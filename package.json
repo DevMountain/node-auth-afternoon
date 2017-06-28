@@ -1,0 +1,25 @@
+{
+  "name": "node-auth-afternoon",
+  "version": "1.0.0",
+  "description": "Node Auth 1 - Afternoon",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.15.3",
+    "express-session": "^1.15.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/devlemire/node-auth-afternoon.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/devlemire/node-auth-afternoon/issues"
+  },
+  "homepage": "https://github.com/devlemire/node-auth-afternoon#readme"
+}
