@@ -2,9 +2,9 @@
 
 # Project Summary
 
-In this project, we'll continue to use `passport`, but instead use the `GitHub` strategy this time. We'll use the same `Default App` from the mini project earlier and modify it to accept the `GitHub` strategy. We'll also expose you to some practice of having to read online documentation. 
+In this project, we'll continue to use `passport`, but instead use the `GitHub` strategy this time. We'll use the same `Default App` from the mini project earlier and modify it to accept the `GitHub` strategy. We'll also gain some experience and exposure using technical documentation. 
 
-At the end of this project, you'll have a fully working node back end that can authorize with GitHub and retrieve a list of followers for the authorized GitHub user.
+At the end of this project, you'll have a fully-working node back end that can authorize with GitHub and retrieve a list of followers for the authorized GitHub user.
 
 ## Setup
 
@@ -31,7 +31,7 @@ In this step, we'll modify the `Default App` on `manage.auth0.com` to accept the
 
 ### Summary 
 
-In this step, we'll use npm to get the required passport dependencies.
+In this step, we'll use `npm` to get the required passport dependencies.
 
 ### Instructions
 
@@ -169,7 +169,7 @@ module.exports = new Auth0Strategy({
 
 ### Summary
 
-In this step, we'll require `strategy.js`, configure the app to use sessions, initialize passport, configure passport to use sessions, and have passport use our strategy from `strategy.js`.
+In this step, we'll require `strategy.js`, configure the app to use sessions, initialize `passport`, configure `passport` to use sessions, and have `passport` use our strategy from `strategy.js`.
 
 ### Instructions
 
