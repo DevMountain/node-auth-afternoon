@@ -2,7 +2,7 @@
 
 # Project Summary
 
-In this project, we'll continue to use `passport`, but instead use the `GitHub` strategy this time. We'll use the same `Default App` from the mini project earlier and modify it to accept the `GitHub` strategy. We'll also gain some experience and exposure using technical documentation. 
+In this project, we'll continue to use `passport`, but instead use the `GitHub` provider this time. We'll use the same `Default App` from the mini project earlier and modify it to accept the `GitHub` provider. We'll also gain some experience and exposure using technical documentation. 
 
 At the end of this project, you'll have a fully-working node back end that can authorize with GitHub and retrieve a list of followers for the authorized GitHub user.
 
@@ -16,7 +16,7 @@ At the end of this project, you'll have a fully-working node back end that can a
 
 ### Summary
 
-In this step, we'll modify the `Default App` on `manage.auth0.com` to accept the `GitHub` strategy.
+In this step, we'll modify the `Default App` on `manage.auth0.com` to accept the `GitHub` provider.
 
 ### Instructions
 
