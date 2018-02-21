@@ -401,19 +401,18 @@ app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
 
 ### Summary
 
-In this step, you'll be required to read documentation on `GitHub`'s API and the documentation for the `request` package. There won't be any detailed instructions on this step. The goal of this step is to expose you to having to read online documentation to figure out how certain technologies work.
+In this step, you'll be required to read documentation on `GitHub`'s API. There won't be any detailed instructions on this step. The goal of this step is to expose you to having to read online documentation to figure out how certain technologies work.
 
 * <a href="https://developer.github.com/v3/">GitHub API Docs</a>
-* <a href="https://www.npmjs.com/package/request">Request NPM Package Docs</a>
 
 ### Instructions
 
 * Open `index.js`.
-* Use `NPM` to install and save `request`.
-* Require `request`.
+* Use `NPM` to install and save `axios`.
+* Require `axios`.
 * Create a `GET` endpoint at `/followers`.
   * This endpoint should check to see if `req.user` exists.
-    * If it does, use `request` to get a list of followers for the currently logged in user. Then return the response body from `request`.
+    * If it does, use `axios` to get a list of followers for the currently logged in user. Then return the response data from `axios`.
     * It it doesn't, redirect to `'/login'`.
 
 ### Solution
@@ -426,7 +425,7 @@ In this step, you'll be required to read documentation on `GitHub`'s API and the
 const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
-const request = require('request');
+const axios = require('axios');
 const strategy = require(`${__dirname}/strategy.js`);
 
 const app = express();
@@ -456,16 +455,12 @@ app.get( '/login',
 
 app.get('/followers', ( req, res, next ) => {
   if ( req.user ) {
-    const FollowersRequest = {
-      url: req.user.followers,
-      headers: {
-        'User-Agent': req.user.clientID
-      }
-    };
-
-    request(FollowersRequest, ( error, response, body ) => {
-      res.status(200).send(body);
-    });
+     axios
+      .get(req.user.followers)
+      .then(response => {
+        res.status(200).send(response.data);
+      })
+      .catch(error => console.log(error));
   } else {
     res.redirect('/login');
   }
