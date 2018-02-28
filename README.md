@@ -540,11 +540,12 @@ In this step, we will create authentication middleware for our `'/students'` end
 ### Instructions
 
 * Open `index.js`.
-* Above the `'/students'` endpoint and below the `'/login'` endpoint we will be placing our middleware by invoking the `use` method off of the `app` object.
-  * Remember that any endpoint below an `app.use()` will be affected by the middleware whereas any endpoint above will not. We don't want want our `'/login'` endpoint to be affected so we will be placing our middleware below it.
-* Pass in a handler function with the parameters `req`, `res`, and `next` as an argument to the newly created middleware.
-* Check inside the handler function to see if there is a `req.user`, if there is, call `next`. If there is not, send a status code of `401`.
-  * Now anytime a user tries to access the endpoint `'/students'`, this handler function will first be invoked by our middleware to ensure there is an authenticated user.
+* Above the `'/students'` endpoint and below the `'/login'` endpoint, create a function called `authenticated`.
+* This function should have the parameters `req`, `res`, and `next`.
+* Inside the `authenticated` function, check to see if there is a `req.user`, if there is, call `next`. If there is not, send a status code of `401`.
+* We will now inject this authentication middleware into our `'/students'` endpoint.
+* Go to the `'/students'` endpoint and between the path and the handler function add the name of the authentication middleware function `authenticated`.
+  * Now anytime a user tries to access the endpoint `'/students'`, this middleware function will first be invoked to ensure there is an authenticated user.
 * Restart your server.
 * Open your browser and enter the address `http://localhost:3000/students`.
 * You should see `Unathorized` in your browser window.
@@ -603,7 +604,7 @@ app.get( '/login',
   )
 );
 
-app.use((req, res, next) => {
+function authenticated(req, res, next) {
   if( req.user ) {
     next()
   } else {
@@ -611,7 +612,7 @@ app.use((req, res, next) => {
   }
 })
 
-app.get('/students', ( req, res, next ) => {
+app.get('/students', authenticated, ( req, res, next ) => {
   res.status(200).send(students)
 });
 
