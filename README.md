@@ -2,9 +2,9 @@
 
 # Project Summary
 
-In this project, we'll continue to use `passport`, but instead use the `GitHub` provider this time. We'll use the same `Default App` from the mini project earlier and modify it to accept the `GitHub` provider. We'll also gain some experience and exposure using technical documentation. 
+In this project, we'll continue to use `passport`, but instead use the `GitHub` provider this time. We'll use the same `Default App` from the mini project earlier and modify it to accept the `GitHub` provider.
 
-At the end of this project, you'll have a fully-working node back end that can authorize with GitHub and retrieve a list of followers for the authorized GitHub user.
+At the end of this project, you'll have a fully-working node back end that can authorize with GitHub and return a list of students for the authorized GitHub user.
 
 ## Setup
 
@@ -23,9 +23,10 @@ In this step, we'll modify the `Default App` on `manage.auth0.com` to accept the
 * Go to `manage.auth0.com` and login to the account you created in the mini project from earlier.
 * Using the left navigation bar, click on `connections` and then click on `social`.
 * Turn on the `GitHub` slider.
-* Under `Permissions` select `read:user`.
+* Select `Continue`.
 * At the top of the same modal, click on `Clients`.
 * Turn on the slider for the `Default App`.
+* Select `Save`.
 
 ## Step 2
 
@@ -53,22 +54,17 @@ npm install --save passport passport-auth0
 
 ### Summary
 
-In this step, we'll create a `config.js` and `strategy.js` file. `config.js` will be responsible for storing our client's `id`, `domain`, and `secret`. We'll use `.gitignore` on this file so GitHub can't see it. `strategy.js` will be responsible for creating and exporting a `new Auth0Strategy` that uses the values from `config.js`.
+In this step, we'll create a `.env` file. `.env` will be responsible for storing our client's `id`, `domain`, and `secret`. We'll use `.gitignore` on this file so GitHub can't see it. 
 
 ### Instructions
 
-* Create a `config.js`.
-* Open `config.js`.
-* Use `module.exports` to export an object with a `domain`, `clientID`, and `clientSecret` property.
-  * The values of these properties should equal the values on `manage.auth0.com` for `Default App`.
-* Add `config.js` to `.gitignore`.
-* Create a `strategy.js`.
-* Open `strategy.js`.
-* Require `passport-auth0` in a `Auth0Strategy` variable.
-* Require `config.js`.
-* Use `module.exports` to export a `new Auth0Strategy`.
-  * The values for `domain`, `clientID`, and `clientSecret` should be taken from `config.js`.
-  * Set the callback URL to `'/login'`.
+* Install and save `dotenv`.
+* Create a `.env` file.
+* Open `.env`.
+* Create 3 variables with the names `DOMAIN`, `CLIENT_ID`, and `CLIENT_SECRET`.
+  * The values of these variables should equal the values on `manage.auth0.com` for `Default App`.
+* Add `.env` to `.gitignore`.
+* Require and config `dotenv` at the top of your file.
 
 <details>
 
@@ -76,111 +72,133 @@ In this step, we'll create a `config.js` and `strategy.js` file. `config.js` wil
 
 <br />
 
-Let's begin by creating a `config.js` file. The reason we are making this file is so that GitHub doesn't publicly display our sensitive information on `manage.auth0.com`. You never want to push a secret up to GitHub and if you ever do, always immediately refresh your secret. In the `config.js` file use `module.exports` to export an object.
+Let's begin by installing and saving the `dotenv` package. Do so by running `npm install --save dotenv`. Now create a `.env` file. The reason we are making this file is so that GitHub doesn't publicly display our sensitive information on `manage.auth0.com`. You never want to push a secret up to GitHub and if you ever do, always immediately refresh your secret. 
 
-```js
-module.exports = {
-
-};
-```
+Open your `.env` file and create 3 variables, `DOMAIN`, `CLIENT_ID`, and `CLIENT_SECRET`.
 
 We can then add our information from `manage.auth0.com` into a `domain`, `clientID`, and `clientSecret` property. ( replace the dots with your actual information )
 
-```js
-module.exports = {
-  domain: '...',
-  clientID: '...',
-  clientSecret: '...'
-};
+```
+DOMAIN=...
+CLIENT_ID=...
+CLIENT_SECRET=...
 ```
 
-Then, we can add this file to our `.gitignore` so we don't accidentally push it to GitHub. After it has been added, let's move on to creating a `strategy.js` file. This file will allow us to create a strategy without bulking our `index.js` file. To begin, let's import `passport-auth0` into a variable called `Auth0Strategy` and import `config.js` into a variable called `config`. I will also destructure `config` for easy referencing, however this step is not required.
+Then, we can add this file to our `.gitignore` so we don't accidentally push it to GitHub. 
 
-```js
-const Auth0Strategy = require('passport-auth0');
-const config = require(`${__dirname}/config.js`);
-const { domain, clientID, clientSecret } = config;
-```
-
-Now we can use `module.exports` to export a `new Auth0Strategy` that uses the credentials from `config.js` and calls back to `'/login'`.
-
-```js
-const Auth0Strategy = require('passport-auth0');
-const config = require(`${__dirname}/config.js`);
-const { domain, clientID, clientSecret } = config;
-
-module.exports = new Auth0Strategy({
-   domain:       domain,
-   clientID:     clientID,
-   clientSecret: clientSecret,
-   callbackURL:  '/login'
-  },
-  function(accessToken, refreshToken, extraParams, profile, done) {
-    return done(null, profile);
-  }
-);
-```
+Now we need to require and confic `dotenv` at the top of our file. You don't need to save it to a variable, you just need to require it and invoke the `config` method off of the invocation of `require`.
 
 </details>
 
 ### Solution
-
 <details>
 
-<summary> <code> config.js </code> </summary>
+<summary> <code> NPM Install </code> </summary>
 
-```js
-module.exports = {
-  domain:       '...',
-  clientID:     '...',
-  clientSecret: '...',
-};
+```
+npm install --save dotenv
 ```
 
 </details>
 
 <details>
 
-<summary> <code> strategy.js </code> </summary>
+<summary> <code> .env </code> </summary>
 
-```js
-const Auth0Strategy = require('passport-auth0');
-const config = require(`${__dirname}/config.js`);
-const { domain, clientID, clientSecret } = config;
-
-module.exports = new Auth0Strategy({
-   domain:       domain,
-   clientID:     clientID,
-   clientSecret: clientSecret,
-   callbackURL:  '/login'
-  },
-  function(accessToken, refreshToken, extraParams, profile, done) {
-    // accessToken is the token to call Auth0 API (not needed in the most cases)
-    // extraParams.id_token has the JSON Web Token
-    // profile has all the information from the user
-    return done(null, profile);
-  }
-);
+```
+DOMAIN=...
+CLIENT_ID=...
+CLIENT_SECRET=...
 ```
 
 </details>
 
-## Step 3
+<details>
+
+<summary> <code> index.js </code> </summary>
+
+```js
+const express = require('express');
+const session = require('express-session');
+require('dotenv').config()
+
+const app = express();
+
+
+const port = 3000;
+app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
+```
+
+</details>
+
+
+## Step 4
 
 ### Summary
 
-In this step, we'll require `strategy.js`, configure the app to use sessions, initialize `passport`, configure `passport` to use sessions, and have `passport` use our strategy from `strategy.js`.
+In this step, we'll configure our app to use sessions, initialize `passport`, configure `passport` to use sessions, and have `passport` use an Auth0 Strategy that we will create.
 
 ### Instructions
 
 * Open `index.js`.
 * Require `passport` in a variable called passport.
-* Require `strategy.js` in a variable called strategy.
+* Require `passport-auth0` in a `Auth0Strategy` variable.
 * Configure the app to use sessions. 
   * Hint: `secret`, `resave`, and `saveUninitialized`.
 * Initialize `passport`.
 * Configure `passport` to use sessions.
-* Configure `passport` to use our strategy from `strategy.js`.
+* Configure `passport` to use a new Auth0 Strategy.
+  * The values for `domain`, `clientID`, and `clientSecret` should be taken from `.env`.
+  * Set the callback URL to `'/login'`.
+  * Add a `scope` property and give it the value `"openid email profile"`.
+
+<details>
+
+<summary> Detailed Instructions </summary>
+
+<br />
+
+To begin, let's require `passport` and  `passport-auth0` into variables called `passport` and `Auth0Strategy` at the top of our `index.js` file.
+
+```js
+const passport = require('passport');
+const Auth0Strategy = require('passport-auth0');
+```
+
+We need to configure our app to use sessions. Invoke the `use` method off of the `app` object. Pass in as an argument the invocation of `session`. The `session` invocation should take an object as an arugment with 3 key value pairs, `secret` with the value of any string you'd like, `resave` with the value of false, and `saveUninitialized` with the value of false.
+
+```js
+app.use( session({
+  secret: '@nyth!ng y0u w@nT',
+  resave: false,
+  saveUninitialized: false
+}));
+```
+
+We now need to initialize passport and configure it to use sessions. Invoke the `use` method off of the `app` object. Pass in as an argument the `passport` variable from the top of the `index.js` file. `passport` is an object with methods that we'll use. Invoke the `initialize` method off of the passport object. On the next line, invoke the `use` method off of the `app` object again. Pass in as an argument the `passport` and invoke the `session` method.
+
+```js
+app.use( passport.initialize() );
+app.use( passport.session() );
+```
+
+We can now pass `passport.use()` a `new Auth0Strategy` that uses the credentials from `.env`, calls back to `'/login'` and has a `scope` property with the value `"openid email profile"` as the first argument and a callback function as the second argument. The callback function should have the parameters  `accessToken, refreshToken, extraParams, profile, done` and should return done invoked with the two arguments `null, profile`.
+
+```js
+passport.use( new Auth0Strategy({
+  domain:       process.env.DOMAIN,
+  clientID:     process.env.CLIENT_ID,
+  clientSecret: process.env.CLIENT_SECRET,
+  callbackURL:  '/login',
+  scope: "openid email profile"
+ },
+ function(accessToken, refreshToken, extraParams, profile, done) {
+   return done(null, profile);
+ }
+) );
+```
+
+</details>
 
 ### Solution
 
@@ -192,7 +210,8 @@ In this step, we'll require `strategy.js`, configure the app to use sessions, in
 const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
-const strategy = require(`${__dirname}/strategy.js`);
+const Auth0Strategy = require('passport-auth0');
+require('dotenv').config()
 
 const app = express();
 app.use( session({
@@ -202,7 +221,20 @@ app.use( session({
 }));
 app.use( passport.initialize() );
 app.use( passport.session() );
-passport.use( strategy );
+passport.use( new Auth0Strategy({
+  domain:       process.env.DOMAIN,
+  clientID:     process.env.CLIENT_ID,
+  clientSecret: process.env.CLIENT_SECRET,
+  callbackURL:  '/login',
+  scope: "openid email profile"
+ },
+ function(accessToken, refreshToken, extraParams, profile, done) {
+   // accessToken is the token to call Auth0 API (not needed in the most cases)
+   // extraParams.id_token has the JSON Web Token
+   // profile has all the information from the user
+   return done(null, profile);
+ }
+) );
 
 const port = 3000;
 app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
@@ -210,7 +242,7 @@ app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
 
 </details>
 
-## Step 4
+## Step 5
 
 ### Summary
 
@@ -222,7 +254,7 @@ In this step, we'll configure passport's `serializeUser` and `deserializeUser` m
 * Call `passport.serializeUser`.
   * Pass in a function as the first argument.
   * The function should have two parameters: `user` and `done`. 
-  * The function should call `done` and with an object that only has the `clientID`, `email`, `name`, and `followers_url` from `user._json` as the first arugment.
+  * The function should call `done` and with this object `{ clientID: user.id, email: user._json.email, name: user._json.name }`. (You don't need all of the data to be saved to your session so this is where you would choose what data to save to the session store and that would be what was passed. Here we will only pass three properities from the user parameter).
 * Call `passport.deserializeUser`.
   * Pass in a function as the first argument.
   * The function should have two parameters: `obj` and `done`.
@@ -246,12 +278,11 @@ passport.deserializeUser( (obj, done) => {
 });
 ```
 
-Since we only want the `clientID`, `email`, `name`, and `followers_url` from `user._json` we'll call done with a new object instead of the entire `user` object. Remember, we pick what properties we want in `serializeUser`.
+Since we only want the `clientID`, `email`, and `name` from `user` we'll call done with a new object instead of the entire `user` object. Remember, we pick what properties we want in `serializeUser`.
 
 ```js
 passport.serializeUser( (user, done) => {
-  const { _json } = user;
-  done(null, { clientID: _json.clientID, email: _json.email, name: _json.name, followers: _json.followers_url });
+  done(null, { clientID: user.id, email: user._json.email, name: user._json.name });
 });
 ```
 
@@ -275,7 +306,8 @@ passport.deserializeUser( (obj, done) => {
 const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
-const strategy = require(`${__dirname}/strategy.js`);
+const Auth0Strategy = require('passport-auth0');
+require('dotenv').config()
 
 const app = express();
 app.use( session({
@@ -283,13 +315,26 @@ app.use( session({
   resave: false,
   saveUninitialized: false
 }));
+
 app.use( passport.initialize() );
 app.use( passport.session() );
-passport.use( strategy );
+passport.use( new Auth0Strategy({
+  domain:       process.env.DOMAIN,
+  clientID:     process.env.CLIENT_ID,
+  clientSecret: process.env.CLIENT_SECRET,
+  callbackURL:  '/login',
+  scope: "openid email profile"
+ },
+ function(accessToken, refreshToken, extraParams, profile, done) {
+   // accessToken is the token to call Auth0 API (not needed in the most cases)
+   // extraParams.id_token has the JSON Web Token
+   // profile has all the information from the user
+   return done(null, profile);
+ }
+) );
 
 passport.serializeUser( (user, done) => {
-  const { _json } = user;
-  done(null, { clientID: _json.clientID, email: _json.email, name: _json.name, followers: _json.followers_url });
+  done(null, { clientID: user.id, email: user._json.email, name: user._json.name });
 });
 
 passport.deserializeUser( (obj, done) => {
@@ -302,7 +347,7 @@ app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
 
 </details>
 
-## Step 5
+## Step 6
 
 ### Summary
 
@@ -312,12 +357,11 @@ In this step, we'll create a `/login` endpoint that will use `passport` to authe
 
 * Open `index.js`.
 * Create a `GET` endpoint at `/login` that calls `passport.authenticate`.
-  * The success redirect should equal `'/followers'`
+  * The success redirect should equal `'/students'`
     * We'll create this endpoint later.
   * The failure redirect should equal `'/login'`.
-  * Failure flash should be enabled.
   * The connection should be forced to use `'GitHub'`.
-    * Hint: You can force passport's connection by using a `connection` property.
+    * Hint: You can force passport's connection by using a `connection` property. The value of this property comes from the connection name on your Auth0 account.
 
 <details>
 
@@ -341,12 +385,12 @@ app.get('/login',
 )
 ```
 
-Then, in the configuration object we can specify the success and failure redirects, turn failure flash on, and force the connection type to `GitHub`. We can do all of these by using the following properties in the configuration object: `successRedirect`, `failureRedirect`, `failureFlash`, and `connection`. The success redirect should go to `'/followers'`; The failure redirect should go to `'/login'`; Failure flash should be set to `true`; The connection should be set to `'github'`.
+Then, in the configuration object we can specify the success and failure redirects, turn failure flash on, and force the connection type to `GitHub`. We can do all of these by using the following properties in the configuration object: `successRedirect`, `failureRedirect`,  and `connection`. The success redirect should go to `'/students'`; The failure redirect should go to `'/login'`; The connection should be set to `'github'`.
 
 ```js
 app.get( '/login',
   passport.authenticate('auth0', 
-    { successRedirect: '/followers', failureRedirect: '/login', failureFlash: true, connection: 'github' }
+    { successRedirect: '/students', failureRedirect: '/login', connection: 'github' }
   )
 );
 ```
@@ -364,7 +408,8 @@ app.get( '/login',
 const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
-const strategy = require(`${__dirname}/strategy.js`);
+const Auth0Strategy = require('passport-auth0');
+require('dotenv').config()
 
 const app = express();
 app.use( session({
@@ -372,13 +417,26 @@ app.use( session({
   resave: false,
   saveUninitialized: false
 }));
+
 app.use( passport.initialize() );
 app.use( passport.session() );
-passport.use( strategy );
+passport.use( new Auth0Strategy({
+  domain:       process.env.DOMAIN,
+  clientID:     process.env.CLIENT_ID,
+  clientSecret: process.env.CLIENT_SECRET,
+  callbackURL:  '/login',
+  scope: "openid email profile"
+ },
+ function(accessToken, refreshToken, extraParams, profile, done) {
+   // accessToken is the token to call Auth0 API (not needed in the most cases)
+   // extraParams.id_token has the JSON Web Token
+   // profile has all the information from the user
+   return done(null, profile);
+ }
+) );
 
 passport.serializeUser( (user, done) => {
-  const { _json } = user;
-  done(null, { clientID: _json.clientID, email: _json.email, name: _json.name, followers: _json.followers_url });
+  done(null, { clientID: user.id, email: user._json.email, name: user._json.name });
 });
 
 passport.deserializeUser( (obj, done) => {
@@ -387,89 +445,9 @@ passport.deserializeUser( (obj, done) => {
 
 app.get( '/login',
   passport.authenticate('auth0', 
-    { successRedirect: '/followers', failureRedirect: '/login', failureFlash: true, connection: 'github' }
+    { successRedirect: '/students', failureRedirect: '/login', connection: 'github' }
   )
 );
-
-const port = 3000;
-app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
-```
-
-</details>
-
-## Step 6
-
-### Summary
-
-In this step, you'll be required to read documentation on `GitHub`'s API and the documentation for the `request` package. There won't be any detailed instructions on this step. The goal of this step is to expose you to having to read online documentation to figure out how certain technologies work.
-
-* <a href="https://developer.github.com/v3/">GitHub API Docs</a>
-* <a href="https://www.npmjs.com/package/request">Request NPM Package Docs</a>
-
-### Instructions
-
-* Open `index.js`.
-* Use `NPM` to install and save `request`.
-* Require `request`.
-* Create a `GET` endpoint at `/followers`.
-  * This endpoint should check to see if `req.user` exists.
-    * If it does, use `request` to get a list of followers for the currently logged in user. Then return the response body from `request`.
-    * It it doesn't, redirect to `'/login'`.
-
-### Solution
-
-<details>
-
-<summary> <code> index.js </code> </summary>
-
-```js
-const express = require('express');
-const session = require('express-session');
-const passport = require('passport');
-const request = require('request');
-const strategy = require(`${__dirname}/strategy.js`);
-
-const app = express();
-app.use( session({
-  secret: '@nyth!ng y0u w@nT',
-  resave: false,
-  saveUninitialized: false
-}));
-app.use( passport.initialize() );
-app.use( passport.session() );
-passport.use( strategy );
-
-passport.serializeUser( (user, done) => {
-  const { _json } = user;
-  done(null, { clientID: _json.clientID, email: _json.email, name: _json.name, followers: _json.followers_url });
-});
-
-passport.deserializeUser( (obj, done) => {
-  done(null, obj);
-});
-
-app.get( '/login',
-  passport.authenticate('auth0', 
-    { successRedirect: '/followers', failureRedirect: '/login', failureFlash: true, connection: 'github' }
-  )
-);
-
-app.get('/followers', ( req, res, next ) => {
-  if ( req.user ) {
-    const FollowersRequest = {
-      url: req.user.followers,
-      headers: {
-        'User-Agent': req.user.clientID
-      }
-    };
-
-    request(FollowersRequest, ( error, response, body ) => {
-      res.status(200).send(body);
-    });
-  } else {
-    res.redirect('/login');
-  }
-});
 
 const port = 3000;
 app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
@@ -481,22 +459,174 @@ app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
 
 ### Summary
 
-In this step, we'll test the API and see if we can get an array of followers.
+In this step, we will create an endpoint for `/students` that will return the list of student data.
 
 ### Instructions
 
-* Open a browser and go to `http://localhost:3000/login`.
-* If you have no errors, try to complete the Black Diamond!
+* Open `index.js`.
+* At the top of `index.js`, require `students.json` into a variable called `students`.
+* Underneath the `get` endpoint `'/login'`, create a new `get` endpoint with the path `'/students'`.
+* This endpoint should return the list of students with a status code of `200`.
+* Open your browser and enter the address `http://localhost:3000/students`, you should see a json of student data matching the file you have in this project.
 
 ### Solution
 
-<img src="https://github.com/DevMountain/node-auth-afternoon/blob/solution/readme-assets/1g.gif" />
+<details>
+
+<summary> <code> index.js </code> </summary>
+
+```js
+const express = require('express');
+const session = require('express-session');
+const passport = require('passport');
+const Auth0Strategy = require('passport-auth0');
+const students = require('./students.json');
+require('dotenv').config()
+
+const app = express();
+app.use( session({
+  secret: '@nyth!ng y0u w@nT',
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use( passport.initialize() );
+app.use( passport.session() );
+passport.use( new Auth0Strategy({
+  domain:       process.env.DOMAIN,
+  clientID:     process.env.CLIENT_ID,
+  clientSecret: process.env.CLIENT_SECRET,
+  callbackURL:  '/login',
+  scope: "openid email profile"
+ },
+ function(accessToken, refreshToken, extraParams, profile, done) {
+   // accessToken is the token to call Auth0 API (not needed in the most cases)
+   // extraParams.id_token has the JSON Web Token
+   // profile has all the information from the user
+   return done(null, profile);
+ }
+) );
+
+passport.serializeUser( (user, done) => {
+  done(null, { clientID: user.id, email: user._json.email, name: user._json.name });
+});
+
+passport.deserializeUser( (obj, done) => {
+  done(null, obj);
+});
+
+app.get( '/login',
+  passport.authenticate('auth0', 
+    { successRedirect: '/students', failureRedirect: '/login', connection: 'github' }
+  )
+);
+
+app.get('/students', ( req, res, next ) => {
+  res.status(200).send(students)
+});
+
+const port = 3000;
+app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
+```
+
+</details>
+
+## Step 8
+
+### Summary
+
+In this step, we will create authentication middleware for our `'/students'` endpoint to ensure that the student data is returned only if the user has been authenticated.
+
+### Instructions
+
+* Open `index.js`.
+* Above the `'/students'` endpoint and below the `'/login'` endpoint, create a function called `authenticated`.
+* This function should have the parameters `req`, `res`, and `next`.
+* Inside the `authenticated` function, check to see if there is a `req.user`, if there is, call `next`. If there is not, send a status code of `401`.
+* We will now inject this authentication middleware into our `'/students'` endpoint.
+* Go to the `'/students'` endpoint and between the path and the handler function add the name of the authentication middleware function `authenticated`.
+  * Now anytime a user tries to access the endpoint `'/students'`, this middleware function will first be invoked to ensure there is an authenticated user.
+* Restart your server.
+* Open your browser and enter the address `http://localhost:3000/students`.
+* You should see `Unathorized` in your browser window.
+* Now login with your app by going to `http://localhost:3000/login`.
+* It should redirect you to `http://localhost:3000/students` and because you've been authenticated, you should once again see the list of student data.
+
+### Solution
+
+<details>
+
+<summary> <code> index.js </code> </summary>
+
+```js
+const express = require('express');
+const session = require('express-session');
+const passport = require('passport');
+const Auth0Strategy = require('passport-auth0');
+const students = require('./students.json');
+require('dotenv').config()
+
+const app = express();
+app.use( session({
+  secret: '@nyth!ng y0u w@nT',
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use( passport.initialize() );
+app.use( passport.session() );
+passport.use( new Auth0Strategy({
+  domain:       process.env.DOMAIN,
+  clientID:     process.env.CLIENT_ID,
+  clientSecret: process.env.CLIENT_SECRET,
+  callbackURL:  '/login',
+  scope: "openid email profile"
+ },
+ function(accessToken, refreshToken, extraParams, profile, done) {
+   // accessToken is the token to call Auth0 API (not needed in the most cases)
+   // extraParams.id_token has the JSON Web Token
+   // profile has all the information from the user
+   return done(null, profile);
+ }
+) );
+
+passport.serializeUser( (user, done) => {
+  done(null, { clientID: user.id, email: user._json.email, name: user._json.name });
+});
+
+passport.deserializeUser( (obj, done) => {
+  done(null, obj);
+});
+
+app.get( '/login',
+  passport.authenticate('auth0', 
+    { successRedirect: '/students', failureRedirect: '/login', connection: 'github' }
+  )
+);
+
+function authenticated(req, res, next) {
+  if( req.user ) {
+    next()
+  } else {
+    res.sendStatus(401);
+  }
+})
+
+app.get('/students', authenticated, ( req, res, next ) => {
+  res.status(200).send(students)
+});
+
+const port = 3000;
+app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
+```
+
+</details>
+
 
 ## Black Diamond
 
-* Create a React front end that takes the array of followers and displays it in a list of `Follower` components.
-  * A `Follower` component should look like a user's information card.
-  * It should display a follower's `avatar_url`, `html_url`, and `login` ( aka their username ). 
+* Create a React front end that takes the array of students and displays it in a list of `Student` components.
+  * A `Student` component should display a students's `name`, contact information, and `grade`. 
 * Use `express.static` to server the React front end.
 
 ## Contributions
@@ -510,3 +640,7 @@ If you see a problem or a typo, please fork, make the necessary changes, and cre
 <p align="center">
 <img src="https://devmounta.in/img/logowhiteblue.png" width="250">
 </p>
+
+
+
+
