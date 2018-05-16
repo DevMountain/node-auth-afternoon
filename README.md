@@ -2,7 +2,7 @@
 
 # Project Summary
 
-In this project, we'll continue to use `passport`, but instead use the `GitHub` provider this time. We'll use the same `Default App` from the mini project earlier and modify it to accept the `GitHub` provider.
+In this project, we'll continue to use `passport`, but instead use the `github` provider this time. We'll use the same `Default App` from the mini project earlier and modify it to accept the `gitub` provider.
 
 At the end of this project, you'll have a fully-working node back end that can authorize with GitHub and return a list of students for the authorized GitHub user.
 
@@ -16,13 +16,13 @@ At the end of this project, you'll have a fully-working node back end that can a
 
 ### Summary
 
-In this step, we'll modify the `Default App` on `manage.auth0.com` to accept the `GitHub` provider.
+In this step, we'll modify the `Default App` on `manage.auth0.com` to accept the `github` provider.
 
 ### Instructions
 
 * Go to `manage.auth0.com` and login to the account you created in the mini project from earlier.
 * Using the left navigation bar, click on `connections` and then click on `social`.
-* Turn on the `GitHub` slider.
+* Turn on the `github` slider.
 * Select `Continue`.
 * At the top of the same modal, click on `Clients`.
 * Turn on the slider for the `Default App`.
@@ -385,7 +385,7 @@ app.get('/login',
 )
 ```
 
-Then, in the configuration object we can specify the success and failure redirects, turn failure flash on, and force the connection type to `GitHub`. We can do all of these by using the following properties in the configuration object: `successRedirect`, `failureRedirect`,  and `connection`. The success redirect should go to `'/students'`; The failure redirect should go to `'/login'`; The connection should be set to `'github'`.
+Then, in the configuration object we can specify the success and failure redirects, turn failure flash on, and force the connection type to `github`. We can do all of these by using the following properties in the configuration object: `successRedirect`, `failureRedirect`,  and `connection`. The success redirect should go to `'/students'`; The failure redirect should go to `'/login'`; The connection should be set to `'github'`.
 
 ```js
 app.get( '/login',
