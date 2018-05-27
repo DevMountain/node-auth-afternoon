@@ -4,6 +4,9 @@
   "description": "Node Auth 1 - Afternoon",
   "main": "index.js",
   "dependencies": {
+    "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
+    "dotenv": "^5.0.1",
     "express": "^4.15.3",
     "express-session": "^1.15.3"
   },
