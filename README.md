@@ -330,15 +330,6 @@ function tradeAccessTokenForUserInfo(accessTokenResponse){
   }
 ```
 
-Then, in the configuration object we can specify the success and failure redirects, turn failure flash on, and force the connection type to `GitHub`. We can do all of these by using the following properties in the configuration object: `successRedirect`, `failureRedirect`, `failureFlash`, and `connection`. The success redirect should go to `'/followers'`; The failure redirect should go to `'/login'`; Failure flash should be set to `true`; The connection should be set to `'github'`.
-
-```js
-app.get( '/login',
-  passport.authenticate('auth0', 
-    { successRedirect: '/followers', failureRedirect: '/login', failureFlash: true, connection: 'github' }
-  )
-);
-```
 
 </details>
 
