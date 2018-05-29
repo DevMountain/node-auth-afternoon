@@ -1,8 +1,8 @@
 .App {
   text-align: center;
   width: 100%;
-  background: red;
   height: 100%;
+  background: rgb(214, 214, 214);
   min-height: 100vh;
 }
 
@@ -14,7 +14,58 @@
   margin: 0 auto;
   max-width: 1000px;
   width: 100%;
-  background: green;
   height: 100%;
   min-height: 100vh;
+}
+
+.App > div .user-image-container {
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  background: white;
+  
+}
+.App > div .user-image-container img{
+  min-width: 100%;
+  min-height: 100%;
+  width: 100%;
+}
+
+.App > div > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.App > div > div > *+* {
+  margin: 5px 0px;
+  border: none;
+  font-size: 16px;
+  border-radius: 2px;
+  text-align: center;
+}
+
+.App > div > div input {
+  height: 25px;
+  width: 210px;
+  box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.432);
+
+}
+
+button {
+  width: 100px;
+  height: 30px;
+  margin: 0 5px;
+  font-size: 16px;
+  box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.432);  
+  cursor: pointer;
+}
+
+button:focus {
+  outline: none;
 }

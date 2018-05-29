@@ -55,7 +55,6 @@ app.get('/callback', (req, res) => {
   }
 
   function setGitTokenToSessions(gitAccessToken){
-    console.log(gitAccessToken.data.identities)
     req.session.access_token = gitAccessToken.data.identities[0].access_token
     res.redirect('http://localhost:3000')
   }
@@ -72,42 +71,17 @@ app.get('/user-data', (req, res) => {
   res.status(200).json(req.session.user)
 })
 
-// app.get('/gitaccess', (req, res) => {
-//   options = { 
-//     method: 'POST',
-//     url: 'https://joshborup.auth0.com/oauth/token',
-//     headers: { 
-//         'content-type': 'application/json'
-//     },
-//     body: {
-//         grant_type: 'client_credentials',
-//         client_id: process.env.AUTH0_API_CLIENT_ID,
-//         client_secret: process.env.AUTH0_API_CLIENT_SECRET,
-//         audience: 'https://joshborup.auth0.com/api/v2/'
-//     },
-//     json: true 
-//   }
-//   axios.post('https://joshborup.auth0.com/oauth/token', options.body).then(resp => {
-//     req.session.access_token = resp.data.access_token
-//     let options = {
-//     headers: {authorization: `Bearer ${req.session.access_token}`}
-//     }
-//     axios.get(`https://joshborup.auth0.com/api/v2/users/${req.session.user.sub}`, options).then(resp => {
-//         console.log(resp.data.identities)
-//         req.session.access_token = resp.data.identities[0].access_token
-//         res.send(req.session.access_token)
-//     }).catch(err => console.log(err))
-//   })
-// })
-
 app.get('/star', (req, res) => {
-  axios.put(`https://api.github.com/user/starred/joshborup/node-auth-afternoon?access_token=${req.session.access_token}`).then(response => {
+  const { gitUser, gitRepo } = req.query;
+  console.log(gitUser, gitRepo)
+  axios.put(`https://api.github.com/user/starred/${gitUser}/${gitRepo}?access_token=${req.session.access_token}`).then(response => {
     res.send('starred it!')
-  }).catch(err => console.log('error', err));
+  }).catch((err) => console.log(err))
 })
 
 app.get('/unstar', (req, res) => {
-  axios.delete(`https://api.github.com/user/starred/joshborup/node-auth-afternoon?access_token=${req.session.access_token}`).then(response => {
+  const { gitUser, gitRepo } = req.query;
+  axios.delete(`https://api.github.com/user/starred/${gitUser}/${gitRepo}?access_token=${req.session.access_token}`).then(response => {
     res.send('unstarred it!')
   }).catch(err => console.log('error', err));
 })
@@ -115,7 +89,6 @@ app.get('/unstar', (req, res) => {
 app.get('/login', (req, res)=>{
   let redirectUri = encodeURIComponent(`http://${req.headers.host}/callback`);
   let login = `https://${process.env.REACT_APP_AUTH0_DOMAIN}/authorize?client_id=${process.env.REACT_APP_AUTH0_CLIENT_ID}&scope=openid%20profile%20email&redirect_uri=${redirectUri}&response_type=code`
-  console.log(login)
   res.redirect(login);
 })
 
