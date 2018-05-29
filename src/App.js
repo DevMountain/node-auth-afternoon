@@ -9,28 +9,29 @@ class App extends Component {
     this.state = {
       user: '',
       starred: 'star',
-      gitRepo:'',
+      gitRepo:'node-auth-afternoon',
       gitUser:'',
       message:'Please Login'
     }
   }
 
   componentDidMount(){
-    axios.get('/user-data').then(user => {
+    axios.get('/api/user-data').then(user => {
       console.log(user);
       this.setState({
-        user: user.data
+        user: user.data,
+        gitUser: user.data.nickname
       })
     })
   }
 
   login = () => {
-    const redirectUri = encodeURIComponent(`http://localhost:4000/callback`);
+    const redirectUri = encodeURIComponent(`${window.location.origin}/callback`);
     window.location = `https://${process.env.REACT_APP_AUTH0_DOMAIN}/authorize?client_id=${process.env.REACT_APP_AUTH0_CLIENT_ID}&scope=openid%20profile%20email&redirect_uri=${redirectUri}&response_type=code`
   }
 
   logout = () => {
-    axios.get('/logout').then(response => {
+    axios.get('/api/logout').then(response => {
       this.setState({
         message: response.data,
         user:''
@@ -50,12 +51,12 @@ class App extends Component {
       this.setState({
         starred: 'unstar'
       })
-      return axios.get(`/star?gitUser=${this.state.gitUser}&gitRepo=${this.state.gitRepo}`)
+      return axios.get(`/api/star?gitUser=${this.state.gitUser}&gitRepo=${this.state.gitRepo}`)
     }else {
       this.setState({
         starred: 'star'
       })
-      return axios.get(`/unstar?gitUser=${this.state.gitUser}&gitRepo=${this.state.gitRepo}`)
+      return axios.get(`/api/unstar?gitUser=${this.state.gitUser}&gitRepo=${this.state.gitRepo}`)
     }
   }
 
