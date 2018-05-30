@@ -64,7 +64,7 @@ In this step, we'll set up `express-session` so we have a place to store our uni
 
 ### Instructions
 
-* Open `index.js` 
+* Open `server/index.js` 
 * require `express-session` and set it equal to `session`
 * invoke `session` and pass it an object with your session configurations
   * Hint: `secret`, `resave`, and `saveUninitialized`.
@@ -75,7 +75,7 @@ In this step, we'll set up `express-session` so we have a place to store our uni
 
 <details>
 
-<summary> <code> index.js </code> </summary>
+<summary> <code> server/index.js </code> </summary>
 
 ```js
 const express = require('express');
@@ -107,7 +107,7 @@ In this step, we'll create a `.env` (you can copy the structure from `.env.examp
   * The values of these properties should equal the values on `manage.auth0.com` (left navigation bar of your auth0 dashboard, applications tab => your application) for the `node-auth` application (except for session secret which can be anything you choose).
   * Also store the `client_id` and `client_secret` of our `API Explorer Application` application we set up in step 1
 * Add `.env` to `.gitignore`.
-* Open `server/index.js` and require the `dotenv` module.
+* Open `server/server/index.js` and require the `dotenv` module.
 *  Within our `/callback` endpoint, make an object called payload that has the following properties from your .env
     * `client_id`
     * `client_secret`,
@@ -146,7 +146,7 @@ AUTH0_API_CLIENT_ID=...
 AUTH0_API_CLIENT_SECRET=...
 ```
 
-Next, we can add this file to our `.gitignore` so we don't accidentally push it to GitHub. After it has been added, let's move on to creating an endpoint that will handle our authorization. First we want to open index.js and use our initialized express instance (i.e. app) to listen for a get request at the path `/callback`
+Next, we can add this file to our `.gitignore` so we don't accidentally push it to GitHub. After it has been added, let's move on to creating an endpoint that will handle our authorization. First we want to open server/index.js and use our initialized express instance (i.e. app) to listen for a get request at the path `/callback`
 
 ```js
 app.get('/callback', (req, res) => {
@@ -196,7 +196,7 @@ AUTH0_API_CLIENT_SECRET=...
 
 <details>
 
-<summary> <code> index.js </code> </summary>
+<summary> <code> server/index.js </code> </summary>
 
 ```js
 const express = require('express');
@@ -241,7 +241,7 @@ In this step we will send the payload we created in the previous step to auth0 i
 
 ### Instructions
 
-* Open `index.js`.
+* Open `server/index.js`.
 * in your `/callback` endoint.
   * write a function called `tradeCodeForAccessToken` that returns a promise in the form of an `axios.post` request.
   * the returned axios request should post to your `https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`. 
@@ -253,7 +253,7 @@ In this step we will send the payload we created in the previous step to auth0 i
 
 <br />
 
-Let's begin by opening `index.js` and within our `/callback` endpoint, write a function called tradeCodeForAccessToken. within our tradeCodeForAccessToken function, return an axios.post request to your `auth0_domain/oauth/token` with the payload built in step 4
+Let's begin by opening `server/index.js` and within our `/callback` endpoint, write a function called tradeCodeForAccessToken. within our tradeCodeForAccessToken function, return an axios.post request to your `auth0_domain/oauth/token` with the payload built in step 4
 
 ```js
 
@@ -269,7 +269,7 @@ function tradeCodeForAccessToken(){
 
 <details>
 
-<summary> <code> index.js </code> </summary>
+<summary> <code> server/index.js </code> </summary>
 
 ```js
 const express = require('express');
@@ -326,7 +326,7 @@ In this step we are going to write a function that will be invoked after our `tr
 
 ### Instructions
 
-* Open `index.js`.
+* Open `server/index.js`.
 * in your `/callback` enpoint and under your `tradeCodeForAccessToken` function, write another function and call it `tradeAccessTokenForUserInfo` that takes in an `accessTokenResponse` as the parameter.
 * Send the token back to Auth0 to get user info:
   * You will need to pull the `access_token` out of the `accessTokenResponse`, the token will be attached to `accessTokenRespone.data.access_token`
@@ -340,7 +340,7 @@ In this step we are going to write a function that will be invoked after our `tr
 
 <br />
 
-now we need to set up a way to send the `access_token` back to auth0 in exchange for the users information. Within `index.js` in your `/callback` endpoint and under your `tradeCodeForAccessToken` function write another function called `tradeAccessTokenForUserInfo` that will accept the `accessTokenResponse` from the previous step as a parameter.
+now we need to set up a way to send the `access_token` back to auth0 in exchange for the users information. Within `server/index.js` in your `/callback` endpoint and under your `tradeCodeForAccessToken` function write another function called `tradeAccessTokenForUserInfo` that will accept the `accessTokenResponse` from the previous step as a parameter.
 
 ```js
 function tradeAccessTokenForUserInfo(accessTokenResponse){
@@ -366,7 +366,7 @@ function tradeAccessTokenForUserInfo(accessTokenResponse){
 
 <details>
 
-<summary> <code> index.js </code> </summary>
+<summary> <code> server/index.js </code> </summary>
 
 ```js
 const express = require('express');
@@ -429,7 +429,7 @@ In this step we are going to set the user Information to session, then make a ca
 
 ### Instructions
 
-* Open `index.js`.
+* Open `server/index.js`.
 * underneath the `tradeAccessTokenForUserInfo` function write another function called `setUserToSessionGetAuthAccessToken` that takes in the `userInfoResponse` from the previous step and sets it equal to req.session.user (hint: the user info is attached to `userInfoResponse.data`)
 * next construct an object called body and give it the following properties
   * `grant_type`: 'client_credentials',
@@ -442,7 +442,7 @@ In this step we are going to set the user Information to session, then make a ca
 
 <details>
 
-<summary> <code> index.js </code> </summary>
+<summary> <code> server/index.js </code> </summary>
 
 ```js
 const express = require('express');
@@ -517,7 +517,7 @@ In this step we are going to write a function called `getGitAccessToken` that ta
 
 ### Instructions
 
-* Open `index.js`.
+* Open `server/index.js`.
 * Write a function and call it `getGitAccessToken`, this function will accept a parameter (i.e the response from the previous steps function) that we will call `authAccessTokenResponse`
 * within the `getGitAccessToken` function, create an object and call it options.
 * this object has one property called `headers` which is equal to an object with the property `authorization`
@@ -530,7 +530,7 @@ In this step we are going to write a function called `getGitAccessToken` that ta
 
 <details>
 
-<summary> <code> index.js </code> </summary>
+<summary> <code> server/index.js </code> </summary>
 
 ```js
 const express = require('express');
@@ -624,7 +624,7 @@ In this step, we are going to build a function which grabs the access token from
 
 <details>
 
-<summary> <code> index.js </code> </summary>
+<summary> <code> server/index.js </code> </summary>
 
 ```js
 const express = require('express');
@@ -733,7 +733,7 @@ In this step, we are going to use the `access_token` that we set equal to `req.s
 
 <details>
 
-<summary> <code> index.js </code> </summary>
+<summary> <code> server/index.js </code> </summary>
 
 ```js
 const express = require('express');
