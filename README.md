@@ -95,13 +95,14 @@ app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
 
 ### Summary
 
-In this step, we'll create a `.env` to store our credentials for the `payload` object we plan to send to auth0. Our `.env` will be responsible for storing our `client_id`, `auth0-domain`, `client_secret`, and `session secret`. We'll use `.gitignore` on this file so GitHub can't see it. We will then want to set up our auth0 endpoint with our payload we plan to send
+In this step, we'll create a `.env` to store our credentials for the `payload` object we plan to send to auth0. Our `.env` will be responsible for storing our `client_id`, `auth0-domain`, `client_secret`, and `session secret` of our application as well as the `client_id` and `client_secret` of our `Auth0 Management API` application we set up in step 1. We'll use `.gitignore` on this file so GitHub can't see it. We will then want to set up our auth0 endpoint with our payload we plan to send
 
 ### Instructions
 
 * Create a `.env`.
 * Insert into your `.env` your `auth0_domain`, `client_ID`, `client_Secret` and `session secret`.
   * The values of these properties should equal the values on `manage.auth0.com` for `node-auth` (except for session secret which can be anything you choose).
+  * Also store the `client_id` and `client_secret` of our `Auth0 Management API` application we set up in step 1
 * Add `.env` to `.gitignore`.
 * Open `server/index.js` and require your `.env`.
 * set up an endpoint to listen for a get request at the path `/callback`
