@@ -95,14 +95,14 @@ app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
 
 ### Summary
 
-In this step, we'll create a `.env` to store our credentials for the `payload` object we plan to send to auth0. Our `.env` will be responsible for storing our `client_id`, `auth0-domain`, `client_secret`, and `session secret` of our application as well as the `client_id` and `client_secret` of our `Auth0 Management API` application we set up in step 1. We'll use `.gitignore` on this file so GitHub can't see it. We will then want to set up our auth0 endpoint with our payload we plan to send
+In this step, we'll create a `.env` to store our credentials for the `payload` object we plan to send to auth0. Our `.env` will be responsible for storing our `client_id`, `auth0-domain`, `client_secret`, and `session secret` of our application as well as the `client_id` and `client_secret` of our `API Explorer Application` application we set up in step 1. We'll use `.gitignore` on this file so GitHub can't see it. We will then want to set up our auth0 endpoint with our payload we plan to send
 
 ### Instructions
 
 * Create a `.env`.
 * Insert into your `.env` your `auth0_domain`, `client_ID`, `client_secret` and `session secret`.
   * The values of these properties should equal the values on `manage.auth0.com` for the `node-auth` application (except for session secret which can be anything you choose).
-  * Also store the `client_id` and `client_secret` of our `Auth0 Management API` application we set up in step 1
+  * Also store the `client_id` and `client_secret` of our `API Explorer Application` application we set up in step 1
 * Add `.env` to `.gitignore`.
 * Open `server/index.js` and require the `dotenv` module.
 *  Within our `/callback` endpoint, make an object called payload that has the following properties from your .env
@@ -403,7 +403,7 @@ app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
 
 ### Summary
 
-In this step we are going to set the user Information to session, then make a call to the  `Auth0 Management API` we registered in step 1 so we can get an Auth0 `access_token`
+In this step we are going to set the user Information to session, then make a call to the  `API Explorer Application` we registered in step 1 so we can get an Auth0 `access_token`
 
 ### Instructions
 
