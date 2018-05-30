@@ -681,7 +681,7 @@ In this step, we are going to use the `access_token` that we attached to `req.se
 * make an axios PUT request to `https://api.github.com/user/starred/${gitUser}/${gitRepo}`
 * In order to authorize our request, github needs the access token we set to `req.session.gitAccessToken`
   * send our access token as a query parameter of our put request (i.e `?access_token=....`)
-* Next, within the `.then` of our put request we will close out our response with `res.status(200).end()` which signifies the POST was successful but that no data is being passed back to the front.
+* Next, within the `.then` of our put request we will close out our response with `res.status(200).end()` which signifies the request was successful but that no data is being passed back to the front.
 * Set up an identical GET endpoint to on `/api/unstar` with the only difference being, the axios call within this new endpoint makes an `axios.delete` instead of an `axios.put`
 
 ### Solution
