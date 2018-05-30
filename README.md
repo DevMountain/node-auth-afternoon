@@ -909,7 +909,7 @@ The last step in our project, is to set up the function which will initiate the 
 
 ### Instructions
 
-* Navigate to `App.js`
+* Navigate to `App.js` and locate the `login` function
 * make a variable called `redirectUri` and set it equal to ``encodeURIComponent(`${window.location.origin}/callback`)``
 * next we are going to force a redirect to our auth0 login screen by setting `window.location` equal to `https://${process.env.REACT_APP_AUTH0_DOMAIN}/authorize`, we will also want to pass along a few queries so our login attempt will succeed and we will get back the correct info
   * `client_id=REACT_APP_AUTH0_CLIENT_ID`
