@@ -66,9 +66,19 @@ button {
   cursor: pointer;
   background: rgb(69, 86, 238);
   color: rgb(255, 253, 253);
-  border: none;
+  transition: .15s;
+  font-weight: 400;
+}
+
+button:hover {
+  color: rgb(69, 86, 238);
+  background: rgb(255, 253, 253);
 }
 
 button:focus {
   outline: none;
+}
+
+button:active {
+  box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.432);  
 }
