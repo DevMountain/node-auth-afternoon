@@ -126,7 +126,7 @@ Let's begin by creating a `.env` file. The reason we are making this file is so 
 We can add the information from `manage.auth0.com` into the .env under the following names
 * `REACT_APP_AUTH0_DOMAIN`,
 * `REACT_APP_AUTH0_CLIENT_ID`, 
-* `REACT_APP_AUTH0_CLIENT_SECRET`
+* `AUTH0_CLIENT_SECRET`
 
 from your API Explorer Application
 * `AUTH0_API_CLIENT_ID`
@@ -140,7 +140,7 @@ and then you can set your `SESSION_SECRET` to anything that isnt easily guessabl
 SESSION_SECRET=...
 REACT_APP_AUTH0_DOMAIN=...
 REACT_APP_AUTH0_CLIENT_ID=...
-REACT_APP_AUTH0_CLIENT_SECRET=...
+AUTH0_CLIENT_SECRET=...
 
 AUTH0_API_CLIENT_ID=...
 AUTH0_API_CLIENT_SECRET=...
@@ -159,10 +159,10 @@ Now we can build our payload that uses the credentials from `.env` to authorize 
 ```js
 app.get('/callback', (req, res) => {
   
-  let payLoad = {
+  let payload = {
     
     client_id: process.env.REACT_APP_AUTH0_CLIENT_ID,
-    client_secret: process.env.REACT_APP_AUTH0_CLIENT_SECRET,
+    client_secret: process.env.AUTH0_CLIENT_SECRET,
     code: req.query.code,
     grant_type: 'authorization_code',
     redirect_uri: `http://${req.headers.host}/callback`
@@ -186,7 +186,7 @@ app.get('/callback', (req, res) => {
 SESSION_SECRET=...
 REACT_APP_AUTH0_DOMAIN=...
 REACT_APP_AUTH0_CLIENT_ID=...
-REACT_APP_AUTH0_CLIENT_SECRET=...
+AUTH0_CLIENT_SECRET=...
 
 AUTH0_API_CLIENT_ID=...
 AUTH0_API_CLIENT_SECRET=...
@@ -216,9 +216,9 @@ app.use( session({
 
 app.get('/callback', (req, res) => {
 
-  let payLoad = {
+  let payload = {
     client_id: process.env.REACT_APP_AUTH0_CLIENT_ID,
-    client_secret: process.env.REACT_APP_AUTH0_CLIENT_SECRET,
+    client_secret: process.env.AUTH0_CLIENT_SECRET,
     code: req.query.code,
     grant_type: 'authorization_code',
     redirect_uri: `http://${req.headers.host}/callback`
@@ -258,7 +258,7 @@ Let's begin by opening `index.js` and within our `/callback` endpoint, write a f
 ```js
 
 function tradeCodeForAccessToken(){
-    return axios.post(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, payLoad)
+    return axios.post(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, payload)
   }
 
 ```
@@ -289,19 +289,28 @@ app.use( session({
 
 app.get('/callback', (req, res) => {
 
-  let payLoad = {
+  let payload = {
     client_id: process.env.REACT_APP_AUTH0_CLIENT_ID,
-    client_secret: process.env.REACT_APP_AUTH0_CLIENT_SECRET,
+    client_secret: process.env.AUTH0_CLIENT_SECRET,
     code: req.query.code,
     grant_type: 'authorization_code',
     redirect_uri: `http://${req.headers.host}/callback`
   }
 
   function tradeCodeForAccessToken(){
-    return axios.post(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, payLoad)
+    return axios.post(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, payload)
   }
   
 })
+
+app.get('/api/user-data', (req, res) => {
+  res.status(200).json(req.session.user)
+});
+
+app.get('/api/logout', (req, res) => {
+  req.session.destroy();
+  res.send('logged out');
+});
 
 const port = 3000;
 app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
@@ -377,16 +386,16 @@ app.use( session({
 
 app.get('/callback', (req, res) => {
 
-  let payLoad = {
+  let payload = {
     client_id: process.env.REACT_APP_AUTH0_CLIENT_ID,
-    client_secret: process.env.REACT_APP_AUTH0_CLIENT_SECRET,
+    client_secret: process.env.AUTH0_CLIENT_SECRET,
     code: req.query.code,
     grant_type: 'authorization_code',
     redirect_uri: `http://${req.headers.host}/callback`
   }
 
   function tradeCodeForAccessToken(){
-    return axios.post(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, payLoad)
+    return axios.post(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, payload)
   }
 
   function tradeAccessTokenForUserInfo(accessTokenResponse){
@@ -395,6 +404,15 @@ app.get('/callback', (req, res) => {
   }
   
 })
+
+app.get('/api/user-data', (req, res) => {
+  res.status(200).json(req.session.user)
+});
+
+app.get('/api/logout', (req, res) => {
+  req.session.destroy();
+  res.send('logged out');
+});
 
 const port = 3000;
 app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
@@ -444,16 +462,16 @@ app.use( session({
 
 app.get('/callback', (req, res) => {
 
-  let payLoad = {
+  let payload = {
     client_id: process.env.REACT_APP_AUTH0_CLIENT_ID,
-    client_secret: process.env.REACT_APP_AUTH0_CLIENT_SECRET,
+    client_secret: process.env.AUTH0_CLIENT_SECRET,
     code: req.query.code,
     grant_type: 'authorization_code',
     redirect_uri: `http://${req.headers.host}/callback`
   }
 
   function tradeCodeForAccessToken(){
-    return axios.post(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, payLoad)
+    return axios.post(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, payload)
   }
 
   function tradeAccessTokenForUserInfo(accessTokenResponse){
@@ -475,6 +493,15 @@ app.get('/callback', (req, res) => {
   }
 
 })
+
+app.get('/api/user-data', (req, res) => {
+  res.status(200).json(req.session.user)
+});
+
+app.get('/api/logout', (req, res) => {
+  req.session.destroy();
+  res.send('logged out');
+});
 
 const port = 3000;
 app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
@@ -523,16 +550,16 @@ app.use( session({
 
 app.get('/callback', (req, res) => {
 
-  let payLoad = {
+  let payload = {
     client_id: process.env.REACT_APP_AUTH0_CLIENT_ID,
-    client_secret: process.env.REACT_APP_AUTH0_CLIENT_SECRET,
+    client_secret: process.env.AUTH0_CLIENT_SECRET,
     code: req.query.code,
     grant_type: 'authorization_code',
     redirect_uri: `http://${req.headers.host}/callback`
   }
 
   function tradeCodeForAccessToken(){
-    return axios.post(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, payLoad)
+    return axios.post(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, payload)
   }
 
   function tradeAccessTokenForUserInfo(accessTokenResponse){
@@ -564,6 +591,15 @@ app.get('/callback', (req, res) => {
   
 })
 
+app.get('/api/user-data', (req, res) => {
+  res.status(200).json(req.session.user)
+});
+
+app.get('/api/logout', (req, res) => {
+  req.session.destroy();
+  res.send('logged out');
+});
+
 const port = 3000;
 app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
 ```
@@ -579,7 +615,7 @@ In this step, we are going to build a function which grabs the access token from
 ### Instructions
 
 * Write a function called `setGitTokenToSessions` which takes in the response from the previous function as a parameter, we will call this response `gitAccessToken`
-* Set the `access_token` on the object of the identities array equal to `req.session.gitAccessToken`
+* Set the `access_token` on the object of the identities array (i.e. `gitAccessToken.data.identities[0].access_token`) equal to `req.session.gitAccessToken`
 * Redirect the user back to our landing page `'/'` using `req.redirect`.
 * next go through your `/callback` endpoint and chain together all of your functions making sure to put them in the correct order and pass them the correct arguments.
 * finally add a catch onto the final `.then` which will console.log any errors when running out function
@@ -608,16 +644,16 @@ app.use( session({
 
 app.get('/callback', (req, res) => {
 
-  let payLoad = {
+  let payload = {
     client_id: process.env.REACT_APP_AUTH0_CLIENT_ID,
-    client_secret: process.env.REACT_APP_AUTH0_CLIENT_SECRET,
+    client_secret: process.env.AUTH0_CLIENT_SECRET,
     code: req.query.code,
     grant_type: 'authorization_code',
     redirect_uri: `http://${req.headers.host}/callback`
   }
 
   function tradeCodeForAccessToken(){
-    return axios.post(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, payLoad)
+    return axios.post(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, payload)
   }
 
   function tradeAccessTokenForUserInfo(accessTokenResponse){
@@ -661,6 +697,15 @@ app.get('/callback', (req, res) => {
   
 })
 
+app.get('/api/user-data', (req, res) => {
+  res.status(200).json(req.session.user)
+});
+
+app.get('/api/logout', (req, res) => {
+  req.session.destroy();
+  res.send('logged out');
+});
+
 const port = 3000;
 app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
 ```
@@ -672,11 +717,11 @@ app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
 
 ### Summary
 
-In this step, we are going to use the `access_token` that we attached to `req.session.gitAccessToken` in the previous step to make calls to the github API and star/unstar repo's on the user's behalf. The access token we will be using is as good as the users github password so for security reasons we will make the calls to star and unstar repos from the server-side 
+In this step, we are going to use the `access_token` that we set equal to `req.session.gitAccessToken` in the previous step to make calls to the github API and star/unstar repo's on the user's behalf. The access token we will be using is as good as the users github password so for security reasons we will make the calls to star and unstar repos from the server-side 
 
 ### Instructions
 
-* Set up an endpoint with the path `/api/star`
+* Set up a GET endpoint with the path `/api/star`
 * in the endpoint handler function, deconstruct `gitUser` and `gitRepo` from `req.query`
 * make an axios PUT request to `https://api.github.com/user/starred/${gitUser}/${gitRepo}`
 * In order to authorize our request, github needs the access token we set to `req.session.gitAccessToken`
@@ -708,16 +753,16 @@ app.use( session({
 
 app.get('/callback', (req, res) => {
 
-  let payLoad = {
+  let payload = {
     client_id: process.env.REACT_APP_AUTH0_CLIENT_ID,
-    client_secret: process.env.REACT_APP_AUTH0_CLIENT_SECRET,
+    client_secret: process.env.AUTH0_CLIENT_SECRET,
     code: req.query.code,
     grant_type: 'authorization_code',
     redirect_uri: `http://${req.headers.host}/callback`
   }
 
   function tradeCodeForAccessToken(){
-    return axios.post(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, payLoad)
+    return axios.post(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, payload)
   }
 
   function tradeAccessTokenForUserInfo(accessTokenResponse){
@@ -774,6 +819,15 @@ app.get('/api/unstar', (req, res) => {
     res.status(200).end()
   }).catch(err => console.log('error', err));
 })
+
+app.get('/api/user-data', (req, res) => {
+  res.status(200).json(req.session.user)
+});
+
+app.get('/api/logout', (req, res) => {
+  req.session.destroy();
+  res.send('logged out');
+});
 
 const port = 3000;
 app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
@@ -786,126 +840,7 @@ app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
 
 ### Summary
 
-The last step in our server file is to set up an endpoint for us to send user data to the front as well as an endpoint to logout
-
-### Instructions
-
-* Set up an endpoint with the path `/user-data`
-* in the handler function of our endpoint, send the data attached to `req.session.user` when hit
-* Set up another endpoint at the path `/logout` which will call `req.session.destroy()` when hit and then `res.send` the string `'logged out'` 
-
-### Solution
-
-<details>
-
-<summary> <code> index.js </code> </summary>
-
-```js
-const express = require('express');
-const bodyParser = require('body-parser');
-const axios = require('axios');
-const session = require('express-session');
-require('dotenv').config();
-
-app.use(bodyParser.json());
-
-const app = express();
-app.use( session({
-  secret: 'WhatEVer SecreT YOU wAnt',
-  resave: false,
-  saveUninitialized: false
-}));
-
-app.get('/callback', (req, res) => {
-
-  let payLoad = {
-    client_id: process.env.REACT_APP_AUTH0_CLIENT_ID,
-    client_secret: process.env.REACT_APP_AUTH0_CLIENT_SECRET,
-    code: req.query.code,
-    grant_type: 'authorization_code',
-    redirect_uri: `http://${req.headers.host}/callback`
-  }
-
-  function tradeCodeForAccessToken(){
-    return axios.post(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, payLoad)
-  }
-
-  function tradeAccessTokenForUserInfo(accessTokenResponse){
-    const accessToken = accessTokenResponse.data.access_token;
-    return axios.get(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/userinfo/?access_token=${accessToken}`) 
-  }
-
-  function setUserToSessionGetAuthAccessToken(userInfoResponse){
-    req.session.user = userInfoResponse.data
-   
-    body = {
-      grant_type: 'client_credentials',
-      client_id: process.env.AUTH0_API_CLIENT_ID,
-      client_secret: process.env.AUTH0_API_CLIENT_SECRET,
-      audience: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/api/v2/`
-    }
-
-    return axios.post(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, body)
-  }
-
-  function getGitAccessToken(authAccessTokenResponse){
-    let options = {
-      headers: {
-          authorization: `Bearer ${authAccessTokenResponse.data.access_token}`
-        }
-    }
-    return axios.get(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/api/v2/users/${req.session.user.sub}`, options)
-  }
-
-  function setGitTokenToSessions(gitAccessToken){
-    req.session.access_token = gitAccessToken.data.identities[0].access_token
-    res.redirect('/')
-  }
-
-  tradeCodeForAccessToken()
-  .then(accessTokenResponse => tradeAccessTokenForUserInfo(accessTokenResponse))
-  .then(userInfoResponse => setUserToSessionGetAuthAccessToken(userInfoResponse))
-  .then(authAccessTokenResponse => getGitAccessToken(authAccessTokenResponse))
-  .then(gitAccessToken => setGitTokenToSessions(gitAccessToken))
-  .catch(err =>  console.log(err))
-  
-})
-
-app.get('/api/star', (req, res) => {
-  const { gitUser, gitRepo } = req.query;
-  axios.put(`https://api.github.com/user/starred/${gitUser}/${gitRepo}?access_token=${req.session.access_token}`).then(response => {
-    res.status(200).end()
-  }).catch((err) => console.log(err))
-})
-
-app.get('/api/unstar', (req, res) => {
-  const { gitUser, gitRepo } = req.query;
-  axios.delete(`https://api.github.com/user/starred/${gitUser}/${gitRepo}?access_token=${req.session.access_token}`).then(response => {
-   res.status(200).end()
-  }).catch(err => console.log('error', err));
-})
-
-app.get('/api/user-data', (req, res) => {
-  res.status(200).json(req.session.user)
-})
-
-app.get('/api/logout', (req, res) => {
-  req.session.destroy();
-  res.send('logged out');
-})
-
-const port = 3000;
-app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
-```
-
-</details>
-
-
-## Step 12
-
-### Summary
-
-The last step in our project, is to set up the function which will initiate the users login request. this will be done from within out react-app. 
+The last step in our project, is to set up the function which will initiate the users login request. this will be done from within our react-app. 
 
 ### Instructions
 
@@ -916,7 +851,7 @@ The last step in our project, is to set up the function which will initiate the 
   * `&scope=openid%20profile%20email`
   * `redirect_uri=${redirectUri}`
   * `response_type=code`
-    * (hint: remember the '&' symbol is used to chain queries on a url)
+    * (hint: remember the '&' symbol is used to chain queries onto a url)
 
 
 
