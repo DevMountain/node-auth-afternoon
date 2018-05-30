@@ -88,7 +88,7 @@ app.use( session({
   saveUninitialized: false
 }));
 
-const port = 3000;
+const port = 4000;
 app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
 ```
 
@@ -226,7 +226,7 @@ app.get('/callback', (req, res) => {
 
 })
 
-const port = 3000;
+const port = 4000;
 app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
 ```
 
@@ -312,7 +312,7 @@ app.get('/api/logout', (req, res) => {
   res.send('logged out');
 });
 
-const port = 3000;
+const port = 4000;
 app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
 ```
 
@@ -414,7 +414,7 @@ app.get('/api/logout', (req, res) => {
   res.send('logged out');
 });
 
-const port = 3000;
+const port = 4000;
 app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
 ```
 
@@ -503,7 +503,7 @@ app.get('/api/logout', (req, res) => {
   res.send('logged out');
 });
 
-const port = 3000;
+const port = 4000;
 app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
 ```
 
@@ -600,7 +600,7 @@ app.get('/api/logout', (req, res) => {
   res.send('logged out');
 });
 
-const port = 3000;
+const port = 4000;
 app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
 ```
 
@@ -706,7 +706,7 @@ app.get('/api/logout', (req, res) => {
   res.send('logged out');
 });
 
-const port = 3000;
+const port = 4000;
 app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
 ```
 
@@ -829,7 +829,7 @@ app.get('/api/logout', (req, res) => {
   res.send('logged out');
 });
 
-const port = 3000;
+const port = 4000;
 app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
 ```
 
