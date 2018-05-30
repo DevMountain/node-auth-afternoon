@@ -412,7 +412,7 @@ In this step we are going to set the user Information to session, then make a ca
 ### Instructions
 
 * Open `index.js`.
-* underneath the `tradeAccessTokenForUserInfo` function write another function called `setUserToSessionGetAuthAccessToken` that takes in the `userInfoResponse` from the previous step and sets it equal to req.session.user
+* underneath the `tradeAccessTokenForUserInfo` function write another function called `setUserToSessionGetAuthAccessToken` that takes in the `userInfoResponse` from the previous step and sets it equal to req.session.user (hint: the user info is attached to `userInfoResponse.data`)
 * next construct an object called body and give it the following properties
   * `grant_type`: 'client_credentials',
   * `client_id`: process.env.AUTH0_API_CLIENT_ID,
