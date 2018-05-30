@@ -2,7 +2,7 @@
 
 # Project Summary
 
-In this project, we'll continue to use `Auth0`, but instead use the `GitHub` social provider this time. We'll use the same `node-auth` from the mini project earlier and modify it to accept the `GitHub` provider.
+In this project, we'll continue to use `Auth0`, but instead use the `GitHub` social provider this time. We'll use the same `node-auth` application from the mini project earlier and modify it to accept the `GitHub` provider.
 
 At the end of this project, you'll have a fully-working node back end that can authorize with GitHub and star a repository of your choice all from your application.
 
@@ -16,7 +16,7 @@ At the end of this project, you'll have a fully-working node back end that can a
 
 ### Summary
 
-In this step, we'll modify the `node-auth` on `manage.auth0.com` to accept the `GitHub` provider.
+In this step, we'll modify the `node-auth` application on `manage.auth0.com` to accept the `GitHub` provider.
 
 ### Instructions
 
@@ -26,7 +26,7 @@ In this step, we'll modify the `node-auth` on `manage.auth0.com` to accept the `
 * click on `Github's` tile
 * Under `Permissions` select `read:user`, `repo`.
 * At the top of the same modal, click on `Applications`.
-* Turn on the slider for the `node-auth`( or whatever you named your application ) if it isnt on already.
+* Turn on the slider for the `node-auth` application( or whatever you named your application ) if it isnt on already.
 * next go to the APIs section in the left column and click on 	
 `Auth0 Management API`
   * go to `API explorer` tab and create and authorize a test application
@@ -101,7 +101,7 @@ In this step, we'll create a `.env` to store our credentials for the `payload` o
 
 * Create a `.env`.
 * Insert into your `.env` your `auth0_domain`, `client_ID`, `client_Secret` and `session secret`.
-  * The values of these properties should equal the values on `manage.auth0.com` for `node-auth` (except for session secret which can be anything you choose).
+  * The values of these properties should equal the values on `manage.auth0.com` for `node-auth` application (except for session secret which can be anything you choose).
   * Also store the `client_id` and `client_secret` of our `Auth0 Management API` application we set up in step 1
 * Add `.env` to `.gitignore`.
 * Open `server/index.js` and require your `.env`.
