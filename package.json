@@ -1,25 +1,30 @@
 {
-  "name": "node-auth-afternoon",
-  "version": "1.0.0",
-  "description": "Node Auth 1 - Afternoon",
-  "main": "index.js",
+  "name": "auth",
+  "version": "0.1.0",
+  "private": true,
+  "main": "server/index.js",
   "dependencies": {
+    "react": "^16.4.0",
+    "react-dom": "^16.4.0",
+    "react-scripts": "1.1.4",
+    "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
+    "dotenv": "^5.0.1",
     "express": "^4.15.3",
     "express-session": "^1.15.3"
   },
-  "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/devlemire/node-auth-afternoon.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/devlemire/node-auth-afternoon/issues"
-  },
-  "homepage": "https://github.com/devlemire/node-auth-afternoon#readme"
+  "proxy": {
+    "/callback" : {
+      "target": "http://localhost:4000"
+    },
+    "/api":{
+    "target": "http://localhost:4000"
+    }
+  }
 }

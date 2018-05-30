@@ -1,10 +1,10 @@
-<img src="https://devmounta.in/img/logowhiteblue.png" width="250" align="right">
+<img src="https://s3.amazonaws.com/devmountain/www/img/dm_white_logo.png" width="200" align="right">
 
 # Project Summary
 
-In this project, we'll continue to use `passport`, but instead use the `GitHub` provider this time. We'll use the same `Default App` from the mini project earlier and modify it to accept the `GitHub` provider. We'll also gain some experience and exposure using technical documentation. 
+In this project, we'll continue to use `Auth0`, but instead use the `GitHub` social provider this time. We'll use the same `node-auth` from the mini project earlier and modify it to accept the `GitHub` provider.
 
-At the end of this project, you'll have a fully-working node back end that can authorize with GitHub and retrieve a list of followers for the authorized GitHub user.
+At the end of this project, you'll have a fully-working node back end that can authorize with GitHub and star a repository of your choice all from your application.
 
 ## Setup
 
@@ -16,26 +16,31 @@ At the end of this project, you'll have a fully-working node back end that can a
 
 ### Summary
 
-In this step, we'll modify the `Default App` on `manage.auth0.com` to accept the `GitHub` provider.
+In this step, we'll modify the `node-auth` on `manage.auth0.com` to accept the `GitHub` provider.
 
 ### Instructions
 
 * Go to `manage.auth0.com` and login to the account you created in the mini project from earlier.
 * Using the left navigation bar, click on `connections` and then click on `social`.
 * Turn on the `GitHub` slider.
-* Under `Permissions` select `read:user`.
-* At the top of the same modal, click on `Clients`.
-* Turn on the slider for the `Default App`.
+* click on `Github's` tile
+* Under `Permissions` select `read:user`, `repo`.
+* At the top of the same modal, click on `Applications`.
+* Turn on the slider for the `node-auth`( or whatever you named your application ) if it isnt on already.
+* next go to the APIs section in the left column and click on 	
+`Auth0 Management API`
+  * go to `API explorer` tab and create and authorize a test application
+
 
 ## Step 2
 
 ### Summary 
 
-In this step, we'll use `npm` to get the required passport dependencies.
+In this step, we'll use `npm` to get the required dependencies we will need for our project.
 
 ### Instructions
 
-* Install and save `passport` and `passport-auth0`.
+* Install `body-parser`, `axios`, `express-session`, and  `dotenv`.
 
 ### Solution
 
@@ -44,7 +49,7 @@ In this step, we'll use `npm` to get the required passport dependencies.
 <summary> <code> NPM Install </code> </summary>
 
 ```
-npm install --save passport passport-auth0
+npm install body-parser dotenv axios express-session
 ```
 
 </details>
@@ -53,134 +58,15 @@ npm install --save passport passport-auth0
 
 ### Summary
 
-In this step, we'll create a `config.js` and `strategy.js` file. `config.js` will be responsible for storing our client's `id`, `domain`, and `secret`. We'll use `.gitignore` on this file so GitHub can't see it. `strategy.js` will be responsible for creating and exporting a `new Auth0Strategy` that uses the values from `config.js`.
+In this step, we'll set up `express-session` so we have a place to store our unique user's data when they log in.
 
 ### Instructions
 
-* Create a `config.js`.
-* Open `config.js`.
-* Use `module.exports` to export an object with a `domain`, `clientID`, and `clientSecret` property.
-  * The values of these properties should equal the values on `manage.auth0.com` for `Default App`.
-* Add `config.js` to `.gitignore`.
-* Create a `strategy.js`.
-* Open `strategy.js`.
-* Require `passport-auth0` in a `Auth0Strategy` variable.
-* Require `config.js`.
-* Use `module.exports` to export a `new Auth0Strategy`.
-  * The values for `domain`, `clientID`, and `clientSecret` should be taken from `config.js`.
-  * Set the callback URL to `'/login'`.
-
-<details>
-
-<summary> Detailed Instructions </summary>
-
-<br />
-
-Let's begin by creating a `config.js` file. The reason we are making this file is so that GitHub doesn't publicly display our sensitive information on `manage.auth0.com`. You never want to push a secret up to GitHub and if you ever do, always immediately refresh your secret. In the `config.js` file use `module.exports` to export an object.
-
-```js
-module.exports = {
-
-};
-```
-
-We can then add our information from `manage.auth0.com` into a `domain`, `clientID`, and `clientSecret` property. ( replace the dots with your actual information )
-
-```js
-module.exports = {
-  domain: '...',
-  clientID: '...',
-  clientSecret: '...'
-};
-```
-
-Then, we can add this file to our `.gitignore` so we don't accidentally push it to GitHub. After it has been added, let's move on to creating a `strategy.js` file. This file will allow us to create a strategy without bulking our `index.js` file. To begin, let's import `passport-auth0` into a variable called `Auth0Strategy` and import `config.js` into a variable called `config`. I will also destructure `config` for easy referencing, however this step is not required.
-
-```js
-const Auth0Strategy = require('passport-auth0');
-const config = require(`${__dirname}/config.js`);
-const { domain, clientID, clientSecret } = config;
-```
-
-Now we can use `module.exports` to export a `new Auth0Strategy` that uses the credentials from `config.js` and calls back to `'/login'`.
-
-```js
-const Auth0Strategy = require('passport-auth0');
-const config = require(`${__dirname}/config.js`);
-const { domain, clientID, clientSecret } = config;
-
-module.exports = new Auth0Strategy({
-   domain:       domain,
-   clientID:     clientID,
-   clientSecret: clientSecret,
-   callbackURL:  '/login'
-  },
-  function(accessToken, refreshToken, extraParams, profile, done) {
-    return done(null, profile);
-  }
-);
-```
-
-</details>
-
-### Solution
-
-<details>
-
-<summary> <code> config.js </code> </summary>
-
-```js
-module.exports = {
-  domain:       '...',
-  clientID:     '...',
-  clientSecret: '...',
-};
-```
-
-</details>
-
-<details>
-
-<summary> <code> strategy.js </code> </summary>
-
-```js
-const Auth0Strategy = require('passport-auth0');
-const config = require(`${__dirname}/config.js`);
-const { domain, clientID, clientSecret } = config;
-
-module.exports = new Auth0Strategy({
-   domain:       domain,
-   clientID:     clientID,
-   clientSecret: clientSecret,
-   callbackURL:  '/login'
-  },
-  function(accessToken, refreshToken, extraParams, profile, done) {
-    // accessToken is the token to call Auth0 API (not needed in the most cases)
-    // extraParams.id_token has the JSON Web Token
-    // profile has all the information from the user
-    return done(null, profile);
-  }
-);
-```
-
-</details>
-
-## Step 3
-
-### Summary
-
-In this step, we'll require `strategy.js`, configure the app to use sessions, initialize `passport`, configure `passport` to use sessions, and have `passport` use our strategy from `strategy.js`.
-
-### Instructions
-
-* Open `index.js`.
-* Require `passport` in a variable called passport.
-* Require `strategy.js` in a variable called strategy.
-* Configure the app to use sessions. 
+* Open `index.js` 
+* require `express-session` and set it equal to `session`
+* invoke `session` and pass it an object with your session configurations
   * Hint: `secret`, `resave`, and `saveUninitialized`.
-* Initialize `passport`.
-* Configure `passport` to use sessions.
-* Configure `passport` to use our strategy from `strategy.js`.
+* finally wrap your invoked session with `app.use()` so that it gets used in your entire app 
 
 ### Solution
 
@@ -191,18 +77,13 @@ In this step, we'll require `strategy.js`, configure the app to use sessions, in
 ```js
 const express = require('express');
 const session = require('express-session');
-const passport = require('passport');
-const strategy = require(`${__dirname}/strategy.js`);
 
 const app = express();
 app.use( session({
-  secret: '@nyth!ng y0u w@nT',
+  secret: 'WhatEVer SecreT YOU wAnt',
   resave: false,
   saveUninitialized: false
 }));
-app.use( passport.initialize() );
-app.use( passport.session() );
-passport.use( strategy );
 
 const port = 3000;
 app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
@@ -214,19 +95,22 @@ app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
 
 ### Summary
 
-In this step, we'll configure passport's `serializeUser` and `deserializeUser` methods.
+In this step, we'll create a `.env` to store our credentials for the `payload` object we plan to send to auth0. Our `.env` will be responsible for storing our `client_id`, `auth0-domain`, `client_secret`, and `session secret`. We'll use `.gitignore` on this file so GitHub can't see it. We will then want to set up our auth0 endpoint with our payload we plan to send
 
 ### Instructions
 
-* Open `index.js`.
-* Call `passport.serializeUser`.
-  * Pass in a function as the first argument.
-  * The function should have two parameters: `user` and `done`. 
-  * The function should call `done` and with an object that only has the `clientID`, `email`, `name`, and `followers_url` from `user._json` as the first arugment.
-* Call `passport.deserializeUser`.
-  * Pass in a function as the first argument.
-  * The function should have two parameters: `obj` and `done`.
-  * The functions should just call `done` and pass in `obj` as the first argument.
+* Create a `.env`.
+* Insert into your `.env` your `auth0_domain`, `client_ID`, `client_Secret` and `session secret`.
+  * The values of these properties should equal the values on `manage.auth0.com` for `node-auth` (except for session secret which can be anything you choose).
+* Add `.env` to `.gitignore`.
+* Open `server/index.js` and require your `.env`.
+* set up an endpoint to listen for a get request at the path `/callback`
+*  Within that endpoint, make an object called payload that has the following properties from your .env
+    * `client_id`
+    * `client_secret`,
+    * `code` (the `code` we expect to recieve from auth0 attached to `req.query`)
+    * `grant_type` (which should be `authorization_code`)
+    * `redirect_uri` which should redirect back to `http://${req.headers.host}/callback`
 
 <details>
 
@@ -234,33 +118,57 @@ In this step, we'll configure passport's `serializeUser` and `deserializeUser` m
 
 <br />
 
-Let's begin by opening `index.js`. After `passport.use( strategy )` let's add `passport.serializeUser` and `passport.deserializeUser`. These methods get called after a successful login and before the success redirect. According to the passport documentation, you use `serializeUser` to pick what properties you want from the returned `user` object and you use `deserializeUser` to execute any necessary logic on the new version of the `user` object. By new version of the `user` object, I mean that when you call `done(null, {})` in `serializeUser` the value of that object then becomes the value of the `obj` parameter in `deserializeUser`.
+Let's begin by creating a `.env` file. The reason we are making this file is so that GitHub doesn't publicly display our sensitive information on `manage.auth0.com`. You never want to push a secret up to GitHub and if you ever do, always immediately refresh your secret.
+
+We can add the information from `manage.auth0.com` into the .env under the following names
+* `REACT_APP_AUTH0_DOMAIN`,
+* `REACT_APP_AUTH0_CLIENT_ID`, 
+* `REACT_APP_AUTH0_CLIENT_SECRET`
+
+from your API Explorer Application
+* `AUTH0_API_CLIENT_ID`
+* `AUTH0_API_CLIENT_SECRET`
+
+
+and then you can set your `SESSION_SECRET` to anything that isnt easily guessable
 
 ```js
-passport.serializeUser( (user, done) => {
 
-});
+SESSION_SECRET=...
+REACT_APP_AUTH0_DOMAIN=...
+REACT_APP_AUTH0_CLIENT_ID=...
+REACT_APP_AUTH0_CLIENT_SECRET=...
 
-passport.deserializeUser( (obj, done) => {
-
-});
+AUTH0_API_CLIENT_ID=...
+AUTH0_API_CLIENT_SECRET=...
 ```
 
-Since we only want the `clientID`, `email`, `name`, and `followers_url` from `user._json` we'll call done with a new object instead of the entire `user` object. Remember, we pick what properties we want in `serializeUser`.
+Next, we can add this file to our `.gitignore` so we don't accidentally push it to GitHub. After it has been added, let's move on to creating an endpoint that will handle our authorization. First we want to open index.js and use our initialized express instance (i.e. app) to listen for a get request at the path `/callback`
 
 ```js
-passport.serializeUser( (user, done) => {
-  const { _json } = user;
-  done(null, { clientID: _json.clientID, email: _json.email, name: _json.name, followers: _json.followers_url });
-});
+app.get('/callback', (req, res) => {
+
+})
 ```
 
-This new object will then be passed on to `deserializeUser` when `done` is invoked. Since we don't have any additional logic to execute, simply call `done` with `null` and `obj`.
+Now we can build our payload that uses the credentials from `.env` to authorize our user.
 
 ```js
-passport.deserializeUser( (obj, done) => {
-  done( null, obj );
-});
+app.get('/callback', (req, res) => {
+  
+  let payLoad = {
+    
+    client_id: process.env.REACT_APP_AUTH0_CLIENT_ID,
+    client_secret: process.env.REACT_APP_AUTH0_CLIENT_SECRET,
+    code: req.query.code,
+    grant_type: 'authorization_code',
+    redirect_uri: `http://${req.headers.host}/callback`
+
+  }
+
+
+})
+
 ```
 
 </details>
@@ -269,32 +177,51 @@ passport.deserializeUser( (obj, done) => {
 
 <details>
 
+<summary> <code> .env  </code> </summary>
+
+```js
+SESSION_SECRET=...
+REACT_APP_AUTH0_DOMAIN=...
+REACT_APP_AUTH0_CLIENT_ID=...
+REACT_APP_AUTH0_CLIENT_SECRET=...
+
+AUTH0_API_CLIENT_ID=...
+AUTH0_API_CLIENT_SECRET=...
+```
+
+</details>
+
+<details>
+
 <summary> <code> index.js </code> </summary>
 
 ```js
 const express = require('express');
+const bodyParser = require('body-parser');
+const axios = require('axios');
 const session = require('express-session');
-const passport = require('passport');
-const strategy = require(`${__dirname}/strategy.js`);
+require('dotenv').config();
+
+app.use(bodyParser.json());
 
 const app = express();
 app.use( session({
-  secret: '@nyth!ng y0u w@nT',
+  secret: 'WhatEVer SecreT YOU wAnt',
   resave: false,
   saveUninitialized: false
 }));
-app.use( passport.initialize() );
-app.use( passport.session() );
-passport.use( strategy );
 
-passport.serializeUser( (user, done) => {
-  const { _json } = user;
-  done(null, { clientID: _json.clientID, email: _json.email, name: _json.name, followers: _json.followers_url });
-});
+app.get('/callback', (req, res) => {
 
-passport.deserializeUser( (obj, done) => {
-  done(null, obj);
-});
+  let payLoad = {
+    client_id: process.env.REACT_APP_AUTH0_CLIENT_ID,
+    client_secret: process.env.REACT_APP_AUTH0_CLIENT_SECRET,
+    code: req.query.code,
+    grant_type: 'authorization_code',
+    redirect_uri: `http://${req.headers.host}/callback`
+  }
+
+})
 
 const port = 3000;
 app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
@@ -302,22 +229,20 @@ app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
 
 </details>
 
+
 ## Step 5
 
 ### Summary
 
-In this step, we'll create a `/login` endpoint that will use `passport` to authenticate with GitHub.
+In this step we will send the payload we created in the previous step to auth0 in exchange for an `access_token`.
 
 ### Instructions
 
 * Open `index.js`.
-* Create a `GET` endpoint at `/login` that calls `passport.authenticate`.
-  * The success redirect should equal `'/followers'`
-    * We'll create this endpoint later.
-  * The failure redirect should equal `'/login'`.
-  * Failure flash should be enabled.
-  * The connection should be forced to use `'GitHub'`.
-    * Hint: You can force passport's connection by using a `connection` property.
+* in your `/callback` endoint.
+  * write a function called `tradeCodeForAccessToken` that returns a promise in the form of an `axios.post` request.
+  * the returned axios request should post to your `REACT_APP_AUTH0_DOMAIN/oauth/token`. 
+  * you will also want to send the payload object built in the previous step as the body of the post.
 
 <details>
 
@@ -325,34 +250,17 @@ In this step, we'll create a `/login` endpoint that will use `passport` to authe
 
 <br />
 
-Now that passport is completely setup and ready to handle authentication let's create a `'/login'` endpoint in `index.js`. 
+Let's begin by opening `index.js` and within our `/callback` endpoint, write a function called tradeCodeForAccessToken. within our tradeCodeForAccessToken function, return an axios.post request to your `auth0_domain/oauth/token` with the payload built in step 4
 
 ```js
-app.get('/login');
-```
 
-We'll want to call `passport.authenticate` and pass in a strategy type and configuration object. The strategy type will be `'auth0'` since we are using an `auth0` strategy.
+function tradeCodeForAccessToken(){
+    return axios.post(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, payLoad)
+  }
 
-```js
-app.get('/login',
-  passport.authenticate('auth0', 
-    { }
-  )
-)
-```
-
-Then, in the configuration object we can specify the success and failure redirects, turn failure flash on, and force the connection type to `GitHub`. We can do all of these by using the following properties in the configuration object: `successRedirect`, `failureRedirect`, `failureFlash`, and `connection`. The success redirect should go to `'/followers'`; The failure redirect should go to `'/login'`; Failure flash should be set to `true`; The connection should be set to `'github'`.
-
-```js
-app.get( '/login',
-  passport.authenticate('auth0', 
-    { successRedirect: '/followers', failureRedirect: '/login', failureFlash: true, connection: 'github' }
-  )
-);
 ```
 
 </details>
-
 
 ### Solution
 
@@ -362,34 +270,35 @@ app.get( '/login',
 
 ```js
 const express = require('express');
+const bodyParser = require('body-parser');
+const axios = require('axios');
 const session = require('express-session');
-const passport = require('passport');
-const strategy = require(`${__dirname}/strategy.js`);
+require('dotenv').config();
+
+app.use(bodyParser.json());
 
 const app = express();
 app.use( session({
-  secret: '@nyth!ng y0u w@nT',
+  secret: 'WhatEVer SecreT YOU wAnt',
   resave: false,
   saveUninitialized: false
 }));
-app.use( passport.initialize() );
-app.use( passport.session() );
-passport.use( strategy );
 
-passport.serializeUser( (user, done) => {
-  const { _json } = user;
-  done(null, { clientID: _json.clientID, email: _json.email, name: _json.name, followers: _json.followers_url });
-});
+app.get('/callback', (req, res) => {
 
-passport.deserializeUser( (obj, done) => {
-  done(null, obj);
-});
+  let payLoad = {
+    client_id: process.env.REACT_APP_AUTH0_CLIENT_ID,
+    client_secret: process.env.REACT_APP_AUTH0_CLIENT_SECRET,
+    code: req.query.code,
+    grant_type: 'authorization_code',
+    redirect_uri: `http://${req.headers.host}/callback`
+  }
 
-app.get( '/login',
-  passport.authenticate('auth0', 
-    { successRedirect: '/followers', failureRedirect: '/login', failureFlash: true, connection: 'github' }
-  )
-);
+  function tradeCodeForAccessToken(){
+    return axios.post(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, payLoad)
+  }
+  
+})
 
 const port = 3000;
 app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
@@ -401,20 +310,44 @@ app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
 
 ### Summary
 
-In this step, you'll be required to read documentation on `GitHub`'s API and the documentation for the `request` package. There won't be any detailed instructions on this step. The goal of this step is to expose you to having to read online documentation to figure out how certain technologies work.
-
-* <a href="https://developer.github.com/v3/">GitHub API Docs</a>
-* <a href="https://www.npmjs.com/package/request">Request NPM Package Docs</a>
+In this step we are going to write a function that will be invoked after our `tradeCodeForAccessToken` function. Call this function `tradeAccessTokenForUserInfo`. this function will take in the response of `tradeCodeForAccessToken` as a parameter (called `access_token`) and return a `Promise` in the form of an `axios.get` to your `auth0_domain/userinfo` with the `access_token` as a query
 
 ### Instructions
 
 * Open `index.js`.
-* Use `NPM` to install and save `request`.
-* Require `request`.
-* Create a `GET` endpoint at `/followers`.
-  * This endpoint should check to see if `req.user` exists.
-    * If it does, use `request` to get a list of followers for the currently logged in user. Then return the response body from `request`.
-    * It it doesn't, redirect to `'/login'`.
+* in your `/callback` enpoint and under your `tradeCodeForAccessToken` function, write another function and call it `tradeAccessTokenForUserInfo` that takes in an `access_token` response as the parameter.
+* Send the token back to Auth0 to get user info:
+  * Within your function logic, return a `Promise` (i.e `axios.get`). The URL should be your Auth0 domain, with path `/userinfo/`, and query string `access_token` with the appropriate value.
+
+
+
+<details>
+
+<summary> Detailed Instructions </summary>
+
+<br />
+
+now we need to set up a way to send the `access_token` back to auth0 in exchange for the users information. Within `index.js` in your `/callback` endpoint and under your `tradeCodeForAccessToken` function write another function called `tradeAccessTokenForUserInfo` that will accept the `access_token` response from the previous step as a parameter.
+
+```js
+function tradeAccessTokenForUserInfo(accessTokenRespons){
+
+}
+```
+
+make sure to pull just the access token from the response
+
+```js
+function tradeAccessTokenForUserInfo(accessTokenResponse){
+    
+    const accessToken = accessTokenResponse.data.access_token;
+    return axios.get(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/userinfo/?access_token=${accessToken}`) 
+  }
+```
+
+
+</details>
+
 
 ### Solution
 
@@ -424,52 +357,40 @@ In this step, you'll be required to read documentation on `GitHub`'s API and the
 
 ```js
 const express = require('express');
+const bodyParser = require('body-parser');
+const axios = require('axios');
 const session = require('express-session');
-const passport = require('passport');
-const request = require('request');
-const strategy = require(`${__dirname}/strategy.js`);
+require('dotenv').config();
+
+app.use(bodyParser.json());
 
 const app = express();
 app.use( session({
-  secret: '@nyth!ng y0u w@nT',
+  secret: 'WhatEVer SecreT YOU wAnt',
   resave: false,
   saveUninitialized: false
 }));
-app.use( passport.initialize() );
-app.use( passport.session() );
-passport.use( strategy );
 
-passport.serializeUser( (user, done) => {
-  const { _json } = user;
-  done(null, { clientID: _json.clientID, email: _json.email, name: _json.name, followers: _json.followers_url });
-});
+app.get('/callback', (req, res) => {
 
-passport.deserializeUser( (obj, done) => {
-  done(null, obj);
-});
-
-app.get( '/login',
-  passport.authenticate('auth0', 
-    { successRedirect: '/followers', failureRedirect: '/login', failureFlash: true, connection: 'github' }
-  )
-);
-
-app.get('/followers', ( req, res, next ) => {
-  if ( req.user ) {
-    const FollowersRequest = {
-      url: req.user.followers,
-      headers: {
-        'User-Agent': req.user.clientID
-      }
-    };
-
-    request(FollowersRequest, ( error, response, body ) => {
-      res.status(200).send(body);
-    });
-  } else {
-    res.redirect('/login');
+  let payLoad = {
+    client_id: process.env.REACT_APP_AUTH0_CLIENT_ID,
+    client_secret: process.env.REACT_APP_AUTH0_CLIENT_SECRET,
+    code: req.query.code,
+    grant_type: 'authorization_code',
+    redirect_uri: `http://${req.headers.host}/callback`
   }
-});
+
+  function tradeCodeForAccessToken(){
+    return axios.post(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, payLoad)
+  }
+
+  function tradeAccessTokenForUserInfo(accessTokenResponse){
+    const accessToken = accessTokenResponse.data.access_token;
+    return axios.get(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/userinfo/?access_token=${accessToken}`) 
+  }
+  
+})
 
 const port = 3000;
 app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
@@ -477,28 +398,535 @@ app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
 
 </details>
 
+
 ## Step 7
 
 ### Summary
 
-In this step, we'll test the API and see if we can get an array of followers.
+In this step we are going to set the user Information to session, then make a call to the  `Auth0 Management API` we registered in step 1 so we can get an Auth0 `access_token`
 
 ### Instructions
 
-* Open a browser and go to `http://localhost:3000/login`.
-* If you have no errors, try to complete the Black Diamond!
+* Open `index.js`.
+* Write a function called `setUserToSessionGetAuthAccessToken` that takes in the `userInfoResponse` from the previous step and sets it to session.
+* next construct an object called body and give it the following properties
+  * `grant_type`: 'client_credentials',
+  * `client_id`: process.env.AUTH0_API_CLIENT_ID,
+  * `client_secret`: process.env.AUTH0_API_CLIENT_SECRET,
+  * `audience`: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/api/v2/`
+* finally, return a `Promise` in the form of an `axios.post` request to your auth0 domain at the path `/oauth/token` and send the `body` object we just created as the body of the post
+  
+### Solution
+
+<details>
+
+<summary> <code> index.js </code> </summary>
+
+```js
+const express = require('express');
+const bodyParser = require('body-parser');
+const axios = require('axios');
+const session = require('express-session');
+require('dotenv').config();
+
+app.use(bodyParser.json());
+
+const app = express();
+app.use( session({
+  secret: 'WhatEVer SecreT YOU wAnt',
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.get('/callback', (req, res) => {
+
+  let payLoad = {
+    client_id: process.env.REACT_APP_AUTH0_CLIENT_ID,
+    client_secret: process.env.REACT_APP_AUTH0_CLIENT_SECRET,
+    code: req.query.code,
+    grant_type: 'authorization_code',
+    redirect_uri: `http://${req.headers.host}/callback`
+  }
+
+  function tradeCodeForAccessToken(){
+    return axios.post(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, payLoad)
+  }
+
+  function tradeAccessTokenForUserInfo(accessTokenResponse){
+    const accessToken = accessTokenResponse.data.access_token;
+    return axios.get(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/userinfo/?access_token=${accessToken}`) 
+  }
+
+  function setUserToSessionGetAuthAccessToken(userInfoResponse){
+    req.session.user = userInfoResponse.data
+   
+    body = {
+      grant_type: 'client_credentials',
+      client_id: process.env.AUTH0_API_CLIENT_ID,
+      client_secret: process.env.AUTH0_API_CLIENT_SECRET,
+      audience: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/api/v2/`
+    }
+
+    return axios.post(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, body)
+  }
+
+})
+
+const port = 3000;
+app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
+```
+
+</details>
+
+## Step 8
+
+### Summary
+
+In this step we are going to write a function called `getGitAccessToken` that takes in the `authAccessTokenResponse` from the previous step as a parameter. within this function we will build an object that will allow us to send the `authAccessTokenResponse` in the headers of an `axios.get` request we will make to Auth0s API requesting the github API `access_token`.
+
+### Instructions
+
+* Open `index.js`.
+* Write a function and call it `getGitAccessToken`, this function will accept a parameter (i.e the response from the previous steps function) that we will call `authAccessTokenResponse`
+* within the `getGitAccessToken` function, create an object and call it options.
+* this object has one property called `headers` which is equal to an object with the property `authorization`
+* Set the `authorization` property equal to `Bearer ${authAccessTokenResponse.data.response}`
+* Next, underneath the object in the same function return a `Promise` in the form of an `axios.get` to `https://${process.env.REACT_APP_AUTH0_DOMAIN}/api/v2/users/${req.session.user.sub}` (we need the id of the user in Auth0's system which we attached to req.session.user, this id is attached to the `sub` property)
+* the options object should be attached to your post request as the second parameter (i.e. after the path)
 
 ### Solution
 
-<img src="https://github.com/DevMountain/node-auth-afternoon/blob/solution/readme-assets/1g.gif" />
+<details>
 
+<summary> <code> index.js </code> </summary>
+
+```js
+const express = require('express');
+const bodyParser = require('body-parser');
+const axios = require('axios');
+const session = require('express-session');
+require('dotenv').config();
+
+app.use(bodyParser.json());
+
+const app = express();
+app.use( session({
+  secret: 'WhatEVer SecreT YOU wAnt',
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.get('/callback', (req, res) => {
+
+  let payLoad = {
+    client_id: process.env.REACT_APP_AUTH0_CLIENT_ID,
+    client_secret: process.env.REACT_APP_AUTH0_CLIENT_SECRET,
+    code: req.query.code,
+    grant_type: 'authorization_code',
+    redirect_uri: `http://${req.headers.host}/callback`
+  }
+
+  function tradeCodeForAccessToken(){
+    return axios.post(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, payLoad)
+  }
+
+  function tradeAccessTokenForUserInfo(accessTokenResponse){
+    const accessToken = accessTokenResponse.data.access_token;
+    return axios.get(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/userinfo/?access_token=${accessToken}`) 
+  }
+
+  function setUserToSessionGetAuthAccessToken(userInfoResponse){
+    req.session.user = userInfoResponse.data
+   
+    body = {
+      grant_type: 'client_credentials',
+      client_id: process.env.AUTH0_API_CLIENT_ID,
+      client_secret: process.env.AUTH0_API_CLIENT_SECRET,
+      audience: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/api/v2/`
+    }
+
+    return axios.post(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, body)
+  }
+
+  function getGitAccessToken(authAccessTokenResponse){
+    let options = {
+      headers: {
+          authorization: `Bearer ${authAccessTokenResponse.data.access_token}`
+        }
+    }
+    return axios.get(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/api/v2/users/${req.session.user.sub}`, options)
+  }
+  
+})
+
+const port = 3000;
+app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
+```
+
+</details>
+
+## Step 9
+
+### Summary
+
+In this step, we are going to build a function which grabs the access token from the response of the previous function and sets it equal to `req.session.gitAccessToken`, then redirects our user back to the home page. finally we are going to chain all of the functions we have written in our `/callback` endpoint with `.then`'s so they are called in the right order and are passed the correct arguments
+
+### Instructions
+
+* Write a function called `setGitTokenToSessions` which takes in the response from the previous function as a parameter, we will call this response `gitAccessToken`
+* Set the `access_token` on the object of the identities array equal to `req.session.gitAccessToken`
+* Redirect the user back to our landing page `'/'` using `req.redirect`.
+* next go through your `/callback` endpoint and chain together all of your functions making sure to put them in the correct order and pass them the correct arguments.
+* finally add a catch onto the final `.then` which will console.log any errors when running out function
+
+### Solution
+
+<details>
+
+<summary> <code> index.js </code> </summary>
+
+```js
+const express = require('express');
+const bodyParser = require('body-parser');
+const axios = require('axios');
+const session = require('express-session');
+require('dotenv').config();
+
+app.use(bodyParser.json());
+
+const app = express();
+app.use( session({
+  secret: 'WhatEVer SecreT YOU wAnt',
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.get('/callback', (req, res) => {
+
+  let payLoad = {
+    client_id: process.env.REACT_APP_AUTH0_CLIENT_ID,
+    client_secret: process.env.REACT_APP_AUTH0_CLIENT_SECRET,
+    code: req.query.code,
+    grant_type: 'authorization_code',
+    redirect_uri: `http://${req.headers.host}/callback`
+  }
+
+  function tradeCodeForAccessToken(){
+    return axios.post(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, payLoad)
+  }
+
+  function tradeAccessTokenForUserInfo(accessTokenResponse){
+    const accessToken = accessTokenResponse.data.access_token;
+    return axios.get(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/userinfo/?access_token=${accessToken}`) 
+  }
+
+  function setUserToSessionGetAuthAccessToken(userInfoResponse){
+    req.session.user = userInfoResponse.data
+   
+    body = {
+      grant_type: 'client_credentials',
+      client_id: process.env.AUTH0_API_CLIENT_ID,
+      client_secret: process.env.AUTH0_API_CLIENT_SECRET,
+      audience: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/api/v2/`
+    }
+
+    return axios.post(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, body)
+  }
+
+  function getGitAccessToken(authAccessTokenResponse){
+    let options = {
+      headers: {
+          authorization: `Bearer ${authAccessTokenResponse.data.access_token}`
+        }
+    }
+    return axios.get(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/api/v2/users/${req.session.user.sub}`, options)
+  }
+
+  function setGitTokenToSessions(gitAccessToken){
+    req.session.access_token = gitAccessToken.data.identities[0].access_token
+    res.redirect('/')
+  }
+
+  exchangeCodeForAccessToken()
+  .then(accessTokenResponse => exchangeAccessTokenForUserInfo(accessTokenResponse))
+  .then(userInfoResponse => setUserToSessionGetAuthAccessToken(userInfoResponse))
+  .then(authAccessTokenResponse => getGitAccessToken(authAccessTokenResponse))
+  .then(gitAccessToken => setGitTokenToSessions(gitAccessToken))
+  .catch(err =>  console.log(err))
+  
+})
+
+const port = 3000;
+app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
+```
+
+</details>
+
+
+## Step 9
+
+### Summary
+
+In this step, we are going to use the `access_token` that we attached to `req.session.gitAccessToken` in the previous step to make calls to the github API and star/unstar repo's on the user's behalf. The access token we will be using is as good as the users github password so for security reasons we will make the calls to star and unstar repos from the server-side 
+
+### Instructions
+
+* Set up an endpoint with the path `/api/star`
+* in the endpoint handler function, deconstruct `gitUser` and `gitRepo` from `req.query`
+* make an axios PUT request to `https://api.github.com/user/starred/${gitUser}/${gitRepo}`
+* In order to authorize our request, github needs the access token we set to `req.session.gitAccessToken`
+  * send our access token as a query parameter of our put request (i.e `?access_token=....`)
+* Next, within the `.then` of our put request we will close out our response with `res.status(200).end()` which signifies the POST was successful but that no data is being passed back to the front.
+* Set up an identical GET endpoint to on `/api/unstar` with the only difference being, the axios call within this new endpoint makes an `axios.delete` instead of an `axios.put`
+
+### Solution
+
+<details>
+
+<summary> <code> index.js </code> </summary>
+
+```js
+const express = require('express');
+const bodyParser = require('body-parser');
+const axios = require('axios');
+const session = require('express-session');
+require('dotenv').config();
+
+app.use(bodyParser.json());
+
+const app = express();
+app.use( session({
+  secret: 'WhatEVer SecreT YOU wAnt',
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.get('/callback', (req, res) => {
+
+  let payLoad = {
+    client_id: process.env.REACT_APP_AUTH0_CLIENT_ID,
+    client_secret: process.env.REACT_APP_AUTH0_CLIENT_SECRET,
+    code: req.query.code,
+    grant_type: 'authorization_code',
+    redirect_uri: `http://${req.headers.host}/callback`
+  }
+
+  function tradeCodeForAccessToken(){
+    return axios.post(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, payLoad)
+  }
+
+  function tradeAccessTokenForUserInfo(accessTokenResponse){
+    const accessToken = accessTokenResponse.data.access_token;
+    return axios.get(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/userinfo/?access_token=${accessToken}`) 
+  }
+
+  function setUserToSessionGetAuthAccessToken(userInfoResponse){
+    req.session.user = userInfoResponse.data
+   
+    body = {
+      grant_type: 'client_credentials',
+      client_id: process.env.AUTH0_API_CLIENT_ID,
+      client_secret: process.env.AUTH0_API_CLIENT_SECRET,
+      audience: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/api/v2/`
+    }
+
+    return axios.post(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, body)
+  }
+
+  function getGitAccessToken(authAccessTokenResponse){
+    let options = {
+      headers: {
+          authorization: `Bearer ${authAccessTokenResponse.data.access_token}`
+        }
+    }
+    return axios.get(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/api/v2/users/${req.session.user.sub}`, options)
+  }
+
+  function setGitTokenToSessions(gitAccessToken){
+    req.session.access_token = gitAccessToken.data.identities[0].access_token
+    res.redirect('/')
+  }
+
+  exchangeCodeForAccessToken()
+  .then(accessTokenResponse => exchangeAccessTokenForUserInfo(accessTokenResponse))
+  .then(userInfoResponse => setUserToSessionGetAuthAccessToken(userInfoResponse))
+  .then(authAccessTokenResponse => getGitAccessToken(authAccessTokenResponse))
+  .then(gitAccessToken => setGitTokenToSessions(gitAccessToken))
+  .catch(err =>  console.log(err))
+  
+})
+
+app.get('/api/star', (req, res) => {
+  const { gitUser, gitRepo } = req.query;
+  axios.put(`https://api.github.com/user/starred/${gitUser}/${gitRepo}?access_token=${req.session.access_token}`).then(response => {
+    res.send('starred it!')
+  }).catch((err) => console.log(err))
+})
+
+app.get('/api/unstar', (req, res) => {
+  const { gitUser, gitRepo } = req.query;
+  axios.delete(`https://api.github.com/user/starred/${gitUser}/${gitRepo}?access_token=${req.session.access_token}`).then(response => {
+    res.send('unstarred it!')
+  }).catch(err => console.log('error', err));
+})
+
+const port = 3000;
+app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
+```
+
+</details>
+
+
+## Step 10
+
+### Summary
+
+The last step in our server file is to set up an endpoint for us to send user data to the front as well as an endpoint to logout
+
+### Instructions
+
+* Set up an endpoint with the path `/user-data`
+* in the handler function of our endpoint, send the data attached to `req.session.user` when hit
+* Set up another endpoint at the path `/logout` which will call `req.session.destroy()` when hit and then `res.send` the string `'logged out'` 
+
+### Solution
+
+<details>
+
+<summary> <code> index.js </code> </summary>
+
+```js
+const express = require('express');
+const bodyParser = require('body-parser');
+const axios = require('axios');
+const session = require('express-session');
+require('dotenv').config();
+
+app.use(bodyParser.json());
+
+const app = express();
+app.use( session({
+  secret: 'WhatEVer SecreT YOU wAnt',
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.get('/callback', (req, res) => {
+
+  let payLoad = {
+    client_id: process.env.REACT_APP_AUTH0_CLIENT_ID,
+    client_secret: process.env.REACT_APP_AUTH0_CLIENT_SECRET,
+    code: req.query.code,
+    grant_type: 'authorization_code',
+    redirect_uri: `http://${req.headers.host}/callback`
+  }
+
+  function tradeCodeForAccessToken(){
+    return axios.post(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, payLoad)
+  }
+
+  function tradeAccessTokenForUserInfo(accessTokenResponse){
+    const accessToken = accessTokenResponse.data.access_token;
+    return axios.get(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/userinfo/?access_token=${accessToken}`) 
+  }
+
+  function setUserToSessionGetAuthAccessToken(userInfoResponse){
+    req.session.user = userInfoResponse.data
+   
+    body = {
+      grant_type: 'client_credentials',
+      client_id: process.env.AUTH0_API_CLIENT_ID,
+      client_secret: process.env.AUTH0_API_CLIENT_SECRET,
+      audience: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/api/v2/`
+    }
+
+    return axios.post(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, body)
+  }
+
+  function getGitAccessToken(authAccessTokenResponse){
+    let options = {
+      headers: {
+          authorization: `Bearer ${authAccessTokenResponse.data.access_token}`
+        }
+    }
+    return axios.get(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/api/v2/users/${req.session.user.sub}`, options)
+  }
+
+  function setGitTokenToSessions(gitAccessToken){
+    req.session.access_token = gitAccessToken.data.identities[0].access_token
+    res.redirect('/')
+  }
+
+  exchangeCodeForAccessToken()
+  .then(accessTokenResponse => exchangeAccessTokenForUserInfo(accessTokenResponse))
+  .then(userInfoResponse => setUserToSessionGetAuthAccessToken(userInfoResponse))
+  .then(authAccessTokenResponse => getGitAccessToken(authAccessTokenResponse))
+  .then(gitAccessToken => setGitTokenToSessions(gitAccessToken))
+  .catch(err =>  console.log(err))
+  
+})
+
+app.get('/api/star', (req, res) => {
+  const { gitUser, gitRepo } = req.query;
+  axios.put(`https://api.github.com/user/starred/${gitUser}/${gitRepo}?access_token=${req.session.access_token}`).then(response => {
+    res.send('starred it!')
+  }).catch((err) => console.log(err))
+})
+
+app.get('/api/unstar', (req, res) => {
+  const { gitUser, gitRepo } = req.query;
+  axios.delete(`https://api.github.com/user/starred/${gitUser}/${gitRepo}?access_token=${req.session.access_token}`).then(response => {
+    res.send('unstarred it!')
+  }).catch(err => console.log('error', err));
+})
+
+app.get('/api/user-data', (req, res) => {
+  res.status(200).json(req.session.user)
+})
+
+app.get('/api/logout', (req, res) => {
+  req.session.destroy();
+  res.send('logged out');
+})
+
+const port = 3000;
+app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
+```
+
+</details>
+
+
+## Step 10
+
+### Summary
+
+The last step in our project, is to set up the function which will initiate the users login request. this will be done from within out react-app. 
+
+### Instructions
+
+* Navigate to `App.js`
+* make a variable called `redirectUri` and set it equal to ``encodeURIComponent(`${window.location.origin}/callback`)``
+* next we are going to force a redirect to our auth0 login screen by setting `window.location` equal to `https://${process.env.REACT_APP_AUTH0_DOMAIN}/authorize`, we will also want to pass along a few queries so our login attempt will succeed and we will get back the correct info
+  * `client_id=REACT_APP_AUTH0_CLIENT_ID`
+  * `&scope=openid%20profile%20email`
+  * `redirect_uri=${redirectUri}`
+  * `response_type=code`
+    * (hint: remember the '&' symbol is used to chain queries on a url)
+
+
+
+``` js
+login = () => {
+    const redirectUri = encodeURIComponent(`${window.location.origin}/callback`);
+
+    window.location = `https://${process.env.REACT_APP_AUTH0_DOMAIN}/authorize?client_id=${process.env.REACT_APP_AUTH0_CLIENT_ID}&scope=openid%20profile%20email&redirect_uri=${redirectUri}&response_type=code`
+  }
+```
 ## Black Diamond
 
-* Create a React front end that takes the array of followers and displays it in a list of `Follower` components.
-  * A `Follower` component should look like a user's information card.
-  * It should display a follower's `avatar_url`, `html_url`, and `login` ( aka their username ). 
-* Use `express.static` to server the React front end.
+ Now that you know how to make allow your users to make API calls to github from inside your application, go explore the docs and see what cool features you can add to your projects
 
+ * <a href="https://developer.github.com/v3/">GitHub API Docs</a>
 ## Contributions
 
 If you see a problem or a typo, please fork, make the necessary changes, and create a pull request so we can review your changes and merge them into the master repo and branch.
@@ -506,7 +934,3 @@ If you see a problem or a typo, please fork, make the necessary changes, and cre
 ## Copyright
 
 © DevMountain LLC, 2017. Unauthorized use and/or duplication of this material without express and written permission from DevMountain, LLC is strictly prohibited. Excerpts and links may be used, provided that full and clear credit is given to DevMountain with appropriate and specific direction to the original content.
-
-<p align="center">
-<img src="https://devmounta.in/img/logowhiteblue.png" width="250">
-</p>
