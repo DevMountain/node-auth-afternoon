@@ -100,13 +100,12 @@ In this step, we'll create a `.env` to store our credentials for the `payload` o
 ### Instructions
 
 * Create a `.env`.
-* Insert into your `.env` your `auth0_domain`, `client_ID`, `client_Secret` and `session secret`.
-  * The values of these properties should equal the values on `manage.auth0.com` for `node-auth` application (except for session secret which can be anything you choose).
+* Insert into your `.env` your `auth0_domain`, `client_ID`, `client_secret` and `session secret`.
+  * The values of these properties should equal the values on `manage.auth0.com` for the `node-auth` application (except for session secret which can be anything you choose).
   * Also store the `client_id` and `client_secret` of our `Auth0 Management API` application we set up in step 1
 * Add `.env` to `.gitignore`.
-* Open `server/index.js` and require your `.env`.
-* set up an endpoint to listen for a get request at the path `/callback`
-*  Within that endpoint, make an object called payload that has the following properties from your .env
+* Open `server/index.js` and require the `dotenv` module.
+*  Within our `/callback` endpoint, make an object called payload that has the following properties from your .env
     * `client_id`
     * `client_secret`,
     * `code` (the `code` we expect to recieve from auth0 attached to `req.query`)
