@@ -21,12 +21,14 @@ In this step, we'll modify the `node-auth` application on `manage.auth0.com` to 
 ### Instructions
 
 * Go to `manage.auth0.com` and login to the account you created in the mini project from earlier.
+* go to the left navigation bar and click on `Applications` and then click on your application
+* Add `http://localhost:3000/callback` to your allowed callbacks for your application.
 * Using the left navigation bar, click on `connections` and then click on `social`.
 * Turn on the `GitHub` slider.
-* click on `Github's` tile
 * Under `Permissions` select `read:user`, `repo`.
-* At the top of the same modal, click on `Applications`.
-* Turn on the slider for the `node-auth` application( or whatever you named your application ) if it isnt on already.
+* scroll to the bottom and save your settings
+* At the top of the same `GitHub` modal, click on `Applications`.
+* Turn on the slider for the `node-auth` application( or whatever you named your application) if it isnt on already.
 * next go to the APIs section in the left column and click on 	
 `Auth0 Management API`
   * go to `API explorer` tab and create and authorize a test application
@@ -66,7 +68,8 @@ In this step, we'll set up `express-session` so we have a place to store our uni
 * require `express-session` and set it equal to `session`
 * invoke `session` and pass it an object with your session configurations
   * Hint: `secret`, `resave`, and `saveUninitialized`.
-* finally wrap your invoked session with `app.use()` so that it gets used in your entire app 
+* next wrap your invoked session with `app.use()` so that it gets used in your entire app 
+* finally require and the rest of the packages from the previous step (i.e. `body-parser` `dotenv` `axios`)
 
 ### Solution
 
@@ -95,20 +98,20 @@ app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
 
 ### Summary
 
-In this step, we'll create a `.env` to store our credentials for the `payload` object we plan to send to auth0. Our `.env` will be responsible for storing our `client_id`, `auth0-domain`, `client_secret`, and `session secret` of our application as well as the `client_id` and `client_secret` of our `API Explorer Application` application we set up in step 1. We'll use `.gitignore` on this file so GitHub can't see it. We will then want to set up our auth0 endpoint with our payload we plan to send
+In this step, we'll create a `.env` (you can copy the structure from `.env.example`) to store our credentials for the `payload` object we plan to send to auth0. Our `.env` will be responsible for storing our `client_id`, `auth0-domain`, `client_secret`, and `session secret` of our application as well as the `client_id` and `client_secret` of our `API Explorer Application` application we set up in step 1. We'll use `.gitignore` on this file so GitHub can't see it. We will then want to set up our auth0 endpoint with our payload we plan to send
 
 ### Instructions
 
 * Create a `.env`.
-* Insert into your `.env` your `auth0_domain`, `client_ID`, `client_secret` and `session secret`.
-  * The values of these properties should equal the values on `manage.auth0.com` for the `node-auth` application (except for session secret which can be anything you choose).
+* Insert into your `.env` your `auth0_domain`, `client_ID`, `client_secret` and `session_secret`.
+  * The values of these properties should equal the values on `manage.auth0.com` (left navigation bar of your auth0 dashboard, applications tab => your application) for the `node-auth` application (except for session secret which can be anything you choose).
   * Also store the `client_id` and `client_secret` of our `API Explorer Application` application we set up in step 1
 * Add `.env` to `.gitignore`.
 * Open `server/index.js` and require the `dotenv` module.
 *  Within our `/callback` endpoint, make an object called payload that has the following properties from your .env
     * `client_id`
     * `client_secret`,
-    * `code` (the `code` we expect to recieve from auth0 attached to `req.query`)
+    * `code` (the `code` we expect to recieve from auth0 attached to `req.query` when our `/callback` enpoint is hit)
     * `grant_type` (which should be `authorization_code`)
     * `redirect_uri` which should redirect back to `http://${req.headers.host}/callback`
 
@@ -241,7 +244,7 @@ In this step we will send the payload we created in the previous step to auth0 i
 * Open `index.js`.
 * in your `/callback` endoint.
   * write a function called `tradeCodeForAccessToken` that returns a promise in the form of an `axios.post` request.
-  * the returned axios request should post to your `REACT_APP_AUTH0_DOMAIN/oauth/token`. 
+  * the returned axios request should post to your `https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`. 
   * you will also want to send the payload object built in the previous step as the body of the post.
 
 <details>
@@ -310,14 +313,15 @@ app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
 
 ### Summary
 
-In this step we are going to write a function that will be invoked after our `tradeCodeForAccessToken` function. Call this function `tradeAccessTokenForUserInfo`. this function will take in the response of `tradeCodeForAccessToken` as a parameter (called `access_token`) and return a `Promise` in the form of an `axios.get` to your `auth0_domain/userinfo` with the `access_token` as a query
+In this step we are going to write a function that will be invoked after our `tradeCodeForAccessToken` function. Call this function `tradeAccessTokenForUserInfo`. this function will take in the response of `tradeCodeForAccessToken` as a parameter (called `accessTokenResponse`) and return a `Promise` in the form of an `axios.get` to your `auth0_domain/userinfo` with the `access_token` as a query
 
 ### Instructions
 
 * Open `index.js`.
-* in your `/callback` enpoint and under your `tradeCodeForAccessToken` function, write another function and call it `tradeAccessTokenForUserInfo` that takes in an `access_token` response as the parameter.
+* in your `/callback` enpoint and under your `tradeCodeForAccessToken` function, write another function and call it `tradeAccessTokenForUserInfo` that takes in an `accessTokenResponse` as the parameter.
 * Send the token back to Auth0 to get user info:
-  * Within your function logic, return a `Promise` (i.e `axios.get`). The URL should be your Auth0 domain, with path `/userinfo/`, and query string `access_token` with the appropriate value.
+  * You will need to pull the `access_token` out of the `accessTokenResponse`, the token will be attached to `accessTokenRespone.data.access_token`
+  * Within your function logic, return a `Promise` (i.e `axios.get`). The URL should be your Auth0 domain, with path `/userinfo/`, also attach a query called `access_token` with the appropriate value.
 
 
 
@@ -327,10 +331,10 @@ In this step we are going to write a function that will be invoked after our `tr
 
 <br />
 
-now we need to set up a way to send the `access_token` back to auth0 in exchange for the users information. Within `index.js` in your `/callback` endpoint and under your `tradeCodeForAccessToken` function write another function called `tradeAccessTokenForUserInfo` that will accept the `access_token` response from the previous step as a parameter.
+now we need to set up a way to send the `access_token` back to auth0 in exchange for the users information. Within `index.js` in your `/callback` endpoint and under your `tradeCodeForAccessToken` function write another function called `tradeAccessTokenForUserInfo` that will accept the `accessTokenResponse` from the previous step as a parameter.
 
 ```js
-function tradeAccessTokenForUserInfo(accessTokenRespons){
+function tradeAccessTokenForUserInfo(accessTokenResponse){
 
 }
 ```
@@ -408,7 +412,7 @@ In this step we are going to set the user Information to session, then make a ca
 ### Instructions
 
 * Open `index.js`.
-* Write a function called `setUserToSessionGetAuthAccessToken` that takes in the `userInfoResponse` from the previous step and sets it to session.
+* underneath the `tradeAccessTokenForUserInfo` function write another function called `setUserToSessionGetAuthAccessToken` that takes in the `userInfoResponse` from the previous step and sets it equal to req.session.user
 * next construct an object called body and give it the following properties
   * `grant_type`: 'client_credentials',
   * `client_id`: process.env.AUTH0_API_CLIENT_ID,
@@ -492,7 +496,8 @@ In this step we are going to write a function called `getGitAccessToken` that ta
 * this object has one property called `headers` which is equal to an object with the property `authorization`
 * Set the `authorization` property equal to `Bearer ${authAccessTokenResponse.data.response}`
 * Next, underneath the object in the same function return a `Promise` in the form of an `axios.get` to `https://${process.env.REACT_APP_AUTH0_DOMAIN}/api/v2/users/${req.session.user.sub}` (we need the id of the user in Auth0's system which we attached to req.session.user, this id is attached to the `sub` property)
-* the options object should be attached to your post request as the second parameter (i.e. after the path)
+* the options object should be attached to your get request as the second parameter (i.e. after the path)
+  * (Remember, the options object is not the same thing as sending a body, every axios request can accept an options parameter so you can change what is in the headers read more here on the structure for axios <a href="https://github.com/axios/axios#request-method-aliases">Axios Docs</a>)
 
 ### Solution
 
