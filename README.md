@@ -764,14 +764,14 @@ app.get('/callback', (req, res) => {
 app.get('/api/star', (req, res) => {
   const { gitUser, gitRepo } = req.query;
   axios.put(`https://api.github.com/user/starred/${gitUser}/${gitRepo}?access_token=${req.session.access_token}`).then(response => {
-    res.send('starred it!')
+    res.status(200).end()
   }).catch((err) => console.log(err))
 })
 
 app.get('/api/unstar', (req, res) => {
   const { gitUser, gitRepo } = req.query;
   axios.delete(`https://api.github.com/user/starred/${gitUser}/${gitRepo}?access_token=${req.session.access_token}`).then(response => {
-    res.send('unstarred it!')
+    res.status(200).end()
   }).catch(err => console.log('error', err));
 })
 
@@ -862,8 +862,8 @@ app.get('/callback', (req, res) => {
     res.redirect('/')
   }
 
-  exchangeCodeForAccessToken()
-  .then(accessTokenResponse => exchangeAccessTokenForUserInfo(accessTokenResponse))
+  tradeCodeForAccessToken()
+  .then(accessTokenResponse => tradeAccessTokenForUserInfo(accessTokenResponse))
   .then(userInfoResponse => setUserToSessionGetAuthAccessToken(userInfoResponse))
   .then(authAccessTokenResponse => getGitAccessToken(authAccessTokenResponse))
   .then(gitAccessToken => setGitTokenToSessions(gitAccessToken))
@@ -874,14 +874,14 @@ app.get('/callback', (req, res) => {
 app.get('/api/star', (req, res) => {
   const { gitUser, gitRepo } = req.query;
   axios.put(`https://api.github.com/user/starred/${gitUser}/${gitRepo}?access_token=${req.session.access_token}`).then(response => {
-    res.send('starred it!')
+    res.status(200).end()
   }).catch((err) => console.log(err))
 })
 
 app.get('/api/unstar', (req, res) => {
   const { gitUser, gitRepo } = req.query;
   axios.delete(`https://api.github.com/user/starred/${gitUser}/${gitRepo}?access_token=${req.session.access_token}`).then(response => {
-    res.send('unstarred it!')
+   res.status(200).end()
   }).catch(err => console.log('error', err));
 })
 
