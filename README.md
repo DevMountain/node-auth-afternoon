@@ -752,8 +752,8 @@ app.get('/callback', (req, res) => {
     res.redirect('/')
   }
 
-  exchangeCodeForAccessToken()
-  .then(accessTokenResponse => exchangeAccessTokenForUserInfo(accessTokenResponse))
+  tradeCodeForAccessToken()
+  .then(accessTokenResponse => tradeAccessTokenForUserInfo(accessTokenResponse))
   .then(userInfoResponse => setUserToSessionGetAuthAccessToken(userInfoResponse))
   .then(authAccessTokenResponse => getGitAccessToken(authAccessTokenResponse))
   .then(gitAccessToken => setGitTokenToSessions(gitAccessToken))
