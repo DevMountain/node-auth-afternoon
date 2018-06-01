@@ -362,7 +362,7 @@ In this step, we'll create a `/login` endpoint that will use `passport` to authe
   * The success redirect should equal `'/students'`
     * We'll create this endpoint later.
   * The failure redirect should equal `'/login'`.
-  * The connection should be forced to use `'GitHub'`.
+  * The connection should be forced to use `'gitHub'`.
     * Hint: You can force passport's connection by using a `connection` property. The value of this property comes from the connection name on your Auth0 account.
 
 <details>
@@ -387,7 +387,7 @@ app.get('/login',
 )
 ```
 
-Then, in the configuration object we can specify the success and failure redirects, turn failure flash on, and force the connection type to `GitHub`. We can do all of these by using the following properties in the configuration object: `successRedirect`, `failureRedirect`,  and `connection`. The success redirect should go to `'/students'`; The failure redirect should go to `'/login'`; The connection should be set to `'github'`.
+Then, in the configuration object we can specify the success and failure redirects, turn failure flash on, and force the connection type to `github`. We can do all of these by using the following properties in the configuration object: `successRedirect`, `failureRedirect`,  and `connection`. The success redirect should go to `'/students'`; The failure redirect should go to `'/login'`; The connection should be set to `'github'`.
 
 ```js
 app.get( '/login',
@@ -636,7 +636,7 @@ app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
 
 ## Contributions
 
-If you see a problem or a typo, please fork, make the necessary changes, and create a pull request so we can review your changes and merge them into the master repo and branch.
+If you see a problem or a typo, please fork, make the necessary changes, and create a pull g so we can review your changes and merge them into the master repo and branch.
 
 ## Copyright
 
