@@ -23,7 +23,7 @@ In this step, we'll modify the `Default App` on `manage.auth0.com` to accept the
 * Go to `manage.auth0.com` and login to the account you created in the mini project from earlier.
 * Using the left navigation bar, click on `Connections` and then click on `Social`.
 * Turn on the `GitHub` slider.
-* Make sure the slide is on for the `Default App`.
+* Make sure the slider is on for the `Default App`.
 * Select `Continue`.
 * Select `Save`.
 * Close the modal.
