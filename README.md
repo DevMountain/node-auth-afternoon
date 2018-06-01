@@ -636,7 +636,7 @@ app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
 
 ## Contributions
 
-If you see a problem or a typo, please fork, make the necessary changes, and create a pull g so we can review your changes and merge them into the master repo and branch.
+If you see a problem or a typo, please fork, make the necessary changes, and create a pull request so we can review your changes and merge them into the master repo and branch.
 
 ## Copyright
 
