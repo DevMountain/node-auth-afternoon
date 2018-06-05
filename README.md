@@ -362,7 +362,7 @@ In this step, we'll create a `/login` endpoint that will use `passport` to authe
   * The success redirect should equal `'/students'`
     * We'll create this endpoint later.
   * The failure redirect should equal `'/login'`.
-  * The connection should be forced to use `'gitHub'`.
+  * The connection should be forced to use `'github'`.
     * Hint: You can force passport's connection by using a `connection` property. The value of this property comes from the connection name on your Auth0 account.
 
 <details>
