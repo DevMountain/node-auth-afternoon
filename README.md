@@ -21,16 +21,16 @@ In this step, we'll modify the `Default App` on `manage.auth0.com` to accept the
 ### Instructions
 
 * Go to `manage.auth0.com` and login to the account you created in the mini project from earlier.
-* Using the left navigation bar, click on `connections` and then click on `social`.
+* Using the left navigation bar, click on `Connections` and then click on `Social`.
 * Turn on the `GitHub` slider.
+* Make sure the slider is on for the `Default App`.
 * Select `Continue`.
-* At the top of the same modal, click on `Clients`.
-* Turn on the slider for the `Default App`.
 * Select `Save`.
+* Close the modal.
 
 ## Step 2
 
-### Summary 
+### Summary
 
 In this step, we'll use `npm` to get the required passport dependencies.
 
@@ -54,7 +54,7 @@ npm install --save passport passport-auth0
 
 ### Summary
 
-In this step, we'll create a `.env` file. `.env` will be responsible for storing our client's `id`, `domain`, and `secret`. We'll use `.gitignore` on this file so GitHub can't see it. 
+In this step, we'll create a `.env` file. `.env` will be responsible for storing our client's `id`, `domain`, and `secret`. We'll use `.gitignore` on this file so GitHub can't see it.
 
 ### Instructions
 
@@ -64,7 +64,7 @@ In this step, we'll create a `.env` file. `.env` will be responsible for storing
 * Create 3 variables with the names `DOMAIN`, `CLIENT_ID`, and `CLIENT_SECRET`.
   * The values of these variables should equal the values on `manage.auth0.com` for `Default App`.
 * Add `.env` to `.gitignore`.
-* Require and config `dotenv` at the top of your file.
+* Require and configure `dotenv` at the top of your file.
 
 <details>
 
@@ -72,7 +72,7 @@ In this step, we'll create a `.env` file. `.env` will be responsible for storing
 
 <br />
 
-Let's begin by installing and saving the `dotenv` package. Do so by running `npm install --save dotenv`. Now create a `.env` file. The reason we are making this file is so that GitHub doesn't publicly display our sensitive information on `manage.auth0.com`. You never want to push a secret up to GitHub and if you ever do, always immediately refresh your secret. 
+Let's begin by installing and saving the `dotenv` package. Do so by running `npm install --save dotenv`. Now create a `.env` file. The reason we are making this file is so that GitHub doesn't publicly display our sensitive information on `manage.auth0.com`. You never want to push a secret up to GitHub and if you ever do, always immediately refresh your secret.
 
 Open your `.env` file and create 3 variables, `DOMAIN`, `CLIENT_ID`, and `CLIENT_SECRET`.
 
@@ -84,9 +84,9 @@ CLIENT_ID=...
 CLIENT_SECRET=...
 ```
 
-Then, we can add this file to our `.gitignore` so we don't accidentally push it to GitHub. 
+Then, we can add this file to our `.gitignore` so we don't accidentally push it to GitHub.
 
-Now we need to require and confic `dotenv` at the top of our file. You don't need to save it to a variable, you just need to require it and invoke the `config` method off of the invocation of `require`.
+Now we need to require and configure `dotenv` at the top of our file. You don't need to save it to a variable, you just need to require it and invoke the `config` method off of the invocation of `require`.
 
 </details>
 
@@ -118,9 +118,9 @@ CLIENT_SECRET=...
 <summary> <code> index.js </code> </summary>
 
 ```js
+require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
-require('dotenv').config()
 
 const app = express();
 
@@ -143,7 +143,7 @@ In this step, we'll configure our app to use sessions, initialize `passport`, co
 * Open `index.js`.
 * Require `passport` in a variable called passport.
 * Require `passport-auth0` in a `Auth0Strategy` variable.
-* Configure the app to use sessions. 
+* Configure the app to use sessions.
   * Hint: `secret`, `resave`, and `saveUninitialized`.
 * Initialize `passport`.
 * Configure `passport` to use sessions.
@@ -207,13 +207,14 @@ passport.use( new Auth0Strategy({
 <summary> <code> index.js </code> </summary>
 
 ```js
+require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
 const Auth0Strategy = require('passport-auth0');
-require('dotenv').config()
 
 const app = express();
+
 app.use( session({
   secret: '@nyth!ng y0u w@nT',
   resave: false,
@@ -253,7 +254,7 @@ In this step, we'll configure passport's `serializeUser` and `deserializeUser` m
 * Open `index.js`.
 * Call `passport.serializeUser`.
   * Pass in a function as the first argument.
-  * The function should have two parameters: `user` and `done`. 
+  * The function should have two parameters: `user` and `done`.
   * The function should call `done` and with this object `{ clientID: user.id, email: user._json.email, name: user._json.name }`. (You don't need all of the data to be saved to your session so this is where you would choose what data to save to the session store and that would be what was passed. Here we will only pass three properities from the user parameter).
 * Call `passport.deserializeUser`.
   * Pass in a function as the first argument.
@@ -303,13 +304,14 @@ passport.deserializeUser( (obj, done) => {
 <summary> <code> index.js </code> </summary>
 
 ```js
+require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
 const Auth0Strategy = require('passport-auth0');
-require('dotenv').config()
 
 const app = express();
+
 app.use( session({
   secret: '@nyth!ng y0u w@nT',
   resave: false,
@@ -360,7 +362,7 @@ In this step, we'll create a `/login` endpoint that will use `passport` to authe
   * The success redirect should equal `'/students'`
     * We'll create this endpoint later.
   * The failure redirect should equal `'/login'`.
-  * The connection should be forced to use `'GitHub'`.
+  * The connection should be forced to use `'gitHub'`.
     * Hint: You can force passport's connection by using a `connection` property. The value of this property comes from the connection name on your Auth0 account.
 
 <details>
@@ -369,7 +371,7 @@ In this step, we'll create a `/login` endpoint that will use `passport` to authe
 
 <br />
 
-Now that passport is completely setup and ready to handle authentication let's create a `'/login'` endpoint in `index.js`. 
+Now that passport is completely setup and ready to handle authentication let's create a `'/login'` endpoint in `index.js`.
 
 ```js
 app.get('/login');
@@ -379,17 +381,17 @@ We'll want to call `passport.authenticate` and pass in a strategy type and confi
 
 ```js
 app.get('/login',
-  passport.authenticate('auth0', 
+  passport.authenticate('auth0',
     { }
   )
 )
 ```
 
-Then, in the configuration object we can specify the success and failure redirects, turn failure flash on, and force the connection type to `GitHub`. We can do all of these by using the following properties in the configuration object: `successRedirect`, `failureRedirect`,  and `connection`. The success redirect should go to `'/students'`; The failure redirect should go to `'/login'`; The connection should be set to `'github'`.
+Then, in the configuration object we can specify the success and failure redirects, turn failure flash on, and force the connection type to `github`. We can do all of these by using the following properties in the configuration object: `successRedirect`, `failureRedirect`,  and `connection`. The success redirect should go to `'/students'`; The failure redirect should go to `'/login'`; The connection should be set to `'github'`.
 
 ```js
 app.get( '/login',
-  passport.authenticate('auth0', 
+  passport.authenticate('auth0',
     { successRedirect: '/students', failureRedirect: '/login', connection: 'github' }
   )
 );
@@ -405,13 +407,14 @@ app.get( '/login',
 <summary> <code> index.js </code> </summary>
 
 ```js
+require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
 const Auth0Strategy = require('passport-auth0');
-require('dotenv').config()
 
 const app = express();
+
 app.use( session({
   secret: '@nyth!ng y0u w@nT',
   resave: false,
@@ -444,7 +447,7 @@ passport.deserializeUser( (obj, done) => {
 });
 
 app.get( '/login',
-  passport.authenticate('auth0', 
+  passport.authenticate('auth0',
     { successRedirect: '/students', failureRedirect: '/login', connection: 'github' }
   )
 );
@@ -476,14 +479,15 @@ In this step, we will create an endpoint for `/students` that will return the li
 <summary> <code> index.js </code> </summary>
 
 ```js
+require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
 const Auth0Strategy = require('passport-auth0');
 const students = require('./students.json');
-require('dotenv').config()
 
 const app = express();
+
 app.use( session({
   secret: '@nyth!ng y0u w@nT',
   resave: false,
@@ -516,7 +520,7 @@ passport.deserializeUser( (obj, done) => {
 });
 
 app.get( '/login',
-  passport.authenticate('auth0', 
+  passport.authenticate('auth0',
     { successRedirect: '/students', failureRedirect: '/login', connection: 'github' }
   )
 );
@@ -559,14 +563,15 @@ In this step, we will create authentication middleware for our `'/students'` end
 <summary> <code> index.js </code> </summary>
 
 ```js
+require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
 const Auth0Strategy = require('passport-auth0');
 const students = require('./students.json');
-require('dotenv').config()
 
 const app = express();
+
 app.use( session({
   secret: '@nyth!ng y0u w@nT',
   resave: false,
@@ -599,7 +604,7 @@ passport.deserializeUser( (obj, done) => {
 });
 
 app.get( '/login',
-  passport.authenticate('auth0', 
+  passport.authenticate('auth0',
     { successRedirect: '/students', failureRedirect: '/login', connection: 'github' }
   )
 );
@@ -626,8 +631,8 @@ app.listen( port, () => { console.log(`Server listening on port ${port}`); } );
 ## Black Diamond
 
 * Create a React front end that takes the array of students and displays it in a list of `Student` components.
-  * A `Student` component should display a students's `name`, contact information, and `grade`. 
-* Use `express.static` to server the React front end.
+  * A `Student` component should display a students's `name`, contact information, and `grade`.
+* Use `express.static` to serve the React front end.
 
 ## Contributions
 
