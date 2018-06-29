@@ -17,6 +17,9 @@
 .env.production.local
 .env
 
+# For old node-auth-afternoon
+config.js
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
