@@ -15,6 +15,10 @@ To simplify the project, we won't be using a database like we did in the mini pr
   * Fill out a value for SESSION_SECRET.
   * Important: add `.env` to the list of ignored files in the `.gitignore` file.
 
+Here's a diagram we'll refer to in the steps.
+
+<img src='./readme-assets/auth0_flow_afternoon.svg' />
+
 ## Step 1
 
 ### Summary
@@ -156,7 +160,7 @@ app.get('/callback', (req, res) => {
 
 ### Summary
 
-In this step, we'll create the `exchangeCodeForAccessToken` function. We'll create a payload of data to send to Auth0, and send it using axios.
+In this step, we'll create the `exchangeCodeForAccessToken` function. We'll create a payload of data to send to Auth0, and send it using axios. This is step 5 in the diagram.
 
 ### Instructions
 
@@ -210,7 +214,7 @@ app.get('/callback', (req, res) => {
 
 ### Summary
 
-In this step we are going to write a function that will be invoked after our `exchangeCodeForAccessToken` function called `exchangeAccessTokenForUserInfo`. Its job is to take the access token we just fetched and send it to Auth0, which will send us back user info. It might seem odd to make two different calls to Auth0 (one with the code and the second with the access token), but that's how the API works.
+In this step we are going to write a function that will be invoked after our `exchangeCodeForAccessToken` function called `exchangeAccessTokenForUserInfo`. Its job is to take the access token we just fetched and send it to Auth0, which will send us back user info. It might seem odd to make two different calls to Auth0 (one with the code and the second with the access token), but that's how the API works.  This is step 7 in the diagram.
 
 ### Instructions
 
@@ -239,7 +243,7 @@ function exchangeAccessTokenForUserInfo(accessTokenResponse) {
 
 ### Summary
 
-In this step we are going to set the user information to session, then make a call to the  `API Explorer Application` we registered in step 1 so we can get an Auth0 `access_token`. Whereas the previous access token was on behalf of the user using our app, we also need an access token to access Auth0 as our app.
+In this step we are going to set the user information to session, then make a call to the  `API Explorer Application` we registered in step 1 so we can get an Auth0 `access_token`. Whereas the previous access token was on behalf of the user using our app, we also need an access token to access Auth0 as our app. This is step 9 (red) in the diagram.
 
 ### Instructions
 
@@ -280,7 +284,7 @@ function fetchAuth0AccessToken(userInfoResponse) {
 
 ### Summary
 
-In this step we are going to use the Auth0 access token from the previous step to fetch an access token token for use with GitHub. It will allow us to make REST calls to GitHub on behalf of the user.
+In this step we are going to use the Auth0 access token from the previous step to fetch an access token token for use with GitHub. It will allow us to make REST calls to GitHub on behalf of the user. This is step 11 (red) in the diagram.
 
 ### Instructions
 
@@ -346,7 +350,7 @@ function setGitTokenToSessions(gitHubAccessToken){
 
 ### Summary
 
-In this step, we are going to use the GitHub access token from the previous step to make calls to the GitHub API and star/unstar repos on the user's behalf. The access token we're using must be kept secure; we can't expose/use it on the client side so we use it from the server side.
+In this step, we are going to use the GitHub access token from the previous step to make calls to the GitHub API and star/unstar repos on the user's behalf. The access token we're using must be kept secure; we can't expose/use it on the client side so we use it from the server side. This is step 13 (red) in the diagram.
 
 ### Instructions
 
@@ -388,7 +392,7 @@ app.delete('/api/star', (req, res) => {
 
 ### Summary
 
-The last step in our project is to set up the function which will initiate the user's login request on the website.
+The last step in our project is to set up the function which will initiate the user's login request on the website.  This is step 1 in the diagram.
 
 ### Instructions
 
