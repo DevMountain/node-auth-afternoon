@@ -7,14 +7,14 @@ class App extends Component {
     super(props);
     this.state = {
       user: '',
-      starred: false,
       gitRepo: 'node-auth-afternoon',
       gitUser: '',
-      errorMessage: ''
+      message: ''
     };
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
     this.star = this.star.bind(this);
+    this.unstar = this.unstar.bind(this);
   }
 
   componentDidMount() {
@@ -42,15 +42,17 @@ class App extends Component {
   }
 
   star() {
-    if (this.state.starred) {
-      return axios.delete(`/api/star?gitUser=${this.state.gitUser}&gitRepo=${this.state.gitRepo}`)
-        .then(() => this.setState({ starred: false }))
-        .catch(error => this.setState({ errorMessage: error.message }));
-    } else {
-      return axios.put(`/api/star?gitUser=${this.state.gitUser}&gitRepo=${this.state.gitRepo}`)
-        .then(() => this.setState({ starred: true }))
-        .catch(error => this.setState({ errorMessage: error.message }));
-    }
+    this.setState({ message: 'Starring...' });
+    axios.put(`/api/star?gitUser=${this.state.gitUser}&gitRepo=${this.state.gitRepo}`)
+      .then(() => this.setState({ message: 'Successfully starred repo' }))
+      .catch(error => this.setState({ message: error.message }));
+  }
+    
+  unstar() {
+    this.setState({ message: 'Unstarring...' });
+    axios.delete(`/api/star?gitUser=${this.state.gitUser}&gitRepo=${this.state.gitRepo}`)
+      .then(() => this.setState({ message: 'Successfully unstarred repo' }))
+      .catch(error => this.setState({ message: error.message }));
   }
 
   render() {
@@ -60,19 +62,20 @@ class App extends Component {
           {this.state.user
             ? <div>
                 <div className='user-image-container'>
-                  <img src={this.state.user.picture}/>
+                  <img src={this.state.user.picture} alt="User" />
                 </div>
 
                 <p>{this.state.user.name}</p>
 
-                <input onChange={e => this.setState({ gitUser: e.target.value })} placeholder='Repo Owner' value={this.state.gitUser}/>
+                <input onChange={e => this.setState({ gitUser: e.target.value })} placeholder='Repo owner' value={this.state.gitUser}/>
                 <input onChange={e => this.setState({ gitRepo: e.target.value })} placeholder='Repo to star' value={this.state.gitRepo} />
 
                 <div>
-                  <button onClick={this.star}>{this.state.starred ? 'Unstar' : 'Add star'}</button>
-                  <button onClick={this.logout}>logout</button>
+                  <button onClick={this.star}>Add star</button>
+                  <button onClick={this.unstar}>Unstar</button>
+                  <button onClick={this.logout}>Logout</button>
                 </div>
-                <div>{this.state.errorMessage}</div>
+                <div>{this.state.message}</div>
               </div>
             : <div>
                 <p>Please login</p>
