@@ -1,4 +1,4 @@
-<img src="https://s3.amazonaws.com/devmountain/www/img/dm_white_logo.png" width="200" align="right">
+<img src="https://devmounta.in/img/logowhiteblue.png" width="250" align="right">
 
 # Project Summary
 
@@ -53,11 +53,16 @@ In this step, we'll create a new Application in Auth0 that represents this proje
 
 ### Summary 
 
-In this step, we'll use `npm` to get the dependencies we'll need for our project.
+In this step, we'll use `npm` to get the dependencies we'll need for our project. We'll also manually modify our `package.json` file for the sake of proxying.
 
 ### Instructions
 
 * Install `body-parser`, `axios`, `express-session`, and  `dotenv`.
+* Modify the webpack dev server such that we proxy JSON requests meant for `/api` to the server. We also need to proxy all requests meant for `/callback` to the server. If we don't do the following, the webpack dev server will intercept requests to `/callback` and serve the `public/index.html` file, which is not what we want for that route.
+  * Open `package.json`.
+  * Change the property named `proxy`. Change it from its current string value to a JSON object.
+    * To the JSON object, add a key of `/callback`. Set its value to a JSON object with a key of `target` and a value of `http://localhost:4000`.
+    * Add another key for `/api` with the same value.
 
 ### Solution
 
@@ -71,9 +76,26 @@ npm install body-parser axios express-session dotenv
 
 </details>
 
-## Step 2.5
+<details>
 
-Talk about proxy in `package.json`
+<summary> <code> package.json </code> </summary>
+
+```
+{
+  ...
+  "proxy": {
+    "/callback": {
+      "target": "http://localhost:4000"
+    },
+    "/api": {
+      "target": "http://localhost:4000"
+    }
+  }
+}
+```
+
+</details>
+
 
 ## Step 3
 
