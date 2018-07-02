@@ -1,91 +1,84 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import logo from './logo.svg';
 import './App.css';
 
 class App extends Component {
-  constructor(props){
-    super(props)
+  constructor(props) {
+    super(props);
     this.state = {
       user: '',
-      starred: 'star',
-      gitRepo:'node-auth-afternoon',
-      gitUser:'',
-      message:'Please Login'
-    }
+      gitRepo: 'node-auth-afternoon',
+      gitUser: '',
+      message: ''
+    };
+    this.login = this.login.bind(this);
+    this.logout = this.logout.bind(this);
+    this.star = this.star.bind(this);
+    this.unstar = this.unstar.bind(this);
   }
 
-  componentDidMount(){
+  componentDidMount() {
     axios.get('/api/user-data').then(user => {
-      console.log(user);
       this.setState({
         user: user.data,
         gitUser: user.data.nickname
-      })
-    })
+      });
+    });
   }
 
-  login = () => {
+  login() {
     alert('set up your login function here')
   }
 
-  logout = () => {
-    axios.get('/api/logout').then(response => {
+  logout() {
+    axios.post('/api/logout').then(response => {
       this.setState({
         message: response.data,
         user:''
-      })
-    })
+      });
+    });
   }
 
-  changeHandler = (key, value) => {
-    this.setState({
-      [key]: value,
-      starred: 'star'
-    })
+  star() {
+    this.setState({ message: 'Starring...' });
+    axios.put(`/api/star?gitUser=${this.state.gitUser}&gitRepo=${this.state.gitRepo}`)
+      .then(() => this.setState({ message: 'Successfully starred repo' }))
+      .catch(error => this.setState({ message: error.message }));
   }
-
-  star = () => {
-    if(this.state.starred === 'star'){
-      this.setState({
-        starred: 'unstar'
-      })
-      return axios.get(`/api/star?gitUser=${this.state.gitUser}&gitRepo=${this.state.gitRepo}`)
-    }else {
-      this.setState({
-        starred: 'star'
-      })
-      return axios.get(`/api/unstar?gitUser=${this.state.gitUser}&gitRepo=${this.state.gitRepo}`)
-    }
+    
+  unstar() {
+    this.setState({ message: 'Unstarring...' });
+    axios.delete(`/api/star?gitUser=${this.state.gitUser}&gitRepo=${this.state.gitRepo}`)
+      .then(() => this.setState({ message: 'Successfully unstarred repo' }))
+      .catch(error => this.setState({ message: error.message }));
   }
 
   render() {
-    console.log(this.state.gitRepo);
     return (
       <div className="App">
         <div>
-          {
-            this.state.user ?
-            <div>
-              <div className='user-image-container'>
-                <img src={this.state.user.picture}/>
+          {this.state.user
+            ? <div>
+                <div className='user-image-container'>
+                  <img src={this.state.user.picture} alt="User" />
+                </div>
+
+                <p>{this.state.user.name}</p>
+
+                <input onChange={e => this.setState({ gitUser: e.target.value })} placeholder='Repo owner' value={this.state.gitUser}/>
+                <input onChange={e => this.setState({ gitRepo: e.target.value })} placeholder='Repo to star' value={this.state.gitRepo} />
+
+                <div>
+                  <button onClick={this.star}>Add star</button>
+                  <button onClick={this.unstar}>Unstar</button>
+                  <button onClick={this.logout}>Logout</button>
+                </div>
+                <div>{this.state.message}</div>
               </div>
-
-              <p>{this.state.user.name}</p>
-
-              <input onChange={(e)=> this.changeHandler(e.target.name, e.target.value)}  name='gitUser' placeholder='Repo Owner' value={this.state.gitUser}/>
-              <input onChange={(e)=> this.changeHandler(e.target.name, e.target.value)} name='gitRepo' placeholder='Repo to star' value={this.state.gitRepo} />
-
-              <div>
-                <button onClick={this.star}>{this.state.starred}</button>
-                <button onClick={this.logout}>logout</button>
+            : <div>
+                <p>Please login</p>
+                <button onClick={this.login}>Login</button>
               </div>
-            </div>
-            :
-            <div>
-              <p>{this.state.message}</p>
-              <button onClick={this.login}>login</button>
-            </div>
           }
         </div>
       </div>
