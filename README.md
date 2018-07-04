@@ -351,7 +351,7 @@ In this step, we are going to build a function which gets the access token from 
 ### Instructions
 
 * Under the `fetchGitHubAccessToken` function, write a function called `setGitTokenToSession` which takes in the return value from the previous function as a parameter. Call the parameter `gitHubAccessTokenResponse`.
-* Set the `access_token` on the object of the identities array (i.e. `gitHubAccessToken.data.identities[0].access_token`) equal to `req.session.gitHubAccessToken`.
+* Set the `access_token` on the object of the identities array (i.e. `gitHubAccessTokenResponse.data.identities[0].access_token`) equal to `req.session.gitHubAccessToken`.
 * In the data of the `gitHubAccessTokenResponse`, there should be an array of `identities` (with only one identity: GitHub). On that identity should be an `access_token` property. Put that access token on the session at `req.session.gitHubAccessToken`.
 * Redirect the user back to our landing page (`'/'`) using `res.redirect`.
 * (We're now done writing code within the `/callback` endpoint.)
