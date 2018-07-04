@@ -193,7 +193,7 @@ In this step, we'll create the `exchangeCodeForAccessToken` function. We'll crea
 * Still in the `/callback` handler, below the code block you pasted from the previous step, declare a function called `exchangeCodeForAccessToken`.
 * In the function, make an object called payload that has the following properties:
   * `client_id` (use value from `.env` REACT_APP_AUTH0_CLIENT_ID)
-  * `client_secret` (use value from `.env` REACT_APP_AUTH0_CLIENT_SECRET)
+  * `client_secret` (use value from `.env` AUTH0_CLIENT_SECRET)
   * `code` (the `code` we expect to recieve from Auth0 attached to `req.query` when our `/callback` endpoint is hit)
   * `grant_type` (which should be `authorization_code`)
   * `redirect_uri` which should redirect back to `http://${req.headers.host}/callback`
