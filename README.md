@@ -423,7 +423,7 @@ The last step in our project is to set up the function which will initiate the u
 ### Instructions
 
 * Open `src/App.js` and locate the `login` function.
-* Make a variable called `redirectUri` and set it equal to `encodeURIComponent(``${window.location.origin}/callback``)`.
+* Make a variable called `redirectUri` and set it equal to `` encodeURIComponent(`${window.location.origin}/callback`) ``.
   * Learn about [encodeURIComponent](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent)
   * (Doing `window.location.origin` is similar to what we did earlier with `req.headers.host`, except instead of on the server it's for use on the client. It means "whatever domain and port the user's browser is currently visiting".)
 * Next we are going to direct the browser to our Auth0 login screen by setting `window.location` equal to `https://${process.env.REACT_APP_AUTH0_DOMAIN}/authorize`. We will also want to pass along a few queries:
