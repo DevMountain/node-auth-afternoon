@@ -190,7 +190,7 @@ In this step, we'll create the `exchangeCodeForAccessToken` function. We'll crea
 
 ### Instructions
 
-* Still in the `/callback` handler, below the code block you pasted from the previous step, declare a function called `exchangeAccessTokenForUserInfo`.
+* Still in the `/callback` handler, below the code block you pasted from the previous step, declare a function called `exchangeCodeForAccessToken`.
 * In the function, make an object called payload that has the following properties:
   * `client_id` (use value from `.env` REACT_APP_AUTH0_CLIENT_ID)
   * `client_secret` (use value from `.env` REACT_APP_AUTH0_CLIENT_SECRET)
