@@ -190,10 +190,10 @@ In this step, we'll create the `exchangeCodeForAccessToken` function. We'll crea
 
 ### Instructions
 
-* Still in the `/callback` handler, below the code block you pasted from the previous step, declare a function called `exchangeAccessTokenForUserInfo`.
+* Still in the `/callback` handler, below the code block you pasted from the previous step, declare a function called `exchangeCodeForAccessToken`.
 * In the function, make an object called payload that has the following properties:
   * `client_id` (use value from `.env` REACT_APP_AUTH0_CLIENT_ID)
-  * `client_secret` (use value from `.env` REACT_APP_AUTH0_CLIENT_SECRET)
+  * `client_secret` (use value from `.env` AUTH0_CLIENT_SECRET)
   * `code` (the `code` we expect to recieve from Auth0 attached to `req.query` when our `/callback` endpoint is hit)
   * `grant_type` (which should be `authorization_code`)
   * `redirect_uri` which should redirect back to `http://${req.headers.host}/callback`
@@ -351,7 +351,7 @@ In this step, we are going to build a function which gets the access token from 
 ### Instructions
 
 * Under the `fetchGitHubAccessToken` function, write a function called `setGitTokenToSession` which takes in the return value from the previous function as a parameter. Call the parameter `gitHubAccessTokenResponse`.
-* Set the `access_token` on the object of the identities array (i.e. `gitHubAccessToken.data.identities[0].access_token`) equal to `req.session.gitHubAccessToken`.
+* Set the `access_token` on the object of the identities array (i.e. `gitHubAccessTokenResponse.data.identities[0].access_token`) equal to `req.session.gitHubAccessToken`.
 * In the data of the `gitHubAccessTokenResponse`, there should be an array of `identities` (with only one identity: GitHub). On that identity should be an `access_token` property. Put that access token on the session at `req.session.gitHubAccessToken`.
 * Redirect the user back to our landing page (`'/'`) using `res.redirect`.
 * (We're now done writing code within the `/callback` endpoint.)
@@ -423,7 +423,7 @@ The last step in our project is to set up the function which will initiate the u
 ### Instructions
 
 * Open `src/App.js` and locate the `login` function.
-* Make a variable called `redirectUri` and set it equal to `encodeURIComponent(``${window.location.origin}/callback``)`.
+* Make a variable called `redirectUri` and set it equal to `` encodeURIComponent(`${window.location.origin}/callback`) ``.
   * Learn about [encodeURIComponent](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent)
   * (Doing `window.location.origin` is similar to what we did earlier with `req.headers.host`, except instead of on the server it's for use on the client. It means "whatever domain and port the user's browser is currently visiting".)
 * Next we are going to direct the browser to our Auth0 login screen by setting `window.location` equal to `https://${process.env.REACT_APP_AUTH0_DOMAIN}/authorize`. We will also want to pass along a few queries:

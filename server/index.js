@@ -12,7 +12,7 @@ app.get('/api/user-data', (req, res) => {
   res.status(200).json(req.session.user)
 })
 
-app.get('/api/logout', (req, res) => {
+app.post('/api/logout', (req, res) => {
   req.session.destroy();
   res.send('logged out');
 })
