@@ -33,7 +33,7 @@ In this step, we'll create a new Application in Auth0 that represents this proje
   * Change the `Application Type` to `Single Page Web Applications`.
   * Click Create.
   * Switch to the application's `Settings` tab.
-  * Change the `Allowed Callback URLs` to `http://localhost:3000/auth/callback`.
+  * Change the `Allowed Callback URLs` to `http://localhost:3000/callback`.
   * At the bottom, click `Save Changes`.
   * Back at the top of the Settings tab, copy the domain, client ID, and client secret to your project's `.env` file, to `REACT_APP_AUTH0_DOMAIN`, `REACT_APP_AUTH0_CLIENT_ID`, and `AUTH0_CLIENT_SECRET`, respectively. Do NOT start `AUTH0_CLIENT_SECRET` with `REACT_APP_`.
 * Click on Connections on the left hand side navigation, and then Social.
