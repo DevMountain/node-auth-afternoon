@@ -53,16 +53,17 @@ In this step, we'll create a new Application in Auth0 that represents this proje
 
 ### Summary 
 
-In this step, we'll use `npm` to get the dependencies we'll need for our project. We'll also manually modify our `package.json` file for the sake of proxying.
+In this step, we'll use `npm` to get the dependencies we'll need for our project. We'll also modify our proxy settings.
 
 ### Instructions
 
-* Install `body-parser`, `axios`, `express-session`, and  `dotenv`.
+* Install `body-parser`, `axios`, `express-session`, `dotenv`, and `http-proxy-middleware`.
 * Modify the webpack dev server such that we proxy JSON requests meant for `/api` to the server. We also need to proxy all requests meant for `/callback` to the server. If we don't do the following, the webpack dev server will intercept requests to `/callback` and serve the `public/index.html` file, which is not what we want for that route.
-  * Open `package.json`.
-  * Change the property named `proxy`. Change it from its current string value to a JSON object.
-    * To the JSON object, add a key of `/callback`. Set its value to a JSON object with a key of `target` and a value of `http://localhost:4000`.
-    * Add another key for `/api` with the same value.
+  * Create a file in the `src` folder called `setupProxy.js`. This is a special file that create-react-app looks for to find optional proxy configuration steps. In `setupProxy.js`:
+    * Require the `http-proxy-middleware` package as a variable named `proxy`.
+    * Export a function that takes in an `app` parameter, and does `app.use()` calls to change the proxy's default behavior from proxying all non text/html requests going to the Node/Express server to instead explicitly proxy any routes starting with:
+    * `/callback`
+    * `/api`
 
 ### Solution
 
@@ -71,27 +72,22 @@ In this step, we'll use `npm` to get the dependencies we'll need for our project
 <summary> <code> NPM Install </code> </summary>
 
 ```
-npm install body-parser axios express-session dotenv
+npm install body-parser axios express-session dotenv http-proxy-middleware
 ```
 
 </details>
 
 <details>
 
-<summary> <code> package.json </code> </summary>
+<summary><code>src/setupProxy.js</code></summary>
 
-```
-{
-  ...
-  "proxy": {
-    "/callback": {
-      "target": "http://localhost:4000"
-    },
-    "/api": {
-      "target": "http://localhost:4000"
-    }
-  }
-}
+```js
+const proxy = require('http-proxy-middleware');
+
+module.exports = app => {
+  app.use(proxy('/callback', { target: 'http://localhost:4000' }));
+  app.use(proxy('/api', { target: 'http://localhost:4000' }));
+};
 ```
 
 </details>
