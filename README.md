@@ -46,7 +46,7 @@ In this step, we'll create a new Application in Auth0 that represents this proje
   * Click on Auth0 Management API.
   * Go to the API Explorer tab.
   * You should see a button that says "Create and authorize a test application". Click it. After you've done this once, you'll see a really long token string (which you don't need).
-* Return to the Applications section of the Auth0 website. You should now see an application named "Auth0 Management API (Test Client)".
+* Return to the Applications section of the Auth0 website. You should now see an application named "API Explorer Application".
   * Click it and you should be taken to its Settings tab. Copy the client ID and client secret to the `.env` file under `AUTH0_API_CLIENT_ID` and `AUTH0_API_CLIENT_SECRET`, respectively. Do NOT start these values with `REACT_APP_`.
 
 ## Step 2
