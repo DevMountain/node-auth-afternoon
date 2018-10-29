@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 module.exports = {
   login: async (req, res) => {
     const { username, password } = req.body;
-    const [user] = await req.db.get_user([username]);
+    const [user] = await req.app.get('db').get_user([username]);
     if (!user) {
       return res.status(401).send('User not found');
     }
@@ -19,9 +19,13 @@ module.exports = {
 
   register: async (req, res) => {
     const { username, password, name: fullName } = req.body;
+    const [existingUser] = await req.app.get('db').check_existing_user([username]);
+    if (existingUser) {
+      return res.status(409).send('Username taken');
+    }
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
-    const [{ user_id: id, name }] = await req.db.register_user([username, hash, fullName]);
+    const [{ id, name }] = await req.app.get('db').register_user([fullName, username, hash]);
     return res.status(201).send({ id, name });
   },
 };

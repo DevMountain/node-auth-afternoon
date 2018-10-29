@@ -4,7 +4,7 @@ CREATE TABLE users
 (
   id SERIAL PRIMARY KEY,
   name VARCHAR(50),
-  username VARCHAR(20),
+  username VARCHAR(120),
   hash text
 );
 

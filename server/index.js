@@ -2,10 +2,10 @@ require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
 const massive = require('massive');
-const ac = require('./controllers/authController');
+const ac = require('../controllers/authController');
 
 const app = express();
-const { SESSION_SECRET, CONNECION_STRING } = process.env;
+const { SESSION_SECRET, CONNECTION_STRING } = process.env;
 
 app.use(
   session({
@@ -15,10 +15,12 @@ app.use(
   })
 );
 
-massive(CONNECION_STRING).then(db => {
+massive(CONNECTION_STRING).then(db => {
   app.set('db', db);
-  console.log('DB connected');
+  db.queries().then(() => console.log('DB connected'));
 });
+
+app.use(express.json());
 
 app.post('/auth/register', ac.register);
 app.post('/auth/login', ac.login);
