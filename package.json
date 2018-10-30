@@ -2,7 +2,7 @@
   "name": "node-auth-afternoon",
   "version": "1.0.0",
   "description": "Node Auth 1 - Afternoon",
-  "main": "index.js",
+  "main": "server/index.js",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "dotenv": "^6.1.0",

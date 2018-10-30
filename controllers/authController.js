@@ -11,21 +11,21 @@ module.exports = {
     if (!isAuthenticated) {
       return res.status(403).send('Incorrect password');
     }
-    const { name, id } = user;
-    req.session.user = { name, id };
+    const { isadmin: isAdmin, id, userName } = user;
+    req.session.user = { isAdmin, id, username: userName };
 
     return res.send(req.session.user);
   },
 
   register: async (req, res) => {
-    const { username, password, name: fullName } = req.body;
+    const { username, password, isAdmin } = req.body;
     const [existingUser] = await req.app.get('db').check_existing_user([username]);
     if (existingUser) {
       return res.status(409).send('Username taken');
     }
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
-    const [{ id, name }] = await req.app.get('db').register_user([fullName, username, hash]);
-    return res.status(201).send({ id, name });
+    await req.app.get('db').register_user([isAdmin, username, hash]);
+    return res.sendStatus(201);
   },
 };
