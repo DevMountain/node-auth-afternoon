@@ -62,3 +62,10 @@
     margin: auto;
     margin-bottom: -5px;
 }
+
+.welcomeMessage{
+    color: whitesmoke;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}

@@ -8,8 +8,7 @@ export default class Header extends Component {
         this.state = {
             username: '',
             password: '',
-            admin: false,
-            user: {}
+            isAdmin: false,
         }
     }
     handleInput = (value, name) => {
@@ -19,7 +18,7 @@ export default class Header extends Component {
     }
 
     toggleAdmin = () => {
-        this.setState({ admin: !this.state.admin })
+        this.setState({ isAdmin: !this.state.isAdmin })
     }
 
     login = () => {
@@ -27,57 +26,69 @@ export default class Header extends Component {
         axios.post('/auth/login', { username, password })
             .then(res => {
                 this.setState({
-                    user: {
-                        username: res.data.name, admin: res.data.admin
-                    },
                     username: '',
                     password: ''
                 })
+                this.props.updateUser(res.data.username, res.data.isAdmin)
             })
             .catch(err => {
-                console.log(err.response) || alert(err.response.request.response)
+                this.setState({ username: '', password: ''})
+                alert(err.response.request.response)
             })
     }
 
     register = () => {
-        const { username, password, admin } = this.state
-        axios.post('/auth/register', { username, password, admin })
+        const { username, password, isAdmin } = this.state
+        console.log('UN:', username, 'PW:', password, isAdmin)
+        axios.post('/auth/register', { username, password, isAdmin })
             .then(res => {
+                console.log(res.data)
                 this.setState({
-                    user: {
-                        username: res.data.name, admin: res.data.admin
-                    },
                     username: '',
                     password: ''
                 })
+                this.props.updateUser(res.data.username, res.data.isAdmin)
             })
-            .catch(err => alert(err.response.request.response))
+            .catch(err => {
+                this.setState({ username: '', password: '' })
+                alert(err.response.request.response)
+            })
     }
 
     render() {
         const { username, password } = this.state
+        const{user} =this.props
+        console.log(this.props)
         return (
             <div className='Header'>
                 <div className="title">Dragon's Lair</div>
-                <div className="loginContainer">
+                {
+                    user.username ?
+                        (<div className='welcomeMessage'>
+                            <h2>Welcome to the dragon's lair, {user.username}</h2>
+                            <button type="submit">Logout</button>
+                        </div>
+                        )
+                        :
+                        <div className="loginContainer">
 
-                    <input type="text"
-                        placeholder="Username"
-                        value={this.username}
-                        onChange={(e) => this.handleInput(e.target.value, 'usernameInput')}
-                    />
-                    <input type="password"
-                        placeholder="Password"
-                        value={this.password}
-                        onChange={(e) => this.handleInput(e.target.value, 'passwordInput')}
-                    />
-                    <div className='adminCheck' >
-                        <input type="checkbox" id='adminCheckbox' onChange={this.toggleAdmin} /> <span> Admin </span>
-                    </div>
-                    <button onClick={this.login}>Log In</button>
-                    <button onClick={this.register} id='reg' >Register</button>
+                            <input type="text"
+                                placeholder="Username"
+                                value={username}
+                                onChange={(e) => this.handleInput(e.target.value, 'username')}
+                            />
+                            <input type="password"
+                                placeholder="Password"
+                                value={password}
+                                onChange={(e) => this.handleInput(e.target.value, 'password')}
+                            />
+                            <div className='adminCheck' >
+                                <input type="checkbox" id='adminCheckbox' onChange={this.toggleAdmin} /> <span> Admin </span>
+                            </div>
+                            <button onClick={this.login}>Log In</button>
+                            <button onClick={this.register} id='reg' >Register</button>
 
-                </div>
+                        </div>}
             </div>
         )
     }

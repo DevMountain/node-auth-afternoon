@@ -11,11 +11,11 @@ CREATE TABLE users
 -- b4rni!n@t0r
 
 INSERT INTO users
-(id, isadmin, username, hash)
+(isadmin, username, hash)
 VALUES
-(1, true, 'Trogdor', $1),
-(2, true, 'Travis', 'notahash'),
-(3, false, 'Nate', 'stillnotahash');
+(true, 'Trogdor', $1),
+(true, 'Travis', 'notahash'),
+(false, 'Nate', 'stillnotahash');
 
 
 
