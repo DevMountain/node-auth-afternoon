@@ -1,0 +1,64 @@
+.Header{
+    background: #383737;
+    padding: 8px 40px 8px 40px;
+    height: 8vh;
+    display: flex; 
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title{
+    color: #F5CC59;
+    font-family: 'Risque', cursive;
+    font-size : 48px;
+    line-height: 55px;
+}
+
+.loginContainer{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.Header input,button{
+    margin: 0px 0px 0px 20px;
+}
+
+.Header button{
+    background:#219653;
+    color: #F5CC59;
+    border: none;
+    padding: 10px 20px 10px 20px;
+    font-family: 'Risque', cursive;
+    font-size: 1em;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-shadow: 1px 1px rgba(0,0,0,0.7)
+}
+
+.Header input{
+    height: 28px;
+    width: 10vw;
+    text-align: center;
+}
+
+#reg{
+    background: #F5CC59;
+    color: #219653;
+}
+
+.adminCheck{
+    color: whitesmoke;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    margin: -3px 0px 0px 20px;
+    font-size: 0.75em;
+}
+
+#adminCheckbox{
+    width: 20px;
+    margin: auto;
+    margin-bottom: -5px;
+}

@@ -1,19 +1,35 @@
 {
   "name": "node-auth-afternoon",
-  "version": "1.0.0",
-  "description": "Node Auth 1 - Afternoon",
-  "main": "index.js",
+  "version": "0.1.0",
+  "private": true,
+  "main": "server/index.js",
   "dependencies": {
+    "axios": "^0.18.0",
     "bcryptjs": "^2.4.3",
     "dotenv": "^6.1.0",
     "express": "^4.15.3",
     "express-session": "^1.15.3",
-    "massive": "^5.5.1"
+    "http-proxy-middleware": "^0.19.0",
+    "massive": "^5.5.1",
+    "react": "^16.5.2",
+    "react-dom": "^16.5.2",
+    "react-scripts": "2.0.5"
   },
-  "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/devlemire/node-auth-afternoon.git"
