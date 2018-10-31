@@ -26,15 +26,16 @@ app.use(express.json());
 
 // ================================== //
 // === Remove this before hosting === //
-app.use((req, res, next) => {
-  req.session.user = { id: 2, isadmin: false };
-  next();
-});
+// app.use((req, res, next) => {
+//   req.session.user = { id: 2, isadmin: false };
+//   next();
+// });
 // ================================== //
 // ================================== //
 
 app.post('/auth/register', ac.register);
 app.post('/auth/login', ac.login);
+app.get('/auth/logout', ac.logout);
 
 app.get('/api/treasure/dragon', tc.dragonTreasure);
 app.use(protect.usersOnly);
