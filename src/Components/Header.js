@@ -32,17 +32,15 @@ export default class Header extends Component {
                 this.props.updateUser(res.data.username, res.data.isAdmin)
             })
             .catch(err => {
-                this.setState({ username: '', password: ''})
+                this.setState({ username: '', password: '' })
                 alert(err.response.request.response)
             })
     }
 
     register = () => {
         const { username, password, isAdmin } = this.state
-        console.log('UN:', username, 'PW:', password, isAdmin)
         axios.post('/auth/register', { username, password, isAdmin })
             .then(res => {
-                console.log(res.data)
                 this.setState({
                     username: '',
                     password: ''
@@ -55,10 +53,13 @@ export default class Header extends Component {
             })
     }
 
+    logout = () => {
+        axios.get('/auth/logout')
+    }
+
     render() {
         const { username, password } = this.state
-        const{user} =this.props
-        console.log(this.props)
+        const { user } = this.props
         return (
             <div className='Header'>
                 <div className="title">Dragon's Lair</div>
@@ -66,7 +67,7 @@ export default class Header extends Component {
                     user.username ?
                         (<div className='welcomeMessage'>
                             <h2>Welcome to the dragon's lair, {user.username}</h2>
-                            <button type="submit">Logout</button>
+                            <button type="submit" onClick={this.logout}>Logout</button>
                         </div>
                         )
                         :

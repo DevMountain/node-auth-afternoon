@@ -27,7 +27,6 @@ module.exports = {
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
     const [user] = await req.app.get('db').register_user([isAdmin, username, hash]);
-    console.log(user);
     const { isadmin, id, username: userName } = user;
     req.session.user = { isAdmin: isadmin, id, username: userName };
     return res.status(200).send(req.session.user);

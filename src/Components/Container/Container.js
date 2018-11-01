@@ -7,9 +7,6 @@ export default class Container extends Component {
     constructor() {
         super()
         this.state = {
-            dragon: [],
-            user: [],
-            all: []
         }
     }
 
@@ -27,7 +24,7 @@ export default class Container extends Component {
         const { dragon, user, all } = this.state
         return (
             <div className='Container' >
-                {dragon[0] ? <div className='treasureBox loggedIn'>
+                {dragon ? <div className='treasureBox loggedIn'>
                     <h1>Dragon's treasure</h1>
                     <Treasure treasure={dragon} />
                 </div> :
@@ -35,14 +32,14 @@ export default class Container extends Component {
                         <button className='title' onClick={this.getTreasure} name='dragon' >See Dragon's <br /> Treasure</button>
                     </div>
                 }
-                {user[0] ? <div className='treasureBox loggedIn'>
-                    <h1>My treasure</h1>
+                {user ? <div className='treasureBox loggedIn'>
+                    <h1>{this.props.user.username}'s treasure</h1>
                     <Treasure treasure={user} />
                 </div> :
                     <div className='treasureBox' >
                         <button className='title' onClick={this.getTreasure} name='user' >See My <br /> Treasure</button>
                     </div>}
-                {all[0] ? <div className='treasureBox loggedIn'>
+                {all ? <div className='treasureBox loggedIn'>
                     <h1>All treasure</h1>
                     <Treasure treasure={all} />
                 </div> :
