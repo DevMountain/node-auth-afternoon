@@ -39,6 +39,7 @@ export default class Container extends Component {
                 </div> :
                     <div className='treasureBox' >
                         <button className='title' onClick={this.getTreasure} name='dragon' >See Dragon's <br /> Treasure</button>
+                        <p>This treasure trove does not require a user to be logged in for access</p>
                     </div>
                 }
                 {user && username ? <div className='treasureBox loggedIn'>
@@ -47,6 +48,7 @@ export default class Container extends Component {
                 </div> :
                     <div className='treasureBox' >
                         <button className='title' onClick={this.getTreasure} name='user' >See My <br /> Treasure</button>
+                        <p>This treasure trove requires a user to be logged in for access</p>
                     </div>}
                 {all && username ? <div className='treasureBox loggedIn'>
                     <h1>All treasure</h1>
@@ -54,6 +56,7 @@ export default class Container extends Component {
                 </div> :
                     <div className='treasureBox' >
                         <button className='title' onClick={this.getTreasure} name='all' >See All <br /> Treasure</button>
+                        <p>This treasure trove requires a user to be a logged in as an admin user for access</p>
                     </div>}
             </div>
         )
