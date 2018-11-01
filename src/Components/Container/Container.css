@@ -21,7 +21,11 @@
     align-items: center;
     margin-bottom: 5vh;
     box-shadow: 20px 0px 23px 10px rgba(0,0,0,0.47);
-    overflow: scroll;
+    overflow: auto;
+}
+
+::-webkit-scrollbar {
+display: none;
 }
 
 .loggedIn{

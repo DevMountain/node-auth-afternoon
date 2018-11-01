@@ -25,7 +25,7 @@ export default class Container extends Component {
     }
 
     addMyTreasure = (addedTreasure) => {
-        this.setState({user: addedTreasure})
+        this.setState({treasures: {...this.state.treasures, user: addedTreasure}})
     }
 
     render() {
@@ -33,7 +33,7 @@ export default class Container extends Component {
         const { dragon, user, all } = this.state.treasures
         return (
             <div className='Container' >
-                {dragon && username ? <div className='treasureBox loggedIn'>
+                {dragon ? <div className='treasureBox loggedIn'>
                     <h1>Dragon's treasure</h1>
                     <Treasure treasure={dragon} />
                 </div> :
