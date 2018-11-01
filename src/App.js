@@ -10,8 +10,8 @@ class App extends Component {
       user: {}
     }
   }
-  updateUser= (username, isAdmin) => {
-    this.setState({user:{username, isAdmin}})
+  updateUser = (user) => {
+    this.setState({user})
   }
   render() {
     return (

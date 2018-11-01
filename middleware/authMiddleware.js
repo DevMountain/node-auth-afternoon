@@ -7,8 +7,9 @@ module.exports = {
     next();
   },
   adminsOnly: (req, res, next) => {
-    const { isadmin } = req.session.user;
-    if (!isadmin) {
+    const { isAdmin } = req.session.user;
+    console.log(isAdmin)
+    if (!isAdmin) {
       return res.status(403).send('You are not an admin');
     }
     next();

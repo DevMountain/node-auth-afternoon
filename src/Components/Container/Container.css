@@ -21,7 +21,7 @@
     align-items: center;
     margin-bottom: 5vh;
     box-shadow: 20px 0px 23px 10px rgba(0,0,0,0.47);
-
+    overflow: scroll;
 }
 
 .loggedIn{
@@ -36,6 +36,7 @@
 
 .treasureBox img{
     max-height: 100px;
+    margin: 10px;
 }
 
 .Container button{
@@ -47,4 +48,16 @@
     border: none;
     text-shadow: 1px 1px rgba(0,0,0,0.7);
     box-shadow: 2px 2px 7px 0px rgba(0,0,0,0.75);
+}
+
+.addTreasure{
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+.addTreasure button{
+    color: #F5CC59;
+    font-family: 'Risque', cursive;
+    padding: 4px;
 }

@@ -3,7 +3,9 @@ const bcrypt = require('bcryptjs');
 module.exports = {
   login: async (req, res) => {
     const { username, password } = req.body;
+    console.log('logInUN:', username);
     const [user] = await req.app.get('db').get_user([username]);
+    console.log(user)
     if (!user) {
       return res.status(401).send('User not found');
     }
@@ -11,7 +13,7 @@ module.exports = {
     if (!isAuthenticated) {
       return res.status(403).send('Incorrect password');
     }
-    const { isadmin: isAdmin, id, userName } = user;
+    const { isadmin: isAdmin, id, username: userName } = user;
     req.session.user = { isAdmin, id, username: userName };
 
     return res.send(req.session.user);
@@ -32,7 +34,8 @@ module.exports = {
     return res.status(200).send(req.session.user);
   },
   logout: (req, res) => {
+    console.log('hit logout')
     req.session.destroy();
-    return res.status(200);
+    return res.sendStatus(200);
   },
 };

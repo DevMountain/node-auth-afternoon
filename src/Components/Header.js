@@ -25,11 +25,13 @@ export default class Header extends Component {
         const { username, password } = this.state
         axios.post('/auth/login', { username, password })
             .then(res => {
+                console.log(res.data)
+                const {username, isAdmin}=res.data
                 this.setState({
                     username: '',
                     password: ''
                 })
-                this.props.updateUser(res.data.username, res.data.isAdmin)
+                this.props.updateUser({username, isAdmin})
             })
             .catch(err => {
                 this.setState({ username: '', password: '' })
@@ -41,11 +43,13 @@ export default class Header extends Component {
         const { username, password, isAdmin } = this.state
         axios.post('/auth/register', { username, password, isAdmin })
             .then(res => {
+                console.log(res.data)
+                const { username, isAdmin } = res.data
                 this.setState({
                     username: '',
                     password: ''
                 })
-                this.props.updateUser(res.data.username, res.data.isAdmin)
+                this.props.updateUser({username, isAdmin})
             })
             .catch(err => {
                 this.setState({ username: '', password: '' })
@@ -54,7 +58,9 @@ export default class Header extends Component {
     }
 
     logout = () => {
-        axios.get('/auth/logout')
+        axios.get('/auth/logout').then(() => {
+            this.props.updateUser({})
+        })
     }
 
     render() {
@@ -66,7 +72,7 @@ export default class Header extends Component {
                 {
                     user.username ?
                         (<div className='welcomeMessage'>
-                            <h2>Welcome to the dragon's lair, {user.username}</h2>
+                            <h2>Welcome to the dragon's lair, {user.username.charAt(0).toUpperCase()}</h2>
                             <button type="submit" onClick={this.logout}>Logout</button>
                         </div>
                         )
