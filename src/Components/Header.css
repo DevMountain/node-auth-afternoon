@@ -69,3 +69,7 @@
     justify-content: flex-end;
     align-items: center;
 }
+
+.welcomeMessage ::first-letter {
+  text-transform: capitalize;
+}

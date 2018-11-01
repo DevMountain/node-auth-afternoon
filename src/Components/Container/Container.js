@@ -42,7 +42,7 @@ export default class Container extends Component {
                     </div>
                 }
                 {user && username ? <div className='treasureBox loggedIn'>
-                    <h1>{this.props.user.username.charAt(0).toUpperCase()}'s treasure</h1>
+                    <h1>{this.props.user.username}'s treasure</h1>
                     <Treasure treasure={user} addMyTreasure={this.addMyTreasure}/>
                 </div> :
                     <div className='treasureBox' >

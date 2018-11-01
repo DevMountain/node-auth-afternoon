@@ -38,6 +38,10 @@ display: none;
     margin-top:30%;
 }
 
+.loggedIn h1::first-letter {
+  text-transform: capitalize;
+}
+
 .treasureBox img{
     max-height: 100px;
     margin: 10px;

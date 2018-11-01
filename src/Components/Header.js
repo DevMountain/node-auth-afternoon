@@ -70,8 +70,8 @@ export default class Header extends Component {
                 <div className="title">Dragon's Lair</div>
                 {
                     user.username ?
-                        (<div className='welcomeMessage'>
-                            <h2>Welcome to the dragon's lair, {user.username.charAt(0).toUpperCase()}</h2>
+                    (<div className='welcomeMessage'>
+                            <h4>{user.username}, welcome to the dragon's lair</h4>
                             <button type="submit" onClick={this.logout}>Logout</button>
                         </div>
                         )
