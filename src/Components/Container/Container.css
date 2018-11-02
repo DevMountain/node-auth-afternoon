@@ -47,6 +47,10 @@ display: none;
     margin: 10px;
 }
 
+.treasureBox p{
+    text-shadow: none;
+}
+
 .Container button{
     background: #219653;
     font-size: 1.5em;
