@@ -1,75 +1,78 @@
-.Container{
-    /* background: #6B6666; */
-    background: url(lair.png);
-    height: 92vh;
-    display: flex;
-    justify-content: space-around;
-    align-items: flex-end;
+.Container {
+  /* background: #6B6666; */
+  background: url(lair.png);
+  height: 92vh;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
 }
 
-.treasureBox{
-    height: 70vh;
-    width: 17vw;
-    background: rgb(196, 196, 196, 0.65);
-    border-top-left-radius: 10vw;
-    border-top-right-radius: 10vw;
-    border: 3vw solid #555454;
-    border-bottom: 10px solid rgb(56,55,55, 0.65);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 5vh;
-    box-shadow: 20px 0px 23px 10px rgba(0,0,0,0.47);
-    overflow: auto;
+.treasureBox {
+  height: 70vh;
+  width: 17vw;
+  background: rgb(196, 196, 196, 0.65);
+  border-top-left-radius: 10vw;
+  border-top-right-radius: 10vw;
+  border: 3vw solid #555454;
+  border-bottom: 10px solid rgb(56, 55, 55, 0.65);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 5vh;
+  box-shadow: 20px 0px 23px 10px rgba(0, 0, 0, 0.47);
+  overflow: auto;
 }
 
 ::-webkit-scrollbar {
-display: none;
+  display: none;
 }
 
-.loggedIn{
-    justify-content: flex-start;
-    font-family: 'Risque', cursive;
-    font-size : 10px;
+.loggedIn {
+  justify-content: flex-start;
+  font-family: 'Risque', cursive;
+  font-size: 10px;
 }
 
-.loggedIn h1{
-    margin-top:30%;
+.loggedIn h1 {
+  margin-top: 30%;
 }
 
 .loggedIn h1::first-letter {
   text-transform: capitalize;
 }
 
-.treasureBox img{
-    max-height: 100px;
-    margin: 10px;
+.treasureBox img {
+  max-height: 100px;
+  margin: 10px;
 }
 
-.treasureBox p{
-    text-shadow: none;
+.treasureBox p {
+  text-shadow: none;
+  font-size: 22px;
+  padding: 0 12px;
+  color: white;
 }
 
-.Container button{
-    background: #219653;
-    font-size: 1.5em;
-    width: 75%;
-    line-height: 1em;
-    padding: 10px;
-    border: none;
-    text-shadow: 1px 1px rgba(0,0,0,0.7);
-    box-shadow: 2px 2px 7px 0px rgba(0,0,0,0.75);
+.Container button {
+  background: #219653;
+  font-size: 1.5em;
+  width: 75%;
+  line-height: 1em;
+  padding: 10px;
+  border: none;
+  text-shadow: 1px 1px rgba(0, 0, 0, 0.7);
+  box-shadow: 2px 2px 7px 0px rgba(0, 0, 0, 0.75);
 }
 
-.addTreasure{
-    padding: 10px;
-    display: flex;
-    justify-content: center;
+.addTreasure {
+  padding: 10px;
+  display: flex;
+  justify-content: center;
 }
 
-.addTreasure button{
-    color: #F5CC59;
-    font-family: 'Risque', cursive;
-    padding: 4px;
+.addTreasure button {
+  color: #F5CC59;
+  font-family: 'Risque', cursive;
+  padding: 4px;
 }

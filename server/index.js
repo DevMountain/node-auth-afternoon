@@ -38,10 +38,9 @@ app.post('/auth/login', ac.login);
 app.get('/auth/logout', ac.logout);
 
 app.get('/api/treasure/dragon', tc.dragonTreasure);
-app.use(protect.usersOnly);
 app.get('/api/treasure/user', tc.getMyTreasure);
-app.post('/api/treasure/user', tc.addMyTreasure);
-app.get('/api/treasure/all', protect.adminsOnly, tc.getAllTreasure);
+app.post('/api/treasure/user', protect.usersOnly, tc.addMyTreasure);
+app.get('/api/treasure/all', protect.usersOnly, protect.adminsOnly, tc.getAllTreasure);
 
 const port = 4000;
 app.listen(port, () => {
