@@ -104,6 +104,7 @@ Here we will create a .env file to store the database connection string.
 
 ```
 CONNECTION_STRING=string_from_heroku_db
+SESSION_SECRET=asdfa12341234
 ```
 
 </details>
