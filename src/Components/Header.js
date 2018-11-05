@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import './Header.css'
-import axios from 'axios'
 
 export default class Header extends Component {
     constructor() {
@@ -11,55 +10,62 @@ export default class Header extends Component {
             isAdmin: false,
         }
     }
-    handleInput = (value, name) => {
-        this.setState({
-            [name]: value
-        })
+    handleUsernameInput(){
+        // should update this.state.username  based on user input. Do not mutate state, use setState.
+    }
+    handlePasswordInput(){
+        // should update this.state.password based on user input. Do not mutate state, use setState.
     }
 
-    toggleAdmin = () => {
-        this.setState({ isAdmin: !this.state.isAdmin })
+    toggleAdmin () {
+        // should toggle the value of isAdmin on state, by setting it to the value of it's opposite. (!this.state.isAdmin)
     }
 
-    login = () => {
-        const { username, password } = this.state
-        axios.post('/auth/login', { username, password })
-            .then(res => {
-                const {username, isAdmin}=res.data
-                this.setState({
-                    username: '',
-                    password: ''
-                })
-                this.props.updateUser({username, isAdmin})
-            })
-            .catch(err => {
-                this.setState({ username: '', password: '' })
-                alert(err.response.request.response)
-            })
+    login () {
+        // create POST request to login endpoint
+
+        // const { username, password } = this.state
+        // axios.post('/auth/login', { username, password })
+        //     .then(res => {
+        //         const {username, isAdmin}=res.data
+        //         this.setState({
+        //             username: '',
+        //             password: ''
+        //         })
+        //         this.props.updateUser({username, isAdmin})
+        //     })
+        //     .catch(err => {
+        //         this.setState({ username: '', password: '' })
+        //         alert(err.response.request.response)
+        //     })
     }
 
-    register = () => {
-        const { username, password, isAdmin } = this.state
-        axios.post('/auth/register', { username, password, isAdmin })
-            .then(res => {
-                console.log(res.data)
-                const { username, isAdmin } = res.data
-                this.setState({
-                    username: '',
-                    password: ''
-                })
-                this.props.updateUser({username, isAdmin})
-            })
-            .catch(err => {
-                this.setState({ username: '', password: '' })
-                alert(err.response.request.response)
-            })
+    register () {
+        // create POST request to register new user
+
+    //     const { username, password, isAdmin } = this.state
+    //     axios.post('/auth/register', { username, password, isAdmin })
+    //         .then(res => {
+    //             console.log(res.data)
+    //             const { username, isAdmin } = res.data
+    //             this.setState({
+    //                 username: '',
+    //                 password: ''
+    //             })
+    //             this.props.updateUser({username, isAdmin})
+    //         })
+    //         .catch(err => {
+    //             this.setState({ username: '', password: '' })
+    //             alert(err.response.request.response)
+    //         })
     }
 
-    logout = () => {
-        axios.get('/auth/logout').then(() => {
-            this.props.updateUser({})
-        })
+    logout () {
+        // GET request to logout
+
+        // axios.get('/auth/logout').then(() => {
+        //     this.props.updateUser({})
+        // })
     }
 
     render() {
@@ -81,15 +87,15 @@ export default class Header extends Component {
                             <input type="text"
                                 placeholder="Username"
                                 value={username}
-                                onChange={(e) => this.handleInput(e.target.value, 'username')}
+                                onChange={()=>{}}
                             />
                             <input type="password"
                                 placeholder="Password"
                                 value={password}
-                                onChange={(e) => this.handleInput(e.target.value, 'password')}
+                                onChange={()=>{}}
                             />
                             <div className='adminCheck' >
-                                <input type="checkbox" id='adminCheckbox' onChange={this.toggleAdmin} /> <span> Admin </span>
+                                <input type="checkbox" id='adminCheckbox' onChange={()=>{}} /> <span> Admin </span>
                             </div>
                             <button onClick={this.login}>Log In</button>
                             <button onClick={this.register} id='reg' >Register</button>

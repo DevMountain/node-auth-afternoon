@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import './Container.css';
-import axios from 'axios';
 import Treasure from '../Treasure';
 
 export default class Container extends Component {
@@ -16,23 +15,18 @@ export default class Container extends Component {
       this.setState({ treasures: {} });
     }
   }
-  // Three seperate endpoints.
-  // All calls wrapped in arrow functions
 
-  getTreasure = e => {
-    const { name } = e.target;
-    axios
-      .get(`/api/treasure/${name}`)
-      .then(res =>
-        this.setState({
-          treasures: { ...this.state.treasures, [name]: res.data },
-        })
-      )
-      .catch(err => alert(err.response.request.response));
-  };
+  getDragonTreasure(){
+    // no auth required
+  }
+  getAllTreasure(){
+    // admin auth required
+  }
+  getMyTreasure(){
+    // login auth required
+  }
 
-  addMyTreasure = addedTreasure => {
-    this.setState({ treasures: { ...this.state.treasures, user: addedTreasure } });
+  addMyTreasure () {
   };
 
   render() {
@@ -47,7 +41,7 @@ export default class Container extends Component {
           </div>
         ) : (
           <div className="treasureBox">
-            <button className="title" onClick={this.getTreasure} name="dragon">
+            <button className="title" onClick={()=>{}}>
               See Dragon's <br /> Treasure
             </button>
             <p>This treasure trove does not require a user to be logged in for access</p>
@@ -63,7 +57,7 @@ export default class Container extends Component {
           </div>
         ) : (
           <div className="treasureBox">
-            <button className="title" onClick={this.getTreasure} name="user">
+            <button className="title" onClick={()=>{}} name="user">
               See My <br /> Treasure
             </button>
             <p>This treasure trove requires a user to be logged in for access</p>
@@ -76,7 +70,7 @@ export default class Container extends Component {
           </div>
         ) : (
           <div className="treasureBox">
-            <button className="title" onClick={this.getTreasure} name="all">
+            <button className="title" onClick={()=>{}} name="all">
               See All <br /> Treasure
             </button>
             <p>This treasure trove requires a user to be a logged in as an admin user for access</p>
