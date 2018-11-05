@@ -4,13 +4,9 @@
 
 The purpose of this project is to implement secure password authentication using the Bcrypt library. Bcrypt is used to salt and hash user passwords, so that we avoid storing plain-text passwords in the database. We will also practice front to back data transmission, from axios calls on the front-end, to express endpoints on the server, to SQL commands in the database. 
 
-# Live Example
+# Example
 
-<a href="#">Click Me!</a>
-
-Please provide live examples to projects you create. This provides more advanced students a way to try to complete the project without reading any instructions and other students a resource to look at if they aren't understanding the instructions.
-
-If a live example is provided, put a screenshot of the landing page below the `Click Me!` link.
+<img src="./readme_assets/demo.gif" alt="demo gif">
 
 ## Setup
 
