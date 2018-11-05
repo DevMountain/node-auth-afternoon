@@ -136,10 +136,10 @@ Here we will program the register and log-in functionality. The user will be abl
 
 Open App.js. There is a user object on state, which needs to be updated with a method, and both the method and the value need to be passed as props to the Header component. 
 
-    * Program the updateUser method to update state.user with a parameter called user.
-    * Bind this method in the constructor, so that it will have the right this-context.
-    * Pass updateUser and this.state.user as props to the Header component.
-    * Passs this.state.user as a prop to the Container component.
+* Program the updateUser method to update state.user with a parameter called user.
+* Bind this method in the constructor, so that it will have the right this-context.
+* Pass updateUser and this.state.user as props to the Header component.
+* Passs this.state.user as a prop to the Container component.
 
 Open Header.js. Here we will program the handleUsernameInput and handlePasswordInput methods to store what the user types on state.
 
