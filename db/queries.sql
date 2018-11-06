@@ -13,7 +13,7 @@ CREATE TABLE users
 INSERT INTO users
 (isadmin, username, hash)
 VALUES
-(true, 'Trogdor', $1),
+(true, 'Trogdor', 'fakehash'),
 (true, 'Travis', 'notahash'),
 (false, 'Nate', 'stillnotahash');
 

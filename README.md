@@ -10,11 +10,11 @@ The purpose of this project is to implement secure password authentication using
 
 ## Setup
 
-* `fork` and `clone` this repository.
-* Open the `bcrypt-start` branch.
-* `cd` into the root of the project.
-* Run `npm install`. 
-* Run `nodemon` AND `npm start`
+* `fork` and `clone` this repository
+* Open the `bcrypt-start` branch
+* `cd` into the root of the project
+* Run `npm install`
+* Run `npm start`
 
 At this point the app should load in the browser and you should see the view of three treasure hoards and the login bar at the top. None of the buttons are connected to functions at this point. 
 
@@ -139,15 +139,15 @@ Open App.js. There is a user object on state, which needs to be updated with a m
 * Program the updateUser method to update state.user with a parameter called user.
 * Bind this method in the constructor, so that it will have the right this-context.
 * Pass updateUser and this.state.user as props to the Header component.
-* Passs this.state.user as a prop to the Container component.
+* Pass this.state.user as a prop to the Container component.
 
 Open Header.js. Here we will program the handleUsernameInput and handlePasswordInput methods to store what the user types on state.
 
 * Program the handleUsernameInput method to take an event object, and store the value on this.state.username
     * To do this, use setState, and the value is stored on event.target.value
 * Do the same for handlePasswordInput method, but this time, it should update the password value on state.
-* Now set these methods as onClick functions for the appropriate input boxes in the login container.
-    * Use an arrow function for the onClick value, to bind these methods.
+* Now set these methods as onChange functions for the appropriate input boxes in the login container.
+    * Use an arrow function for the onChange value, to bind these methods.
 
 Now we need to allow the user to select whether they are creating an admin account or not. There is a checkbox for this in the login component. 
 
@@ -155,20 +155,23 @@ Now we need to allow the user to select whether they are creating an admin accou
     * use `!this.state.isAdmin` as the new value
 * Set the onChange value for the checkbox input to be this method, wrapped in an arrow function to bind it.  
 
-Now that we are storing these values, we can program a the login and register functions. These will both be POST requests that send the username, password and isAdmin values from state. 
+Now that we are storing these values, we can program the login and register functions. These will both be POST requests that send the username, password and isAdmin values from state. 
 
 * Install and import axios.
-* Program the login method to send a POST request to '/auth/login', with an object with username and password from the user input on state.
+* Program the login method to send a POST request to '/auth/login'. Send an object with username and password from state.
     * Destructure username and password from state.
     * In the .then of the axios request, set username and password on state to empty strings, using setState. 
     * Also in the .then, invoke this.props.updateUser passing in username and isAdmin, so that we can update the user object on App.js.
+    * Make sure to bind this method in the constructor.
 
 * Program the register method to send a POST request to '/auth/register', with an object with username, password and isAdmin values from state.
     * Destructure username, password, and isAdmin from state.
     * In the .then of the axios request, set username and password on state to empty strings, using setState.
     * Also in the .then, invoke this.props.updateUser passing in username and isAdmin, so that we can update the user object on App.js.
+    * Bind this method in the constructor
 
 * Program the logout method to send a GET request to '/auth/logout'.
+* Bind the logout method in the constructor.
 * In the .then, invoke this.props.updateUser passing in an empty object, to reset the user object on App.js state.
 
 ### Solution
@@ -191,6 +194,11 @@ updateUser(user) {
 <details><summary><code> src/Components/Header.js </code></summary>
 
 ```js
+// bind methods in constructor
+this.login = this.login.bind(this);
+this.logout = this.logout.bind(this);
+this.register = this.register.bind(this);
+// ...
 handleUsernameInput(event) {
     this.setState({username: event.target.value})
 } 
@@ -268,7 +276,7 @@ The login endpoint function
 * Otherwise, create a const variable called isAuthenticated and set it equal to `bcrypt.compareSync(password, user.hash)`
 * If isAuthenticated is false, send a response with status code 403, and the string 'Incorrect password'.
 * Otherwise, set req.session.user to be the user record that was retrieved from the database. 
-* Then send a response of req.session.user, using res.send.
+* Then send req.session.user as a response with status code 200.
 
 <details><summary><code> login method</code></summary>
 
@@ -523,16 +531,12 @@ getMyTreasure() {
 
 // set the dragon treasure onClick value
 <button className="title" onClick={()=>this.getDragonTreasure()}>
-              See Dragon's <br /> Treasure
-            </button>
+
 // set the all treasure onClick value
-<button className="title" onClick={()=>this.getAllTreasure()} name="all">
-              See All <br /> Treasure
-            </button>
+<button className="title" onClick={()=>this.getAllTreasure()}>
+
 // set the my treasure onClick value
-<button className="title" onClick={()=>this.getMyTreasure() name="user">
-              See My <br /> Treasure
-            </button>
+<button className="title" onClick={()=>this.getMyTreasure()>
 
 ```
 
@@ -550,13 +554,13 @@ Here we will create another controller to handle the treasure related requests. 
 * Set module.exports to an object with three properties, dragonTreasure, getMyTreasure, and getAllTreasure. 
 * Each of these properties should have the value of an async arrow function with parameters req and res.
 * dragonTreasure should get the database instance and run the get_dragon_treasure SQL file, passing in the number '1'.
-* Return the result of this database query as the response.
+* Return the result of this database query as the response with status 200.
 
 * getMyTreasure should get the database instance and run the get_my_treasure SQL file, passing in the id from req.session.user.
-* Send the result of this database query as the response. 
+* Send the result of this database query as the response with status 200. 
 
 * getAllTreasure should get the database instance and run the get_all_treasure SQL file. 
-* Send a response with the result of this database query. 
+* Send a response with the result of this database query with status 200. 
 
 Now we need to bring this controller into the main server file and create endpoints for these functions. 
 
@@ -715,6 +719,7 @@ Here we need to finish programming the add treasure functionality on the server 
 * Send the results of this SQL query and the response. 
 
 * Create a POST endpoint for this function in index.js.
+    * The endpoint url should be '/api/treasure/user'.
 * Apply the usersOnly auth middleware function to this endpoint. 
 
 ### Solution
@@ -735,7 +740,7 @@ addMyTreasure: async (req, res) => {
 <details><summary><code> server/index.js </code></summary>
 
 ```js
-app.post('/api/treasure/user', protect.usersOnly, tc.addMyTreasure);
+app.post('/api/treasure/user', auth.usersOnly, tc.addMyTreasure);
 ```
 
 </details>

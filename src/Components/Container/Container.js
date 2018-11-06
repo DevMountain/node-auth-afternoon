@@ -53,7 +53,7 @@ export default class Container extends Component {
               {this.props.user.username}
               's treasure
             </h1>
-            <Treasure treasure={user} addMyTreasure={this.addMyTreasure} />
+            <Treasure treasure={user} />
           </div>
         ) : (
           <div className="treasureBox">
