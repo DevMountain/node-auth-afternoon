@@ -516,8 +516,9 @@ Here we will create another controller to handle the treasure related requests. 
 
 * Now go to server/index.js and create a get endpoint, '/api/treasure/user', with the function tc.getMyTreasure.
 
-* Go back to treasureController.js and create a method called getAllTreasure with parameters req and res.
+* Go back to treasureController.js and create an async method called getAllTreasure with parameters req and res.
     * This should get the database instance and run the get_all_treasure SQL file. 
+    * Use the await keyword on the database query and store the result on a variable.
     * Send a response with the result of this database query with status 200. 
 
 * Back on server/index.js, create a get endpoint, '/api/treasure/all', with the function tc.getAllTreasure.
