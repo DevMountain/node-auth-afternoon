@@ -30,6 +30,7 @@ Here we will set up the server and get it listening on a port. We will install a
 
 Here we will create the server file.
 
+* Create a folder called server on the root. 
 * Create a file called `index.js` in the server folder.
 * Install and require the following packages and store them on const variables
     * express
