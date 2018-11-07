@@ -279,6 +279,8 @@ The login endpoint function
 * Destructure username and password from req.body, storing them on const variables. 
 * Get the database instance using req.app.get('db')
 * Using the `get_user` SQL file, query the database for a user with a username matching the username from req.body.
+* Store the result of the SQL query on a const variable called user. 
+    * Remember that SQL queries come back in an array, so take the first item of the result to be your user variable. 
 * If there is not user found, send a response with status 401, and the string 'User  not found. Please register as a new user before loggin in.'
 * Otherwise, create a const variable called isAuthenticated and set it equal to `bcrypt.compareSync(password, user.hash)`
 * If isAuthenticated is false, send a response with status code 403, and the string 'Incorrect password'.
@@ -322,7 +324,7 @@ The register endpoint function
     * Remember that SQL function parameters should be passed in as an array.
 * Set the value of this SQL query to a variable called user.
     * It will come as an array, and we just need the first element in the array. 
-* Set req.session.user to be an object with properties isadmin, id, and username, equal to user.isAdmin, user.id, and user.userName. 
+* Set req.session.user to be an object with properties isAdmin, id, and username, equal to user.isadmin, user.id, and user.username. 
 
 <details><summary><code> register function </code></summary>
 
