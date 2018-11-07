@@ -283,9 +283,7 @@ The login endpoint function
 ```js
 login: async (req, res) => {
 const { username, password } = req.body;
-console.log('logInUN:', username);
 const [user] = await req.app.get('db').get_user([username]);
-console.log(user);
 if (!user) {
     return res.status(401).send('User not found. Please register as a new user before logging in.');
 }
@@ -321,7 +319,6 @@ The register endpoint function
 ```js
 register: async (req, res) => {
     const { username, password, isAdmin } = req.body;
-    console.log('UN:', username);
     const [existingUser] = await req.app.get('db').check_existing_user([username]);
     if (existingUser) {
       return res.status(409).send('Username taken');
@@ -347,7 +344,6 @@ The logout endpoint function
 
 ```js
 logout: (req, res) => {
-    console.log('hit logout');
     req.session.destroy();
     return res.sendStatus(200);
   }
@@ -373,9 +369,7 @@ const bcrypt = require('bcryptjs');
 module.exports = {
   login: async (req, res) => {
     const { username, password } = req.body;
-    console.log('logInUN:', username);
     const [user] = await req.app.get('db').get_user([username]);
-    console.log(user);
     if (!user) {
       return res.status(401).send('User not found. Please register as a new user before logging in.');
     }
@@ -391,7 +385,6 @@ module.exports = {
 
   register: async (req, res) => {
     const { username, password, isAdmin } = req.body;
-    console.log('UN:', username);
     const [existingUser] = await req.app.get('db').check_existing_user([username]);
     if (existingUser) {
       return res.status(409).send('Username taken');
@@ -404,7 +397,6 @@ module.exports = {
     return res.status(200).send(req.session.user);
   },
   logout: (req, res) => {
-    console.log('hit logout');
     req.session.destroy();
     return res.sendStatus(200);
   },
@@ -462,7 +454,6 @@ module.exports = {
   },
   adminsOnly: (req, res, next) => {
     const { isAdmin } = req.session.user;
-    console.log(isAdmin)
     if (!isAdmin) {
       return res.status(403).send('You are not an admin');
     }
