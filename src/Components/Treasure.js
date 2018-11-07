@@ -1,16 +1,14 @@
-import React from 'react'
-import AddTreasure from './AddTreasure'
+import React from 'react';
+import AddTreasure from './AddTreasure';
 
 export default function Treasure(props) {
-  let treasure = props.treasure.map((item, index) => {
-    return <img src={item.image_url} key={index} alt='' />
-  }) 
+  const treasure = props.treasure.map((item, index) => {
+    return <img src={item.image_url} key={index} alt="" />;
+  });
   return (
-    <div >
-      {props.addMyTreasure ?
-        <AddTreasure addMyTreasure={props.addMyTreasure} />
-        : null}
+    <div>
+      {props.addMyTreasure ? <AddTreasure /> : null}
       {treasure}
     </div>
-  )
+  );
 }

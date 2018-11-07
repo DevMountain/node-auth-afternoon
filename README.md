@@ -641,7 +641,7 @@ Here we will add the functionality for a user to be able to add new treasure to 
     * AddTreasure is conditionally rendered, depending upon whether the addMyTreasure prop was passed to it.
 
 * In the AddTreasure component there is a method called addTreasure. This needs to be the onClick value for the Add button. 
-* This method should make a POST request to '/api/treasure/user', with an object containing the treasureURL value from state.
+* This method should make a POST request to '/api/treasure/user', with an object containing the treasureURL value from state. Be sure to import axios at the top.
 * Then, in the .then, call this.props.addMyTreasure passing in res.data, and setState with treasureURL set to an empty string. 
 
 ### Solution
@@ -699,14 +699,14 @@ Here we need to finish programming the add treasure functionality on the server 
 
 ### Instructions
 
-* Open the treasureController.js file and create another method called addMyTreasure. 
+* Open the treasureController.js file and create another method called addMyTreasure. This is going to be asynchronous, so be sure to use `async` and `await`. 
 * Destructure treasureURL from req.body and id from req.session.user.
 * Get the database connection and invoke the add_user_treasure SQL file passing in treasureURL and id as arguments. 
 * Send the results of this SQL query and the response. 
 
 * Create a POST endpoint for this function in index.js.
-    * The endpoint url should be '/api/treasure/user'.
-* Apply the usersOnly auth middleware function to this endpoint. 
+    * The endpoint url should be '/api/treasure/user' and `tc.addMyTreasure` should be the controller function that runs when this endpoint is hit.
+* Apply the usersOnly auth middleware function between the URL path and the controller function (`tc.addMyTreasure`). 
 
 ### Solution
 
