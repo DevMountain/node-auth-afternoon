@@ -42,6 +42,7 @@ Here we will create the server file.
 * Define a const variable called PORT equal to 4000
 * Use the json method of the body-parser package as top level middleware.  
 * Make the server listen on this port number using app.listen
+* Run nodemon and make sure there are no bugs.
 
 ### Solution
 
@@ -71,7 +72,7 @@ app.listen(PORT, ()=>console.log(`Listening on port ${PORT}))
 
 ### Summary
 
-Here we will connect the server to the database using massive. We will create a .env file to store our personal data such as the database connection string. We will also set up session top-level middleware. 
+Here we will connect the server to the database using massive. We will create a .env file on the root of the project to store our personal data such as the database connection string. We will also set up session top-level middleware. 
 
 ### Instructions
 
@@ -94,7 +95,7 @@ Here we will create a .env file to store the database connection string.
         ```
     </details>
 * Set up session as top-level middleware by invoking app.use and passing in session invoked with a configuration object.
-    * The session configuration object should properties resave set to true, saveUninitialized set to false, and secret set to SESSION_SECRET.
+    * The session configuration object should have properties `resave` set to true, `saveUninitialized` set to false, and `secret` set to SESSION_SECRET.
 * Take the contents of queries.sql in the DB folder and run that in your database using SQL tabs. This will create the necessary user and treasure tables. 
 
 ### Solution
@@ -161,13 +162,13 @@ Now that we are storing these values, we can program the login and register func
 * Program the login method to send a POST request to '/auth/login'. Send an object with username and password from state.
     * Destructure username and password from state.
     * In the .then of the axios request, set username and password on state to empty strings, using setState. 
-    * Also in the .then, invoke this.props.updateUser passing in username and isAdmin, so that we can update the user object on App.js.
+    * Also in the .then, invoke this.props.updateUser passing in an object with properties username and isAdmin, so that we can update the user object on App.js.
     * Make sure to bind this method in the constructor.
 
 * Program the register method to send a POST request to '/auth/register', with an object with username, password and isAdmin values from state.
     * Destructure username, password, and isAdmin from state.
     * In the .then of the axios request, set username and password on state to empty strings, using setState.
-    * Also in the .then, invoke this.props.updateUser passing in username and isAdmin, so that we can update the user object on App.js.
+    * Also in the .then, invoke this.props.updateUser passing in and object with properties username and isAdmin, so that we can update the user object on App.js.
     * Bind this method in the constructor
 
 * Program the logout method to send a GET request to '/auth/logout'.
@@ -261,7 +262,12 @@ Here we will create the server endpoints for login, register and logout. We will
 
 * Create a folder called controllers in server.
 * Create a file called authController.js in controllers. 
-* Install and require `bcryptjs`. Store it on a const variable called bcrypt. 
+* Open `server/index.js` and require the authController.js file storing it on a const variable called ac.
+* Create a POST endpoint with url '/auth/login' and method ac.login
+
+
+
+* Go back to authController.js and install and require `bcryptjs`. Store it on a const variable called bcrypt. 
     * This package allows us to hash and salt passwords.
 * Set module.exports equal to an object. 
     * On this object we will create our auth endpoint functions
@@ -278,7 +284,7 @@ The login endpoint function
 * Otherwise, set req.session.user to be the user record that was retrieved from the database. 
 * Then send req.session.user as a response with status code 200.
 
-<details><summary><code> login method</code></summary>
+<details><summary><code> login function </code></summary>
 
 ```js
 login: async (req, res) => {
@@ -301,7 +307,11 @@ login: async (req, res) => {
 
 The register endpoint function
 
-* Create a register property with the value of an async function with parameters req and res.
+* In server/index.js we will create the register endpoint. 
+* Create a POST endpoint with url '/auth/register' and method ac.register
+
+
+* Go back to authController.js and create a register property with the value of an async function with parameters req and res.
 * Destructure username, password and isAdmin from req.body.
 * Get the database instance and run the sql file `check_existing_user`, passing in username.
 * If existingUser is defined, send a response with status 409 and the text 'Username taken');
@@ -335,7 +345,9 @@ register: async (req, res) => {
 
 The logout endpoint function
 
-* Create a logout property with the value of an async function with parameters req and res
+* Go to server/index.js and create a GET endpoint with url '/auth/logout' and method ac.logout
+
+* Go back to authController.js and create a logout property with the value of an async function with parameters req and res
 * This function should run req.session.destroy()
 * Then send a response with a status of 200.
 
@@ -349,14 +361,6 @@ logout: (req, res) => {
 ```
 
 </details>
-
-The last step is to import this controller into our main server file and create endpoints for these methods.
-
-* Open server/index.js
-* Require the authController.js file, storing it on a const variable called ac.
-* Create a POST endpoint with url '/auth/register' and method ac.register
-* Create a POST endpoint with url '/auth/login' and method ac.login
-* Create a GET endpoint with url '/auth/logout' and method ac.logout
 
 ### Solution
 
@@ -418,52 +422,6 @@ app.get('/auth/logout', ac.logout);
 </details>
 
 ## Step 5
-
-### Summary
-
-Here we will create authentication middelware functions, that will check if a user is logged in or if the user is an administrator. 
-
-### Instructions
-
-* Create a middleware folder in the server folder.
-* Create a authMiddleware.js file.
-* Here set module.exports to an object with two properties;
-usersOnly and adminsOnly.
-    * These properties will have the value of an arrow function with req, res and next parameters.
-* The usersOnly function should check if there is a user object on req.session. 
-* If there is not, send a response with status 401 and the string 'Please log in'.
-* Otherwise invoke next.
-* The adminsOnly function should check if isAdmin on req.session.user is true. 
-* If isAdmin is false, send a response with status 403 and the string 'You mare not an admin'.
-* Otherwise, invoke next. 
-
-### Solution
-
-<details><summary><code> server/middleware/authMiddleware.js </code></summary>
-
-```js
-module.exports = {
-  usersOnly: (req, res, next) => {
-    const { user } = req.session;
-    if (!user) {
-      return res.status(401).send('Please log in');
-    }
-    next();
-  },
-  adminsOnly: (req, res, next) => {
-    const { isAdmin } = req.session.user;
-    if (!isAdmin) {
-      return res.status(403).send('You are not an admin');
-    }
-    next();
-  },
-};
-
-```
-
-</details>
-
-## Step 6
 
 ### Summary
 
@@ -531,7 +489,7 @@ getMyTreasure() {
 
 </details>
 
-## Step 7
+## Step 6
 
 ### Summary
 
@@ -540,24 +498,25 @@ Here we will create another controller to handle the treasure related requests. 
 ### Instructions
 
 * Create a file called treasureController.js in the controllers folder. 
-* Set module.exports to an object with three properties, dragonTreasure, getMyTreasure, and getAllTreasure. 
-* Each of these properties should have the value of an async arrow function with parameters req and res.
-* dragonTreasure should get the database instance and run the get_dragon_treasure SQL file, passing in the number '1'.
-* Return the result of this database query as the response with status 200.
+* Set module.exports to an object that will store our methods. 
+* Create a method called dragonTreasure with parameters req and res
+    * This should get the database instance and run the get_dragon_treasure SQL file, passing in the number '1'.
+    * Return the result of this database query as the response with status 200.
 
-* getMyTreasure should get the database instance and run the get_my_treasure SQL file, passing in the id from req.session.user.
-* Send the result of this database query as the response with status 200. 
-
-* getAllTreasure should get the database instance and run the get_all_treasure SQL file. 
-* Send a response with the result of this database query with status 200. 
-
-Now we need to bring this controller into the main server file and create endpoints for these functions. 
-
-* Require treasureController.js into the server file and store it on a const variable called `tc`.
+* Now go to server/index.js and require treasureController.js storing it on a const variable called `tc`.
 * Create a get endpoint, '/api/treasure/dragon', with the function tc.dragonTreasure.
-* Create a get endpoint, '/api/treasure/user', with the function tc.getMyTreasure.
-* Create a get endpoint, '/api/treasure/all', with the function tc.getAllTreasure.
 
+* Go back to treasureController.js and create a method called getMyTreasure with parameters req and res.
+    * This should get the database instance and run the get_my_treasure SQL file, passing in the id from req.session.user.
+    * Send the result of this database query as the response with status 200. 
+
+* Now go to server/index.js and create a get endpoint, '/api/treasure/user', with the function tc.getMyTreasure.
+
+* Go back to treasureController.js and create a method called getAllTreasure with parameters req and res.
+    * This should get the database instance and run the get_all_treasure SQL file. 
+    * Send a response with the result of this database query with status 200. 
+
+* Back on server/index.js, create a get endpoint, '/api/treasure/all', with the function tc.getAllTreasure.
 
 ### Solution
 
@@ -602,20 +561,57 @@ app.get('/api/treasure/all', tc.getAllTreasure);
 
 </details>
 
-## Step 8
+## Step 7
 
 ### Summary
 
-Here we are going to apply our authentication middleware to certain endpoints that require a user to be logged in or to be an administrator. 
+Here we will create authentication middelware functions and apply them on the server. These will check if a user is logged in or if the user is an administrator. 
 
 ### Instructions
 
+* Create a middleware folder in the server folder.
+* Create a authMiddleware.js file.
+* Here set module.exports to an object.
+    * Create a method called `usersOnly` with the parameters req, res, and next.
+    * The usersOnly function should check if there is a user object on req.session. 
+    * If there is not, send a response with status 401 and the string 'Please log in'.
+    * Otherwise invoke next.
+
 * In server/index.js require authMiddleware.js and store it on a const variable called auth. 
-* On the '/api/treasure/user' endpoint, and an argumet before the controller function, auth.usersOnly.
-* On the '/api/treasure/all' endpoint, and two arguments before the controller function, auth.usersOnly and auth.adminsOnly. 
+* On the '/api/treasure/user' endpoint, apply the usersOnly middleware that we have just created.
+
+* Go back to authMiddleware.js and create a second method called `adminsOnly` with parameters req, res, and next.
+* The adminsOnly function should check if isAdmin on req.session.user is true. 
+* If isAdmin is false, send a response with status 403 and the string 'You are not an admin'.
+* Otherwise, invoke next. 
+
+* In server/index.js on the '/api/treasure/all' endpoint, apply the usersOnly AND adminsOnly middleware.
 
 ### Solution
 
+<details><summary><code> server/middleware/authMiddleware.js </code></summary>
+
+```js
+module.exports = {
+  usersOnly: (req, res, next) => {
+    const { user } = req.session;
+    if (!user) {
+      return res.status(401).send('Please log in');
+    }
+    next();
+  },
+  adminsOnly: (req, res, next) => {
+    const { isAdmin } = req.session.user;
+    if (!isAdmin) {
+      return res.status(403).send('You are not an admin');
+    }
+    next();
+  },
+};
+
+```
+
+</details>
 <details><summary><code> server/index.js </code></summary>
 
 ```js
@@ -628,7 +624,7 @@ app.get('/api/treasure/all', auth.usersOnly, auth.adminsOnly, tc.getAllTreasure)
 
 </details>
 
-## Step 9
+## Step 8
 
 ### Summary
 
@@ -694,7 +690,7 @@ addTreasure () {
 
 </details>
 
-## Step 10
+## Step 9
 
 ### Summary
 
