@@ -313,8 +313,7 @@ The register endpoint function
 * In server/index.js we will create the register endpoint. 
 * Create a POST endpoint with url '/auth/register' and method ac.register
 
-
-* Go back to authController.js and create a register property with the value of an async function with parameters req and res.
+* Go back to authController.js and create a register method with parameters req and res.
 * Destructure username, password and isAdmin from req.body.
 * Get the database instance and run the sql file `check_existing_user`, passing in username.
 * If existingUser is defined, send a response with status 409 and the text 'Username taken');
@@ -474,7 +473,7 @@ getMyTreasure() {
          .then(res=>{
              this.setState({
                  treasures: { ...this.state.treasures,
-                 all: res.data}
+                 user: res.data}
              })
          })
 }
@@ -502,15 +501,17 @@ Here we will create another controller to handle the treasure related requests. 
 
 * Create a file called treasureController.js in the controllers folder. 
 * Set module.exports to an object that will store our methods. 
-* Create a method called dragonTreasure with parameters req and res
+* Create an async method called dragonTreasure with parameters req and res
     * This should get the database instance and run the get_dragon_treasure SQL file, passing in the number '1'.
+    * Use the await keyword on the database query and store the result on a variable. 
     * Return the result of this database query as the response with status 200.
 
 * Now go to server/index.js and require treasureController.js storing it on a const variable called `tc`.
 * Create a get endpoint, '/api/treasure/dragon', with the function tc.dragonTreasure.
 
-* Go back to treasureController.js and create a method called getMyTreasure with parameters req and res.
+* Go back to treasureController.js and create an async method called getMyTreasure with parameters req and res.
     * This should get the database instance and run the get_my_treasure SQL file, passing in the id from req.session.user.
+    * Use the await keyword on the database query, and store the result on a variable. 
     * Send the result of this database query as the response with status 200. 
 
 * Now go to server/index.js and create a get endpoint, '/api/treasure/user', with the function tc.getMyTreasure.
