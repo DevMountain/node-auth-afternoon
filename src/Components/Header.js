@@ -9,6 +9,9 @@ export default class Header extends Component {
       password: '',
       isAdmin: false,
     };
+    this.register = this.register.bind(this);
+    this.login = this.login.bind(this);
+    this.logout = this.logout.bind(this);
   }
 
   handleUsernameInput(value) {
@@ -29,7 +32,7 @@ export default class Header extends Component {
   }
 
   register() {
-    // create POST request to register new user
+    // create POST request to register endpoint
   }
 
   logout() {

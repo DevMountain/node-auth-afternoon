@@ -22,7 +22,7 @@ class App extends Component {
     const { user } = this.state;
     return (
       <div className="App">
-        <Header user={user} />
+        <Header user={user} updateUser={this.updateUser} />
         <Container user={user} />
       </div>
     );
