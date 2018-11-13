@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS users;
 CREATE TABLE users
 (
   id SERIAL PRIMARY KEY,
-  isadmin BOOLEAN default false,
+  is_admin BOOLEAN default false,
   username VARCHAR(120),
   hash text
 );
@@ -11,7 +11,7 @@ CREATE TABLE users
 -- b4rni!n@t0r
 
 INSERT INTO users
-(isadmin, username, hash)
+(is_admin, username, hash)
 VALUES
 (true, 'Trogdor', 'fakehash'),
 (true, 'Travis', 'notahash'),
