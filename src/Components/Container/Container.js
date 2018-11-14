@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import './Container.css';
 import Treasure from '../Treasure';
 
@@ -16,18 +17,21 @@ export default class Container extends Component {
     }
   }
 
-  getDragonTreasure(){
-    // no auth required
-  }
-  getAllTreasure(){
-    // admin auth required
-  }
-  getMyTreasure(){
-    // login auth required
+  getDragonTreasure() {
+    // axios GET to /api/treasure/dragon here
   }
 
-  addMyTreasure () {
-  };
+  getAllTreasure() {
+    // axios GET to /api/treasure/all here
+  }
+
+  getMyTreasure() {
+    // axios GET to /api/treasure/user here
+  }
+
+  addMyTreasure() {
+    // axios POST to /api/treasure/user here
+  }
 
   render() {
     const { username } = this.props.user;
@@ -41,7 +45,7 @@ export default class Container extends Component {
           </div>
         ) : (
           <div className="treasureBox">
-            <button className="title" onClick={()=>{}}>
+            <button className="title" onClick={() => this.getDragonTreasure()}>
               See Dragon's <br /> Treasure
             </button>
             <p>This treasure trove does not require a user to be logged in for access</p>
@@ -57,7 +61,7 @@ export default class Container extends Component {
           </div>
         ) : (
           <div className="treasureBox">
-            <button className="title" onClick={()=>{}} name="user">
+            <button className="title" onClick={() => this.getMyTreasure()} name="user">
               See My <br /> Treasure
             </button>
             <p>This treasure trove requires a user to be logged in for access</p>
@@ -70,7 +74,7 @@ export default class Container extends Component {
           </div>
         ) : (
           <div className="treasureBox">
-            <button className="title" onClick={()=>{}} name="all">
+            <button className="title" onClick={() => this.getAllTreasure()} name="all">
               See All <br /> Treasure
             </button>
             <p>This treasure trove requires a user to be a logged in as an admin user for access</p>
