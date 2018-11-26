@@ -9,6 +9,7 @@ export default class Container extends Component {
     this.state = {
       treasures: {},
     };
+    this.addMyTreasure = this.addMyTreasure.bind(this);
   }
 
   componentDidUpdate(prevProps) {
@@ -29,8 +30,13 @@ export default class Container extends Component {
     // axios GET to /api/treasure/user here
   }
 
-  addMyTreasure() {
-    // axios POST to /api/treasure/user here
+  addMyTreasure(newMyTreasure) {
+    this.setState({
+      treasures: {
+        ...this.state.treasures,
+        user: newMyTreasure,
+      },
+    });
   }
 
   render() {
@@ -57,7 +63,7 @@ export default class Container extends Component {
               {this.props.user.username}
               's treasure
             </h1>
-            <Treasure treasure={user} />
+            <Treasure treasure={user} addMyTreasure={this.addMyTreasure} />
           </div>
         ) : (
           <div className="treasureBox">
