@@ -13,15 +13,19 @@ export default class AddTreasure extends Component {
   }
 
   addTreasure() {
-    // post to add treasure
-
-    }
+    // post to /api/treasure/user here
+  }
 
   render() {
     return (
       <div className="addTreasure">
-        <input type="text" placeholder="Add image URL" onChange={this.handleInput} value={this.state.treasureURL} />
-        <button onClick={() => {}}>Add</button>
+        <input
+          type="text"
+          placeholder="Add image URL"
+          onChange={e => this.handleInput(e)}
+          value={this.state.treasureURL}
+        />
+        <button onClick={() => this.addTreasure()}>Add</button>
       </div>
     );
   }
