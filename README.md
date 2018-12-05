@@ -1,5 +1,8 @@
 <img src="https://s3.amazonaws.com/devmountain/readme-logo.png" width="250" align="right">
 
+# Todo 
+[ ] - change column name from isadmin to is_admin
+
 # Bcrypt Dragon's Lair
 
 The purpose of this project is to implement secure password authentication using the Bcrypt library. Bcrypt is used to salt and hash user passwords, so that we avoid storing plain-text passwords in the database. We will also practice front to back data transmission, from axios calls on the front-end, to express endpoints on the server, to SQL commands in the database. 
@@ -20,7 +23,7 @@ At this point the app should load in the browser and you should see the view of 
 
 <img src="./readme_assets/main-view.png" alt="main view">
 
-## Step 1
+## Step X - Server (initial setup)
 
 ### Summary
 
@@ -57,7 +60,8 @@ const express = require('express');
 const session = require('express-session');
 const massive = require('massive');
 const bodyParser = require('body-parser');
-const app = express();
+const ac = require('./controllers/authController');
+
 const PORT = 4000;
 
 app.use(bodyParser.json());
@@ -69,7 +73,7 @@ app.listen(PORT, ()=>console.log(`Listening on port ${PORT}))
 
 <br />
 
-## Step 2
+## Step X - Server (DB Setup)
 
 ### Summary
 
@@ -111,258 +115,97 @@ SESSION_SECRET=asdfa12341234
 
 </details>
 <details>
-<summary><code> server.index.js </code></summary>
+<summary><code> server/index.js </code></summary>
 
 ```js
-const { CONNECTION_STRING, SESSION_SECRET } = process.env
+require('dotenv').config();
+const express = require('express');
+const session = require('express-session');
+const massive = require('massive');
+const bodyParser = require('body-parser');
+const ac = require('./controllers/authController');
 
-app.use(session({
+const PORT = 4000;
+
+const { SESSION_SECRET, CONNECTION_STRING } = process.env;
+
+const app = express();
+
+app.use(bodyParser.json());
+
+massive(CONNECTION_STRING).then(db => {
+  app.set('db', db);
+  console.log('db connected');
+});
+
+app.use(
+  session({
     resave: true,
     saveUninitialized: false,
-    secret: SESSION_SECRET
-}))
-massive(CONNECTION_STRING).then(db => {
-    app.set('db', db);
-})
+    secret: SESSION_SECRET,
+  })
+);
+
+app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+
 ```
 
 </details>
 
-## Step 3
+## Step X - Register (Backend)
 
 ### Summary
 
-Here we will program the register and log-in functionality. The user will be able to submit a name and password, and select whether they are registering as an admin or not. 
-
-### Instructions
-
-Open App.js. There is a user object on state, which needs to be updated with a method, and both the method and the value need to be passed as props to the Header component. 
-
-* Program the updateUser method to update state.user with a parameter called user.
-* Bind this method in the constructor, so that it will have the right this-context.
-* Pass updateUser and this.state.user as props to the Header component.
-* Pass this.state.user as a prop to the Container component.
-
-Open Header.js. Here we will program the handleUsernameInput and handlePasswordInput methods to store what the user types on state.
-
-* Program the handleUsernameInput method to take an event object, and store the value on this.state.username
-    * To do this, use setState, and the value is stored on event.target.value
-* Do the same for handlePasswordInput method, but this time, it should update the password value on state.
-* Now set these methods as onChange functions for the appropriate input boxes in the login container.
-    * Use an arrow function for the onChange value, to bind these methods.
-
-Now we need to allow the user to select whether they are creating an admin account or not. There is a checkbox for this in the login component. 
-
-* The toggleAdmin method should setState for isAdmin to be the opposite value of this.state.isAdmin. 
-    * use `!this.state.isAdmin` as the new value
-* Set the onChange value for the checkbox input to be this method, wrapped in an arrow function to bind it.  
-
-Now that we are storing these values, we can program the login and register functions. These will both be POST requests that send the username, password and isAdmin values from state. 
-
-* Install and import axios.
-* Program the login method to send a POST request to '/auth/login'. Send an object with username and password from state.
-    * Destructure username and password from state.
-    * In the .then of the axios request, set username and password on state to empty strings, using setState. 
-    * Also in the .then, invoke this.props.updateUser passing in an object with properties username and isAdmin, so that we can update the user object on App.js.
-    * Make sure to bind this method in the constructor.
-
-* Program the register method to send a POST request to '/auth/register', with an object with username, password and isAdmin values from state.
-    * Destructure username, password, and isAdmin from state.
-    * In the .then of the axios request, set username and password on state to empty strings, using setState.
-    * Also in the .then, invoke this.props.updateUser passing in and object with properties username and isAdmin, so that we can update the user object on App.js.
-    * Bind this method in the constructor
-
-* Program the logout method to send a GET request to '/auth/logout'.
-* Bind the logout method in the constructor.
-* In the .then, invoke this.props.updateUser passing in an empty object, to reset the user object on App.js state.
-
-### Solution
-
-<details><summary><code> src/App.js </code></summary>
-
-```js
-// bind the method in the constructor
-this.updateUser = this.updateUser.bind(this);
-// write the method functionality
-updateUser(user) {
-    this.setState({ user })
-}
-// pass props
-<Header updateUser={this.updateUser} user={this.state.user}/>
-<Container user={this.state.user}>
-```
-
-</details>
-<details><summary><code> src/Components/Header.js </code></summary>
-
-```js
-// bind methods in constructor
-this.login = this.login.bind(this);
-this.logout = this.logout.bind(this);
-this.register = this.register.bind(this);
-// ...
-handleUsernameInput(event) {
-    this.setState({username: event.target.value})
-} 
-handlePasswordInput(event) {
-    this.setState({password: event.target.value})
-}
-toggleAdmin() {
-    this.setState({isAdmin: !this.state.isAdmin})
-}
-login() {
-    const { username, password } = this.state;
-    axios.post('/auth/login', { username, password })
-         .then( () => {
-             this.setState({
-                 username: '',
-                 password: ''
-             })
-             this.props.updateUser({username, isAdmin})
-         })
-}
-logout() {
-    axios.get('/auth/logout').then(()=>{
-        this.props.updateUser({})
-    })
-}
-register() {
-    const { username, password, isAdmin } = this.state;
-    axios.post('/auth/register', { username, password, isAdmin })
-         .then( ()=> {
-             this.setState({
-                 username: '',
-                 password: ''
-             })
-             this.props.updateUser({username, isAdmin})
-         })
-}
-
-// username input box 
-
-<input type="text" placeholder="Username" value={username} onChange={e=>this.handleUsernameInput(e)}/>
-
-// password input box
-
-<input type="password" placeholder="Password" value={password} onChange={e=>this.handlePasswordInput(e)}/>
-
-// admin checkbox
-
-<input type="checkbox" id="adminCheckbox" onChange={()=>this.toggleAdmin()}/>
-```
-
-</details>
-
-## Step 4
-
-### Summary
-
-Here we will create the server endpoints for login, register and logout. We will create an auth controller file and import the bcryptjs package here.
+Here We will create an auth controller file and import the bcryptjs package here. We will also build the server endpoint that we will use to register a new user.
 
 ### Instructions
 
 * Create a folder called controllers in server.
 * Create a file called authController.js in controllers. 
 * Open `server/index.js` and require the authController.js file storing it on a const variable called ac.
-* Create a POST endpoint with url '/auth/login' and method ac.login
-
-
-
-* Go back to authController.js and install and require `bcryptjs`. Store it on a const variable called bcrypt. 
-    * This package allows us to hash and salt passwords.
-* Set module.exports equal to an object. 
-    * On this object we will create our auth endpoint functions
-
-The login endpoint function
-
-* Create a property called login, with the value of an async function that takes a req and res parameter.
-* Destructure username and password from req.body, storing them on const variables. 
-* Get the database instance using req.app.get('db')
-* Using the `get_user` SQL file, query the database for a user with a username matching the username from req.body.
-* Store the result of the SQL query on a const variable called user. 
-    * Remember that SQL queries come back in an array, so take the first item of the result to be your user variable. 
-* If there is not user found, send a response with status 401, and the string 'User  not found. Please register as a new user before loggin in.'
-* Otherwise, create a const variable called isAuthenticated and set it equal to `bcrypt.compareSync(password, user.hash)`
-* If isAuthenticated is false, send a response with status code 403, and the string 'Incorrect password'.
-* Otherwise, set req.session.user to be the user record that was retrieved from the database. 
-* Then send req.session.user as a response with status code 200.
-
-<details><summary><code> login function </code></summary>
-
-```js
-login: async (req, res) => {
-  const { username, password } = req.body;
-  const foundUser = await req.app.get('db').get_user([username]);
-  const user = foundUser[0];
-  if (!user) {
-      return res.status(401).send('User not found. Please register as a new user before logging in.');
-  }
-  const isAuthenticated = bcrypt.compareSync(password, user.hash);
-  if (!isAuthenticated) {
-      return res.status(403).send('Incorrect password');
-  }
-  req.session.user = { isAdmin: user.isadmin, id: user.id, username: user.username };
-  return res.send(req.session.user);
-}
-```
-
-</details>
-
-The register endpoint function
 
 * In server/index.js we will create the register endpoint. 
-* Create a POST endpoint with url '/auth/register' and method ac.register
+* Create a POST endpoint with '/auth/register' as the URL and ac.register as the controller function.
 
-* Go back to authController.js and create a register method with parameters req and res.
+* Go back to authController.js and create a register method with parameters req and res. We will use `async` and `await`, so make sure to use the `async` keyword before defining your function.
 * Destructure username, password and isAdmin from req.body.
-* Get the database instance and run the sql file `check_existing_user`, passing in username.
+* Get the database instance and run the sql file `get_user`, passing in username. This query will check the database to see if there if the username is already taken. Since this query is asynchronous, make sure to use the await keyword to ensure that the promise resolves before the rest of the code executes. 
 * If existingUser is defined, send a response with status 409 and the text 'Username taken');
 * Otherwise, create a const variable called salt, equal to `bcrypt.genSaltSync(10)`.
 * Create a const variable called hash, equal to `bcrypt.hashSync(password, salt)`.
-* Asynchronously (using await) run the register_user SQL file, passing in isAdmin, username, and hash as parameters.
+* Asynchronously (using await) run the register_user SQL file, passing in isAdmin, username, and hash as parameters (in that order).
     * Remember that SQL function parameters should be passed in as an array.
 * Set the value of this SQL query to a variable called user.
     * It will come as an array, and we just need the first element in the array. 
-* Set req.session.user to be an object with properties isAdmin, id, and username, equal to user.isadmin, user.id, and user.username. 
+* Set req.session.user to be an object with properties isAdmin, id, and username, equal to user.is_admin, user.id, and user.username.
+* Now let's test our endpoint with postman. 
+    * Open postman and enter `http://localhost:4000/auth/register` in the URL input and send the following as raw JSON on the body of your request:
 
-<details><summary><code> register function </code></summary>
+<details><summary>Postman JSON Body - Register</summary>
 
-```js
-register: async (req, res) => {
-    const { username, password, isAdmin } = req.body;
-    const existingUser = await req.app.get('db').check_existing_user([username]);
-    if (existingUser[0]) {
-      return res.status(409).send('Username taken');
-    }
-    const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(password, salt);
-    const createdUser = await req.app.get('db').register_user([isAdmin, username, hash]);
-    const user = createdUser[0];
-    req.session.user = { isAdmin: user.isadmin, id: user.id, username: user.username };
-    return res.status(200).send(req.session.user);
-  }
-```
-
-</details>
-
-The logout endpoint function
-
-* Go to server/index.js and create a GET endpoint with url '/auth/logout' and method ac.logout
-
-* Go back to authController.js and create a logout property with the value of an async function with parameters req and res
-* This function should run req.session.destroy()
-* Then send a response with a status of 200.
-
-<details><summary><code> logout function </code></summary>
-
-```js
-logout: (req, res) => {
-  req.session.destroy();
-  return res.sendStatus(200);
+```json
+{
+  "username": "mrsmee",
+  "password": "1stM84Lyfe",
+  "isAdmin": false
 }
+
 ```
 
 </details>
+
+You should receive the following as a response if your request was successful. If nothing went wrong, we have now registered a non-admin user and you should be able to see the new user in the `users` table of your database.
+
+<details><summary>Postman JSON Response - Register</summary>
+
+```json
+{
+  "isAdmin": false,
+  "username": "mrsmee",
+  "id": 4
+}
+
+```
 
 ### Solution
 
@@ -372,130 +215,712 @@ logout: (req, res) => {
 const bcrypt = require('bcryptjs');
 
 module.exports = {
+  register: async (req, res) => {
+    const { username, password, isAdmin } = req.body;
+    const db = req.app.get('db');
+    const result = await db.get_user([username]);
+    const existingUser = result[0];
+    if (existingUser) {
+      return res.status(409).send('Username taken');
+    }
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync(password, salt);
+    const registeredUser = await db.register_user([isAdmin, username, hash]);
+    const user = registeredUser[0];
+    req.session.user = { isAdmin: user.is_admin, username: user.username, id: user.id };
+    return res.send(req.session.user);
+  },
+};
+```
+
+</details>
+
+<details><summary><code> server/index.js </code></summary>
+
+```js
+require('dotenv').config();
+const express = require('express');
+const session = require('express-session');
+const massive = require('massive');
+const bodyParser = require('body-parser');
+const ac = require('./controllers/authController');
+
+const PORT = 4000;
+
+const { SESSION_SECRET, CONNECTION_STRING } = process.env;
+
+const app = express();
+
+app.use(bodyParser.json());
+
+massive(CONNECTION_STRING).then(db => {
+  app.set('db', db);
+  console.log('db connected');
+});
+
+app.use(
+  session({
+    resave: true,
+    saveUninitialized: false,
+    secret: SESSION_SECRET,
+  })
+);
+
+app.post('/auth/register', ac.register);
+
+app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+```
+</details>
+
+</details>
+
+## Step X - Register (Frontend)
+
+### Summary
+
+In this step, we will add logic to our front end that will interact with the register endpoint that we just created. By the end of this step, a new user will be able to register for the application using the form inputs in the header.
+
+### Instructions
+
+Since the user object is stored on state in `App.js`, but the input boxes and the methods that update state with their value are stored in `Header.js`, we will make the HTTP request in `Header.js` and call a method passed as a prop from `App.js` with the response from the request as an argument.
+
+* Open `Header.js`
+* Install and import axios.
+* In the `register` method, use axios to send a POST request to `/auth/register`.
+    * Destructure `username`, `password`, and `isAdmin` properties from state.
+    * Send along an object with `username`, `password`, and `isAdmin` properties with the correct values from state as the body of the request.
+    * In the .then of the axios request, set username and password on state to empty strings, using setState. 
+    * Also in the .then, invoke this.props.updateUser passing in the response data from our request, so that we can update the user object on App.js.
+    * Chain a `.catch` onto the `.then` method with a callback function that contains the error as a parameter, and `alert` the `response.request.response`. Unfortunately, that path is the only way to get access to the error string that we sent as a response if the status code is not a 200. Dont forget to clear the input boxes using `setState` as well. 
+    ```js
+    .catch(err => {
+        this.setState({ username: '', password: '' })
+        alert(err.response.request.response)
+    })
+    ```
+    * Test your application by entering a username and a password and clicking the register button. The header should switch to display a welcome message and a logout button. The logout button shouldn't work yet, so to test the error handling of our endpoint, refresh the page to get the input boxes back.
+    * Try registering again with the same username. You should see an alert that says 'Username taken'.
+    
+<img src="./readme_assets/after-register.gif" alt="main view">
+
+### Solution
+
+<details><summary><code>src/Components/Header/Header.js</code></summary>
+
+```js
+import React, { Component } from 'react';
+import './Header.css';
+import axios from 'axios';
+
+export default class Header extends Component {
+  constructor() {
+    super();
+    this.state = {
+      username: '',
+      password: '',
+      isAdmin: false,
+    };
+    this.register = this.register.bind(this);
+    this.login = this.login.bind(this);
+    this.logout = this.logout.bind(this);
+  }
+
+  handleUsernameInput(value) {
+    this.setState({ username: value });
+  }
+
+  handlePasswordInput(value) {
+    this.setState({ password: value });
+  }
+
+  toggleAdmin() {
+    const { isAdmin } = this.state;
+    this.setState({ isAdmin: !isAdmin });
+  }
+
+  login() {
+    // create POST request to login endpoint
+  }
+
+  register() {
+    const { username, password, isAdmin } = this.state;
+    axios
+      .post('/auth/register', { username, password, isAdmin })
+      .then(user => {
+        this.setState({ username: '', password: '' });
+        this.props.updateUser(user.data);
+      })
+      .catch(err => {
+        this.setState({ username: '', password: '' });
+        alert(err.response.request.response);
+      });
+  }
+
+  logout() {
+    // GET request to logout
+  }
+
+  render() {
+    const { username, password } = this.state;
+    const { user } = this.props;
+    return (
+      <div className="Header">
+        <div className="title">Dragon's Lair</div>
+        {user.username ? (
+          <div className="welcomeMessage">
+            <h4>{user.username}, welcome to the dragon's lair</h4>
+            <button type="submit" onClick={this.logout}>
+              Logout
+            </button>
+          </div>
+        ) : (
+          <div className="loginContainer">
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={e => this.handleUsernameInput(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={e => this.handlePasswordInput(e.target.value)}
+            />
+            <div className="adminCheck">
+              <input type="checkbox" id="adminCheckbox" onChange={() => this.toggleAdmin()} /> <span> Admin </span>
+            </div>
+            <button onClick={this.login}>Log In</button>
+            <button onClick={this.register} id="reg">
+              Register
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  }
+}
+
+
+```
+
+</details>
+
+
+## Step X - Login (Backend)
+
+### Summary
+
+Now that we are successfully able to register, lets create the login endpoint so an existing user can now log in. 
+
+### Instructions
+
+This endpoint will take a username and password off of the body and check if there is a user already exists by that username in the database. If the user is not in the database, our endpoint should respond with a 401 status code (unauthorized) since we were not able to authorize the user based on the fact that the username isn't registered. The endpoint should then compare the plain text password sent by the user to the salted and hashed version in our database. At that point, the endpoint should respond with a 200 (OK) status code if the password matches, or a 403 (Forbidden) status code if the password doesn't match.
+
+* In server/index.js we will create the login endpoint. 
+* Create a POST endpoint with '/auth/login' as the URL and ac.login as the controller function.
+
+* Create a property called login on the `authController` exports object, with the value of an async function that takes a req and res parameter.
+* Destructure username and password from req.body, storing them on const variables. 
+* Get the database instance using req.app.get('db')
+* Using the `get_user` SQL file, query the database for a user with a username matching the username from req.body. Make sure to use the `await` keyword to ensure the promise resolves before referencing the data.
+* Store the result of the SQL query on a const variable called foundUser. 
+    * Remember that SQL queries come back in an array, so take the first item of the foundUser array and set it to another const variable called `user`. 
+* If there is no user found, send a response with status 401, and the string 'User  not found. Please register as a new user before logging in.'
+* Otherwise, create a const variable called isAuthenticated and set it equal to `bcrypt.compareSync(password, user.hash)`. This method compares the password entered by the user at login to the hashed and salted version stored in the database.
+* If isAuthenticated is false, send a response with status code 403, and the string 'Incorrect password'.
+* Otherwise, set req.session.user to be on object with the same properties as the user object from the register endpoint, but using the data retreived from the `get_user` query. 
+* Then send `req.session.user` as a response with status code 200.
+* Now test your endpoint with postman. Paste the following into the body section of the request as raw JSON.
+
+<details><summary> Postman JSON Body - Login </summary>
+
+```json
+{
+	"username": "mrsmee",
+	"password": "1stM84Lyfe"
+}
+```
+
+</details>
+
+You should receive the following response.
+
+
+<details><summary>Postman Response - Login</summary>
+
+```json
+{
+	"username": "mrsmee",
+	"password": "1stM84Lyfe"
+}
+```
+
+</details>
+
+Also, try modifying the password so that it is incorrect. You should receive `Incorrect password` as a response.
+
+### Solution
+
+<details><summary><code> server/controllers/authController.js </code></summary>
+
+```js
+const bcrypt = require('bcryptjs');
+
+module.exports = {
+  register: async (req, res) => {
+    const { username, password, isAdmin } = req.body;
+    const db = req.app.get('db');
+    const result = await db.get_user([username]);
+    const existingUser = result[0];
+    if (existingUser) {
+      return res.status(409).send('Username taken');
+    }
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync(password, salt);
+    const registeredUser = await db.register_user([isAdmin, username, hash]);
+    const user = registeredUser[0];
+    req.session.user = { isAdmin: user.is_admin, username: user.username, id: user.id };
+    return res.send(req.session.user);
+  },
+
   login: async (req, res) => {
     const { username, password } = req.body;
     const foundUser = await req.app.get('db').get_user([username]);
     const user = foundUser[0];
     if (!user) {
-      return res.status(401).send('User not found. Please register as a new user before logging in.');
+      return res.status(401).send('User  not found. Please register as a new user before loggin in.');
     }
     const isAuthenticated = bcrypt.compareSync(password, user.hash);
     if (!isAuthenticated) {
       return res.status(403).send('Incorrect password');
     }
-    req.session.user = { isAdmin: user.isadmin, id: user.id, username: user.username };
+    req.session.user = { isAdmin: user.is_admin, id: user.id, username: user.username };
     return res.send(req.session.user);
   },
+};
+```
 
+</details>
+
+<details><summary><code> server/index.js </code></summary>
+
+```js
+require('dotenv').config();
+const express = require('express');
+const session = require('express-session');
+const massive = require('massive');
+const bodyParser = require('body-parser');
+const ac = require('./controllers/authController');
+
+const PORT = 4000;
+
+const { SESSION_SECRET, CONNECTION_STRING } = process.env;
+
+const app = express();
+
+app.use(bodyParser.json());
+
+massive(CONNECTION_STRING).then(db => {
+  app.set('db', db);
+  console.log('db connected');
+});
+
+app.use(
+  session({
+    resave: true,
+    saveUninitialized: false,
+    secret: SESSION_SECRET,
+  })
+);
+
+app.post('/auth/register', ac.register);
+app.post('/auth/login', ac.login);
+
+app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+```
+</details>
+
+
+
+## Step X - Login (FrontEnd)
+
+### Summary
+
+Now that we are successfully able to register, lets create the login endpoint so an existing user can now log in. 
+
+### Instructions
+
+* Open `src/Components/Header/Header.js`. 
+* Our `login()` method is connected to the login button's onClick event handler, we just need to complete the logic that will make the POST request to our server's login endpoint.
+* Begin by destructuring the `username` and `password` values from state.
+* Use axios to make a POST request to `/auth/login` with a body object with the `username` and `password` values from state.
+* Chain a `.then` onto the end of the `.post` method and provide a function that takes in a parameter called user. 
+* The `Header` component has access to an `updateUser` method passed as a prop from the `App` component that will update the `user` property on state in `App`. Execute the `updateUser` method from props with `user.data` as an argument. 
+* Also in the `.then`, make sure to clear the input boxes by setting the `username` and `password` properties to empty strings using `setState`.
+* Chain a `.catch` onto the `.then` with an arrow function that references the error as a parameter. 
+* Alert the error using the `alert()` function, passing in `error.response.request.response`. That chain of data leads to the string response from our server endpoint if there is an error.
+* You should now be able to test the login functionality. In your browser, enter a username and password that you have already registered, or register a new user with a memorable username and password.
+* Click Log In. You should now see the welcome message. 
+* Since the logout button doesn't work yet, refresh your browser to get the input boxes back. Try logging in with a username that hasn't been used yet. You should get an alert that says 'User  not found. Please register as a new user before loggin in.'
+* Now try logging in with a registered user, but use an incorrect password. You should see 'Incorrect password' alerted.
+
+### Solution
+<details><summary><code> src/Components/Header/Header.js </code></summary>
+
+```js
+import React, { Component } from 'react';
+import './Header.css';
+import axios from 'axios';
+
+export default class Header extends Component {
+  constructor() {
+    super();
+    this.state = {
+      username: '',
+      password: '',
+      isAdmin: false,
+    };
+    this.register = this.register.bind(this);
+    this.login = this.login.bind(this);
+    this.logout = this.logout.bind(this);
+  }
+
+  handleUsernameInput(value) {
+    this.setState({ username: value });
+  }
+
+  handlePasswordInput(value) {
+    this.setState({ password: value });
+  }
+
+  toggleAdmin() {
+    const { isAdmin } = this.state;
+    this.setState({ isAdmin: !isAdmin });
+  }
+
+  login() {
+    const { username, password } = this.state;
+    axios
+      .post('/auth/login', { username, password })
+      .then(user => {
+        this.props.updateUser(user.data);
+        this.setState({ username: '', password: '' });
+      })
+      .catch(err => alert(err.response.request.response));
+  }
+
+  register() {
+    const { username, password, isAdmin } = this.state;
+    axios
+      .post('/auth/register', { username, password, isAdmin })
+      .then(user => {
+        this.setState({ username: '', password: '' });
+        this.props.updateUser(user.data);
+      })
+      .catch(err => {
+        this.setState({ username: '', password: '' });
+        alert(err.response.request.response);
+      });
+  }
+
+  logout() {
+    // GET request to logout
+  }
+
+  render() {
+    const { username, password } = this.state;
+    const { user } = this.props;
+    return (
+      <div className="Header">
+        <div className="title">Dragon's Lair</div>
+        {user.username ? (
+          <div className="welcomeMessage">
+            <h4>{user.username}, welcome to the dragon's lair</h4>
+            <button type="submit" onClick={this.logout}>
+              Logout
+            </button>
+          </div>
+        ) : (
+          <div className="loginContainer">
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={e => this.handleUsernameInput(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={e => this.handlePasswordInput(e.target.value)}
+            />
+            <div className="adminCheck">
+              <input type="checkbox" id="adminCheckbox" onChange={() => this.toggleAdmin()} /> <span> Admin </span>
+            </div>
+            <button onClick={this.login}>Log In</button>
+            <button onClick={this.register} id="reg">
+              Register
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  }
+}
+
+```
+
+</details>
+
+
+
+## Step X - Logout (Backend)
+
+### Summary
+
+Now that our users can register and login, lets build the endpoint and controller method that will handle destroying the user session; effectively logging the user out.
+
+* Go to server/index.js and create a GET endpoint with url '/auth/logout' and method ac.logout
+
+* Go back to authController.js and create a logout property with the value of an async function with parameters req and res
+* This function should run `req.session.destroy()`. As the name implies, this destroys the data stored on the user's session object, effectively logging the user out.
+* Then send a response with a status of 200.
+* Test your endpoint with Postman. Send a GET request to `http://localhost:4000/auth/logout. You should receive `OK` as a response.
+
+
+### Solution
+
+<details><summary><code> server/index.js </code></summary>
+
+```js
+require('dotenv').config();
+const express = require('express');
+const session = require('express-session');
+const massive = require('massive');
+const bodyParser = require('body-parser');
+const ac = require('./controllers/authController');
+
+const PORT = 4000;
+
+const { SESSION_SECRET, CONNECTION_STRING } = process.env;
+
+const app = express();
+
+app.use(bodyParser.json());
+
+massive(CONNECTION_STRING).then(db => {
+  app.set('db', db);
+  console.log('db connected');
+});
+
+app.use(
+  session({
+    resave: true,
+    saveUninitialized: false,
+    secret: SESSION_SECRET,
+  })
+);
+
+app.post('/auth/register', ac.register);
+app.post('/auth/login', ac.login);
+app.get('/auth/logout', ac.logout);
+
+app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+```
+
+</details>
+
+<details><summary><code> server/controllers/authController.js </code></summary>
+
+```js
+const bcrypt = require('bcryptjs');
+
+module.exports = {
   register: async (req, res) => {
     const { username, password, isAdmin } = req.body;
-    const existingUser = await req.app.get('db').check_existing_user([username]);
-    if (existingUser[0]) {
+    const db = req.app.get('db');
+    const result = await db.get_user([username]);
+    const existingUser = result[0];
+    if (existingUser) {
       return res.status(409).send('Username taken');
     }
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
-    const createdUser = await req.app.get('db').register_user([isAdmin, username, hash]);
-    const user = createdUser[0];
-    req.session.user = { isAdmin: user.isadmin, id: user.id, username: user.username };
-    return res.status(200).send(req.session.user);
+    const registeredUser = await db.register_user([isAdmin, username, hash]);
+    const user = registeredUser[0];
+    req.session.user = { isAdmin: user.is_admin, username: user.username, id: user.id };
+    return res.send(req.session.user);
   },
+
+  login: async (req, res) => {
+    const { username, password } = req.body;
+    const foundUser = await req.app.get('db').get_user([username]);
+    const user = foundUser[0];
+    if (!user) {
+      return res.status(401).send('User  not found. Please register as a new user before loggin in.');
+    }
+    const isAuthenticated = bcrypt.compareSync(password, user.hash);
+    if (!isAuthenticated) {
+      return res.status(403).send('Incorrect password');
+    }
+    req.session.user = { isAdmin: user.is_admin, id: user.id, username: user.username };
+    return res.send(req.session.user);
+  },
+
   logout: (req, res) => {
     req.session.destroy();
     return res.sendStatus(200);
   },
 };
 
-```
 
-</details>
-<details><summary><code> server/index.js </code></summary>
-
-```js
-const ac = require('./controllers/authController.js');
-
-// endpoints
-
-app.post('/auth/register', ac.register);
-app.post('/auth/login', ac.login);
-app.get('/auth/logout', ac.logout);
 ```
 
 </details>
 
-## Step 5
+## Step X - Logout (Frontend)
 
 ### Summary
 
-Here we will program the treasure-related GET requests in Container.js. There are three methods corresponding to the three treasure hoards, namely getDragonTreasure, getAllTreasure, and getMyTreasure.
+We will now add log out functionality to our front end.
 
 ### Instructions
 
-* Program the getDragonTreasure method to make a GET request to '/api/treasure/dragon'.
-* The resulting data needs to be stored on state.treasures.dragon 
-    * Remember not to mutate the object on state directly. You may use the object spread operator.
-* Set this method as the onClick value for the See Dragon's Treasure button. Wrap it in an arrow function to bind it. 
-
-* Program the getAllTreasure method to make a GET request to '/api/treasure/all'.
-* The resulting value needs to be stored on state.treasures.all
-    * Remember not to mutate the object on state directly. You may use the object spread operator.
-* Set this method as the onClick value for the See All Treasure button. Wrap it in an arrow function to bind it.
-
-* Program the getMyTreasure method to make a GET request to '/api/treasure/user'.
-* The resulting value should be stored on state.treasures.user
-    * Remember not to mutate the object on state directly. You may use the object spread operator.
-* Set this method as the onClick value for the See My Treasure button. Wrap it in an arrow function to bind it. 
+* Open `src/Components/Header/Header.js`
+* In the `logout()` method, use axios to make a GET request to `/auth/logout`.
+* Chain a `.then` onto the end of the `.get` method. We don't need use of the response, since it is just the string 'OK' because we used the 'sendStatus' method on the backend, so just pass an arrow function without a parameter into the `.then`.
+* Once the response comes back from our GET request, we know the user is logged out. We now just need to modify the `user` object stored on state in `App.js` by calling the `updateUser` method passed through props from the `App` component with an empty object so that it clears all user data off of state.
+* Chain a `.catch` onto the `.then`. Since we don't need to alert the user of any errors, just `console.log` the error for debugging purposes.
+* Test the logout functionality by logging in, and then clicking the logout button. The header should switch from the welcome message back tot he username and password inputs.
 
 ### Solution
 
-<details><summary><code> src/components/Container.js </code></summary>
+<details><summary><code> src/components/Header.js </code></summary>
 
 ```js
-getDragonTreasure() {
-    axios.get('/api/treasure/dragon')
-         .then(res=>{
-             this.setState({
-                 treasures: { ...this.state.treasures, dragon: res.data}
-             })
-         })
-}
-getAllTreasure() {
-    axios.get('/api/treasure/all')
-         .then(res=>{
-             this.setState({
-                 treasures: { ...this.state.treasures,
-                 all: res.data}
-             })
-         })
-}
-getMyTreasure() {
-    axios.get('/api/treasure/user')
-         .then(res=>{
-             this.setState({
-                 treasures: { ...this.state.treasures,
-                 user: res.data}
-             })
-         })
+import React, { Component } from 'react';
+import './Header.css';
+import axios from 'axios';
+
+export default class Header extends Component {
+  constructor() {
+    super();
+    this.state = {
+      username: '',
+      password: '',
+      isAdmin: false,
+    };
+    this.register = this.register.bind(this);
+    this.login = this.login.bind(this);
+    this.logout = this.logout.bind(this);
+  }
+
+  handleUsernameInput(value) {
+    this.setState({ username: value });
+  }
+
+  handlePasswordInput(value) {
+    this.setState({ password: value });
+  }
+
+  toggleAdmin() {
+    const { isAdmin } = this.state;
+    this.setState({ isAdmin: !isAdmin });
+  }
+
+  login() {
+    const { username, password } = this.state;
+    axios
+      .post('/auth/login', { username, password })
+      .then(user => {
+        this.props.updateUser(user.data);
+        this.setState({ username: '', password: '' });
+      })
+      .catch(err => alert(err.response.request.response));
+  }
+
+  register() {
+    const { username, password, isAdmin } = this.state;
+    axios
+      .post('/auth/register', { username, password, isAdmin })
+      .then(user => {
+        this.setState({ username: '', password: '' });
+        this.props.updateUser(user.data);
+      })
+      .catch(err => {
+        this.setState({ username: '', password: '' });
+        alert(err.response.request.response);
+      });
+  }
+
+  logout() {
+    axios
+      .get('/auth/logout')
+      .then(() => {
+        this.props.updateUser({});
+      })
+      .catch(err => console.log(err));
+  }
+
+  render() {
+    const { username, password } = this.state;
+    const { user } = this.props;
+    return (
+      <div className="Header">
+        <div className="title">Dragon's Lair</div>
+        {user.username ? (
+          <div className="welcomeMessage">
+            <h4>{user.username}, welcome to the dragon's lair</h4>
+            <button type="submit" onClick={this.logout}>
+              Logout
+            </button>
+          </div>
+        ) : (
+          <div className="loginContainer">
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={e => this.handleUsernameInput(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={e => this.handlePasswordInput(e.target.value)}
+            />
+            <div className="adminCheck">
+              <input type="checkbox" id="adminCheckbox" onChange={() => this.toggleAdmin()} /> <span> Admin </span>
+            </div>
+            <button onClick={this.login}>Log In</button>
+            <button onClick={this.register} id="reg">
+              Register
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  }
 }
 
-// set the dragon treasure onClick value
-<button className="title" onClick={()=>this.getDragonTreasure()}>
-
-// set the all treasure onClick value
-<button className="title" onClick={()=>this.getAllTreasure()}>
-
-// set the my treasure onClick value
-<button className="title" onClick={()=>this.getMyTreasure()>
 
 ```
 
 </details>
 
-## Step 6
+
+
+
+
+
+
+
+## Step X - Get Dragon's treasure (Backend)
 
 ### Summary
 
-Here we will create another controller to handle the treasure related requests. This will be called treasureController.js and will have functions to handle the three GET requests that we wrote in the last step.
+At this point, our user can register, log in, and log out which is all well and good, but our application still hasn't done anything useful yet. In this step, we will set up a get endpoint to retrieve the dragon's treasure. This endpoint is meant to be accessible to any user of the application regardless of whether they are logged in, and regardless of whether or not they are an admin.
 
 ### Instructions
 
@@ -508,20 +933,22 @@ Here we will create another controller to handle the treasure related requests. 
 
 * Now go to server/index.js and require treasureController.js storing it on a const variable called `tc`.
 * Create a get endpoint, '/api/treasure/dragon', with the function tc.dragonTreasure.
+* Now test your endpoint in postman by making a GET request to `http://localhost:4000/api/treasure/dragon`.
+* If everything is working correctly, you should get the following for the response:
 
-* Go back to treasureController.js and create an async method called getMyTreasure with parameters req and res.
-    * This should get the database instance and run the get_my_treasure SQL file, passing in the id from req.session.user.
-    * Use the await keyword on the database query, and store the result on a variable. 
-    * Send the result of this database query as the response with status 200. 
+<details><summary>Postman Response - Get Dragon Treasure</summary>
 
-* Now go to server/index.js and create a get endpoint, '/api/treasure/user', with the function tc.getMyTreasure.
+```json
+[
+    {
+        "id": 1,
+        "image_url": "http://www.theholidayspot.com/easter/treasure_hunt/images/treasure-chest.png",
+        "user_id": 1
+    }
+]
+```
 
-* Go back to treasureController.js and create an async method called getAllTreasure with parameters req and res.
-    * This should get the database instance and run the get_all_treasure SQL file. 
-    * Use the await keyword on the database query and store the result on a variable.
-    * Send a response with the result of this database query with status 200. 
-
-* Back on server/index.js, create a get endpoint, '/api/treasure/all', with the function tc.getAllTreasure.
+</details>
 
 ### Solution
 
@@ -531,46 +958,257 @@ Here we will create another controller to handle the treasure related requests. 
 module.exports = {
   dragonTreasure: async (req, res) => {
     const treasure = await req.app.get('db').get_dragon_treasure(1);
-    return res.send(treasure);
-  },
-  getMyTreasure: async (req, res) => {
-    const { id } = req.session.user;
-    const myTreasure = await req.app.get('db').get_my_treasure([id]);
-    res.send(myTreasure);
-  },
-  addMyTreasure: async (req, res) => {
-    const { id } = req.session.user;
-    const { treasureURL } = req.body;
-    const myTreasure = await req.app.get('db').add_user_treasure([treasureURL, id]);
-    return res.status(201).send(myTreasure);
-  },
-  getAllTreasure: async (req, res) => {
-    const allTreasure = await req.app.get('db').get_all_treasure();
-    return res.send(allTreasure);
+    return res.status(200).send(treasure);
   },
 };
 
 ```
 
 </details>
-<details><summary><code> server/index.js </code></summary>
+
+
+## Step X - Get Dragon Treasure (Frontend)
+
+### Summary
+
+We will now set up our React application to request the dragon's treasure data from the back end.
+
+### Instructions
+
+* Open `src/Components/Container/Container.js`
+* Import `axios` at the top.
+* In the `getDragonTreasure()` method, make an axios GET request to `/api/treasure/dragon`.
+* Chain a `.then` and set the data from the response to the `treasures` object on state on a property called `dragon`.
+  * Make sure to use the spread operator to keep the treasures object immutable.
+* Chain a `.catch` onto the `.then` with 
+* You should now be able to open your browser and click on the 'See Dragon's Treasure' button and see an image of the treasure display.
+
+### Solution
+
+<details><summary><code> src/components/Container.js </code></summary>
 
 ```js
-const tc = require('./controllers/treasureController.js');
+import React, { Component } from 'react';
+import axios from 'axios';
+import './Container.css';
+import Treasure from '../Treasure';
 
-// endpoints
-app.get('/api/treasure/dragon', tc.dragonTreasure);
-app.get('/api/treasure/user', tc.getMyTreasure);
-app.get('/api/treasure/all', tc.getAllTreasure);
+export default class Container extends Component {
+  constructor() {
+    super();
+    this.state = {
+      treasures: {},
+    };
+    this.addMyTreasure = this.addMyTreasure.bind(this);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps !== this.props) {
+      this.setState({ treasures: {} });
+    }
+  }
+
+  getDragonTreasure() {
+    axios
+      .get('/api/treasure/dragon')
+      .then(treasure => {
+        this.setState({
+          treasures: {
+            ...this.state.treasures,
+            dragon: treasure.data,
+          },
+        });
+      })
+      .catch(error => console.log(error));
+  }
+
+  getAllTreasure() {
+    // axios GET to /api/treasure/all here
+  }
+
+  getMyTreasure() {
+    axios
+      .get('/api/treasure/user')
+      .then(treasure => {
+        this.setState({
+          treasures: {
+            ...this.state.treasures,
+            user: treasure.data,
+          },
+        });
+      })
+      .catch(error => alert(error.response.request.response));
+  }
+
+  addMyTreasure(newMyTreasure) {
+    this.setState({
+      treasures: {
+        ...this.state.treasures,
+        user: newMyTreasure,
+      },
+    });
+  }
+
+  render() {
+    const { username } = this.props.user;
+    const { dragon, user, all } = this.state.treasures;
+    return (
+      <div className="Container">
+        {dragon ? (
+          <div className="treasureBox loggedIn">
+            <h1>Dragon's treasure</h1>
+            <Treasure treasure={dragon} />
+          </div>
+        ) : (
+          <div className="treasureBox">
+            <button className="title" onClick={() => this.getDragonTreasure()}>
+              See Dragon's <br /> Treasure
+            </button>
+            <p>This treasure trove does not require a user to be logged in for access</p>
+          </div>
+        )}
+        {user && username ? (
+          <div className="treasureBox loggedIn">
+            <h1>
+              {this.props.user.username}
+              's treasure
+            </h1>
+            <Treasure treasure={user} addMyTreasure={this.addMyTreasure} />
+          </div>
+        ) : (
+          <div className="treasureBox">
+            <button className="title" onClick={() => this.getMyTreasure()} name="user">
+              See My <br /> Treasure
+            </button>
+            <p>This treasure trove requires a user to be logged in for access</p>
+          </div>
+        )}
+        {all && username ? (
+          <div className="treasureBox loggedIn">
+            <h1>All treasure</h1>
+            <Treasure treasure={all} />
+          </div>
+        ) : (
+          <div className="treasureBox">
+            <button className="title" onClick={() => this.getAllTreasure()} name="all">
+              See All <br /> Treasure
+            </button>
+            <p>This treasure trove requires a user to be a logged in as an admin user for access</p>
+          </div>
+        )}
+      </div>
+    );
+  }
+}
+
 ```
 
 </details>
 
-## Step 7
+
+
+
+## Step X - GetUserTreasure(backend)
 
 ### Summary
 
-Here we will create authentication middelware functions and apply them on the server. These will check if a user is logged in or if the user is an administrator. 
+At this point, a user should be able to register, log in, log out, and view the dragon's treasure without logging in. In this step, we will now build an endpoint for a user to view their treasure, as well as an endpoint to add new treasure to their collection. We will also write middleware that will protect these endpoint by responding with an error if a user is not logged in.
+
+### Instructions
+
+* Go to treasureController.js and create an async method called getUserTreasure with parameters req and res.
+* This should get the database instance and run the `get_my_treasure` SQL file, passing in the id from req.session.user.
+* Use the await keyword on the database query, and store the result on a variable. 
+* Send the result of this database query as the response with status 200. 
+* Now go to server/index.js and create a get endpoint, '/api/treasure/user', with the function `tc.getMyTreasure`.
+* Before we can test this endpoint, you will need to log in with postman by sending a POST request to `http://localhost:4000/auth/login` with the following raw JSON request body: 
+
+<details><summary> Postman JSON Body - Login </summary>
+
+```json
+{
+	"username": "mrsmee",
+	"password": "1stM84Lyfe"
+}
+```
+
+</details>
+
+* Now test your GET endpoint using postman by making a GET request to 'http://localhost:4000/api/treasure/user'. 
+  * You should receive `[]` as a response since the user currently has no treasure in the database.
+
+### Solution
+
+<details><summary><code> server/controllers/treasureController.js </code></summary>
+
+```js
+module.exports = {
+  dragonTreasure: async (req, res) => {
+    const treasure = await req.app.get('db').get_dragon_treasure(1);
+    return res.status(200).send(treasure);
+  },
+
+  getUserTreasure: async (req, res) => {
+    const userTreasure = await req.app.get('db').get_user_treasure([req.session.user.id]);
+    return res.status(200).send(userTreasure);
+  },
+};
+
+```
+
+</details>
+
+<details><summary><code> server/index.js </code></summary>
+
+```js
+require('dotenv').config();
+const express = require('express');
+const session = require('express-session');
+const massive = require('massive');
+const bodyParser = require('body-parser');
+const ac = require('./controllers/authController');
+const tc = require('./controllers/treasureController');
+const auth = require('./middleware/authMiddleware');
+
+const PORT = 4000;
+
+const { SESSION_SECRET, CONNECTION_STRING } = process.env;
+
+const app = express();
+
+app.use(bodyParser.json());
+
+massive(CONNECTION_STRING).then(db => {
+  app.set('db', db);
+  console.log('db connected');
+});
+
+app.use(
+  session({
+    resave: true,
+    saveUninitialized: false,
+    secret: SESSION_SECRET,
+  })
+);
+
+app.post('/auth/register', ac.register);
+app.post('/auth/login', ac.login);
+app.get('/auth/logout', ac.logout);
+
+app.get('/api/treasure/dragon', tc.dragonTreasure);
+app.get('/api/treasure/user', tc.getUserTreasure);
+
+app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+
+```
+
+</details>
+
+## Step X - GetUserTreasure(middleware)
+
+### Summary
+
+Remember how you had to first make a POST request to your `/auth/login` endpoint before testing the GET `/api/treasure/user` endpoint? Had you attempted to make the GET request to `/api/treasure/user` before hitting the login endpoint first, there would have been an error in the console because `req.session.user.id` is not defined until the user logs in. In this step, we are going to build top-level middleware that will ensure that each endpoint that requires the user to be logged in instead of getting an error in the console, our server will respond to the request with an error.
 
 ### Instructions
 
@@ -583,32 +1221,35 @@ Here we will create authentication middelware functions and apply them on the se
     * Otherwise invoke next.
 
 * In server/index.js require authMiddleware.js and store it on a const variable called auth. 
-* On the '/api/treasure/user' endpoint, apply the usersOnly middleware that we have just created.
+* On the '/api/treasure/user' endpoint, apply the usersOnly middleware that we have just created by referencing the middleware function between the endpoint path and the controller function.
+* Now test your middleware using postman. Since your server restarted as you have been developing, the server's session data has been cleared. Send a GET request to `http://localhost:4000/api/treasure/user` WITHOUT hitting the `/auth/login` endpoint first.
+  * You should see 'Please log in' as a response.
+* Now 'log in' with postman by sending a POST request to `http://localhost:4000/auth/login` with the following raw JSON request body: 
 
-* Go back to authMiddleware.js and create a second method called `adminsOnly` with parameters req, res, and next.
-* The adminsOnly function should check if isAdmin on req.session.user is true. 
-* If isAdmin is false, send a response with status 403 and the string 'You are not an admin'.
-* Otherwise, invoke next. 
+<details><summary> Postman JSON Body - Login </summary>
 
-* In server/index.js on the '/api/treasure/all' endpoint, apply the usersOnly AND adminsOnly middleware.
+```json
+{
+	"username": "mrsmee",
+	"password": "1stM84Lyfe"
+}
+```
+
+</details>
+
+* You should then test your GET endpoint again using postman by making a GET request to 'http://localhost:4000/api/treasure/user'. 
+  * You should receive `[]` as a response instead of 'Please log in'.
 
 ### Solution
+
 
 <details><summary><code> server/middleware/authMiddleware.js </code></summary>
 
 ```js
 module.exports = {
   usersOnly: (req, res, next) => {
-    const { user } = req.session;
-    if (!user) {
+    if (!req.session.user) {
       return res.status(401).send('Please log in');
-    }
-    next();
-  },
-  adminsOnly: (req, res, next) => {
-    const { isAdmin } = req.session.user;
-    if (!isAdmin) {
-      return res.status(403).send('You are not an admin');
     }
     next();
   },
@@ -617,112 +1258,311 @@ module.exports = {
 ```
 
 </details>
+
 <details><summary><code> server/index.js </code></summary>
 
 ```js
-const auth = require('./middleware/authMiddleware.js');
+require('dotenv').config();
+const express = require('express');
+const session = require('express-session');
+const massive = require('massive');
+const bodyParser = require('body-parser');
+const ac = require('./controllers/authController');
+const tc = require('./controllers/treasureController');
+const auth = require('./middleware/authMiddleware');
 
-// endpoints
-app.get('/api/treasure/user', auth.usersOnly, tc.getMyTreasure);
-app.get('/api/treasure/all', auth.usersOnly, auth.adminsOnly, tc.getAllTreasure);
+const PORT = 4000;
+
+const { SESSION_SECRET, CONNECTION_STRING } = process.env;
+
+const app = express();
+
+app.use(bodyParser.json());
+
+massive(CONNECTION_STRING).then(db => {
+  app.set('db', db);
+  console.log('db connected');
+});
+
+app.use(
+  session({
+    resave: true,
+    saveUninitialized: false,
+    secret: SESSION_SECRET,
+  })
+);
+
+app.post('/auth/register', ac.register);
+app.post('/auth/login', ac.login);
+app.get('/auth/logout', ac.logout);
+
+app.get('/api/treasure/dragon', tc.dragonTreasure);
+app.get('/api/treasure/user', auth.usersOnly, tc.getUserTreasure);
+
+app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+
 ```
 
 </details>
 
-## Step 8
+## Step X - GetUserTreasure(frontend)
 
 ### Summary
 
-Here we will add the functionality for a user to be able to add new treasure to their hoard. 
+Now that our `getUserTreasure` endpoint is now working, we will now code the front end to request the user's treasure data from the server.
 
 ### Instructions
 
-* In the Container component there is a method called addMyTreasure. This needs to update state.treasures.user to be a value passed in as an argument to the method.
-* Bind this method in the constructor. 
-* Pass this method as a prop to the Treasure component, which we are rendering below. 
+* Open `src/Components/Container/Container.js`
+* In the `getMyTreasure()` method, use axios to make a GET request to `/api/treasure/user`.
+    * Chain a `.then` on to the end of the `.get` method and provide an arrow function with `treasure` as a parameter.
+    * Call `this.setState` and pass in an object with a `treasures` property with the value of an object.
+    * Inside that object, make sure to spread the current properties and values of `this.state.treasures` before setting the `user` property to `treasure.data`.
+* Chain a `.catch` on to the `.then` that takes an arrow function with `error` as a parameter and using an `alert()`, alerts `error.response.request.response`. This will alert the message that we respond with on the server. 
+* You should now test your application by doing the following.
+    * Open your browser.
+    * Log in
+    * Click the 'See My Treasure' button.
+    * You should now see the panel change to display '<your username>'s treasure and an input box with an 'add' button next to it.
 
-* In the Treasure component, pass props.addMyTreasure as a prop to the AddTreasure component.
-    * AddTreasure is conditionally rendered, depending upon whether the addMyTreasure prop was passed to it.
-
-* In the AddTreasure component there is a method called addTreasure. This needs to be the onClick value for the Add button. 
-* This method should make a POST request to '/api/treasure/user', with an object containing the treasureURL value from state. Be sure to import axios at the top.
-* Then, in the .then, call this.props.addMyTreasure passing in res.data, and setState with treasureURL set to an empty string. 
 
 ### Solution
 
-<details><summary><code> Container.js </code></summary>
+
+<details><summary><code> src/Components/Container/Container.js</code></summary>
 
 ```js
-addMyTreasure (addedTreasure) {
+import React, { Component } from 'react';
+import axios from 'axios';
+import './Container.css';
+import Treasure from '../Treasure';
+
+export default class Container extends Component {
+  constructor() {
+    super();
+    this.state = {
+      treasures: {},
+    };
+    this.addMyTreasure = this.addMyTreasure.bind(this);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps !== this.props) {
+      this.setState({ treasures: {} });
+    }
+  }
+
+  getDragonTreasure() {
+    axios
+      .get('/api/treasure/dragon')
+      .then(treasure => {
+        this.setState({
+          treasures: {
+            ...this.state.treasures,
+            dragon: treasure.data,
+          },
+        });
+      })
+      .catch(error => console.log(error));
+  }
+
+  getAllTreasure() {
+    // axios GET to /api/treasure/all here
+  }
+
+  getMyTreasure() {
+    axios
+      .get('/api/treasure/user')
+      .then(treasure => {
+        this.setState({
+          treasures: {
+            ...this.state.treasures,
+            user: treasure.data,
+          },
+        });
+      })
+      .catch(error => alert(error.response.request.response));
+  }
+
+  addMyTreasure(newMyTreasure) {
     this.setState({
-        treasures: {...this.state.treasures}, user: addedTreasure
-    })
+      treasures: {
+        ...this.state.treasures,
+        user: newMyTreasure,
+      },
+    });
+  }
+
+  render() {
+    const { username } = this.props.user;
+    const { dragon, user, all } = this.state.treasures;
+    return (
+      <div className="Container">
+        {dragon ? (
+          <div className="treasureBox loggedIn">
+            <h1>Dragon's treasure</h1>
+            <Treasure treasure={dragon} />
+          </div>
+        ) : (
+          <div className="treasureBox">
+            <button className="title" onClick={() => this.getDragonTreasure()}>
+              See Dragon's <br /> Treasure
+            </button>
+            <p>This treasure trove does not require a user to be logged in for access</p>
+          </div>
+        )}
+        {user && username ? (
+          <div className="treasureBox loggedIn">
+            <h1>
+              {this.props.user.username}
+              's treasure
+            </h1>
+            <Treasure treasure={user} addMyTreasure={this.addMyTreasure} />
+          </div>
+        ) : (
+          <div className="treasureBox">
+            <button className="title" onClick={() => this.getMyTreasure()} name="user">
+              See My <br /> Treasure
+            </button>
+            <p>This treasure trove requires a user to be logged in for access</p>
+          </div>
+        )}
+        {all && username ? (
+          <div className="treasureBox loggedIn">
+            <h1>All treasure</h1>
+            <Treasure treasure={all} />
+          </div>
+        ) : (
+          <div className="treasureBox">
+            <button className="title" onClick={() => this.getAllTreasure()} name="all">
+              See All <br /> Treasure
+            </button>
+            <p>This treasure trove requires a user to be a logged in as an admin user for access</p>
+          </div>
+        )}
+      </div>
+    );
+  }
 }
 
-// pass prop to the user's treasure component
-<Treasure treasure={user}
-addMyTreasure={this.addMyTreasure} />
 ```
 
 </details>
+ 
 
-<details><summary><code> Treasure.js </code></summary>
-
-```js
-{props.addMyTreasure ? 
-    <AddTreasure addMyTreasure={props.addMyTreasure}
-    : null
-}
-```
-
-</details>
-
-<details><summary><code> AddTreasure.js </code></summary>
-
-```js
-addTreasure () {
-    const { treasureURL } = this.state;
-    axios.post('/api/treasure/user', { treasureURL })
-         .then(res => {
-             this.props.addMyTreasure(res.data)
-             this.setState({ treasureURL: ''})
-         })
-}
-
-// add the onclick to the add button
-<button onClick={()=>this.addTreasure()}> Add </button>
-```
-
-</details>
-
-## Step 9
+## Step X - AddUserTreasure(backend)
 
 ### Summary
 
-Here we need to finish programming the add treasure functionality on the server side. We will need to create a controller function and a POST endpoint for '/api/treasure/user'. We will need to apply the correct authentication middleware to this endpoint, so that it only works for logged-in users. 
+Now we will code the add treasure functionality on the server side. We will need to create a controller function and a POST endpoint for '/api/treasure/user'. We will need to apply the correct authentication middleware to this endpoint, so that it only works for logged-in users. 
 
 ### Instructions
 
-* Open the treasureController.js file and create another method called addMyTreasure. This is going to be asynchronous, so be sure to use `async` and `await`. 
+* Open the treasureController.js file and create another method called addUserTreasure. This is going to be asynchronous, so be sure to use `async` and `await`. 
 * Destructure treasureURL from req.body and id from req.session.user.
-* Get the database connection and invoke the add_user_treasure SQL file passing in treasureURL and id as arguments. 
-* Send the results of this SQL query and the response. 
+* Get the database connection and invoke the add_user_treasure SQL file passing in treasureURL and id as arguments.
+* Set the result of your query to a variable named `userTreasure`.
+* Send the results of this SQL query as the response with a 200 status code. 
 
 * Create a POST endpoint for this function in index.js.
     * The endpoint url should be '/api/treasure/user' and `tc.addMyTreasure` should be the controller function that runs when this endpoint is hit.
-* Apply the usersOnly auth middleware function between the URL path and the controller function (`tc.addMyTreasure`). 
+* Apply the usersOnly auth middleware function between the URL path and the controller function (`tc.addMyTreasure`).
+* You should now be able to test your endpoint using Postman. Note: this shouldn't work, initially because we don't have an active session, but we need to make sure it won't work if the user isn't logged in.
+    * send the following body as a POST request to `http://localhost:4000/api/treasure/user`.
+
+      <details><summary>JSON Treasure POST body</summary>
+
+      ```json
+      {
+        "treasureUrl": "https://bible2blog.files.wordpress.com/2015/06/treasurechest.png"
+      }
+      ```
+
+      </details>
+
+    * You should receive the following as a response:
+
+    ```
+    Please log in
+    
+    ```
+
+
+
+
+* Now 'log in' with postman by sending a POST request to `http://localhost:4000/auth/login` with the following raw JSON request body: 
+
+<details><summary> Postman JSON Body - Login </summary>
+
+```json
+{
+	"username": "mrsmee",
+	"password": "1stM84Lyfe"
+}
+```
+
+</details>
+
+    * You should receive the following as a response. The id on your response may be different.
+
+    ```json
+    {
+      "isAdmin": false,
+      "id": 4,
+      "username": "mrsmee"
+    }
+    ```
+
+* You should now be able to test this endpoint again by sending a POST request to 
+`http://localhost:4000/api/treasure/user`.
+
+  <details><summary>JSON Treasure POST body</summary>
+
+    ```json
+    {
+      "treasureUrl": "https://bible2blog.files.wordpress.com/2015/06/treasurechest.png"
+    }
+    ```
+
+  </details>
+
+    * You should receive the following as a response:
+
+    ```
+      [
+        {
+          "id": 4,
+          "image_url": "https://bible2blog.files.wordpress.com/2015/06/treasurechest.png",
+          "user_id": 4
+        }
+      ]
+    ```
+
 
 ### Solution
 
 <details><summary><code> treasureController.js </code></summary>
 
 ```js
-addMyTreasure: async (req, res) => {
-    const { id } = req.session.user;
+module.exports = {
+  dragonTreasure: async (req, res) => {
+    const treasure = await req.app.get('db').get_dragon_treasure(1);
+    return res.status(200).send(treasure);
+  },
+
+  getUserTreasure: async (req, res) => {
+    const userTreasure = await req.app.get('db').get_user_treasure([req.session.user.id]);
+    return res.status(200).send(userTreasure);
+  },
+
+  addUserTreasure: async (req, res) => {
     const { treasureURL } = req.body;
-    const myTreasure = await req.app.get('db').add_user_treasure([treasureURL, id]);
-    return res.status(201).send(myTreasure);
-  }
+    const { id } = req.session.user;
+    const userTreasure = await req.app.get('db').add_user_treasure([treasureURL, id]);
+    return res.status(200).send(userTreasure);
+  },
+};
+
 ```
 
 </details>
@@ -730,7 +1570,569 @@ addMyTreasure: async (req, res) => {
 <details><summary><code> server/index.js </code></summary>
 
 ```js
-app.post('/api/treasure/user', auth.usersOnly, tc.addMyTreasure);
+require('dotenv').config();
+const express = require('express');
+const session = require('express-session');
+const massive = require('massive');
+const bodyParser = require('body-parser');
+const ac = require('./controllers/authController');
+const tc = require('./controllers/treasureController');
+const auth = require('./middleware/authMiddleware');
+
+const PORT = 4000;
+
+const { SESSION_SECRET, CONNECTION_STRING } = process.env;
+
+const app = express();
+
+app.use(bodyParser.json());
+
+massive(CONNECTION_STRING).then(db => {
+  app.set('db', db);
+  console.log('db connected');
+});
+
+app.use(
+  session({
+    resave: true,
+    saveUninitialized: false,
+    secret: SESSION_SECRET,
+  })
+);
+
+app.post('/auth/register', ac.register);
+app.post('/auth/login', ac.login);
+app.get('/auth/logout', ac.logout);
+
+app.get('/api/treasure/dragon', tc.dragonTreasure);
+app.get('/api/treasure/user', auth.usersOnly, tc.getUserTreasure);
+app.post('/api/treasure/user', auth.usersOnly, tc.addUserTreasure);
+
+app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+
+```
+
+</details>
+
+
+## Step X - AddUserTreasure(frontend)
+
+### Summary
+
+Here we will make our application capable of adding new treasure from the front end.
+
+### Instructions
+
+* Open `src/Components/AddTreasure.js`.
+* In the AddTreasure component there is a method called addTreasure. This method should use `axios` to make a POST request to '/api/treasure/user', with an object containing the treasureURL value from state. Be sure to import axios at the top.
+* In the `.then`, call `this.props.addMyTreasure`, which was has been already been passed as a prop from `<Treasure />` and pass in `res.data`. Then call `this.setState` with treasureURL set to an empty string to clear the input field. 
+* Chain a `.catch` on to the `.then` and pass an arrow function referencing the `error` as a parameter that uses an `alert()` to alert `error.response.request.response`.
+* You should now be able to test your application.
+    * Log in with your username and password.
+        * You can use username: `mrsmee` and password: `1stM84Lyfe` if you would like, or register another user.
+    * Click the 'See My Treasure' button.
+    * Type a known image URL into the input box. Feel free to use `https://bible2blog.files.wordpress.com/2015/06/treasurechest.png` if you would like.
+    * You should see the image added below the input box after a short pause and the input box should clear.
+
+### Solution
+
+<details><summary><code> src/Components/AddTreasure.js </code></summary>
+
+```js
+import React, { Component } from 'react';
+import axios from 'axios';
+
+export default class AddTreasure extends Component {
+  constructor() {
+    super();
+    this.state = {
+      treasureURL: '',
+    };
+  }
+
+  handleInput(e) {
+    this.setState({ treasureURL: e.target.value });
+  }
+
+  addTreasure() {
+    const { treasureURL } = this.state;
+    axios
+      .post('/api/treasure/user', { treasureURL: treasureURL })
+      .then(res => {
+        this.props.addMyTreasure(res.data);
+        this.setState({ treasureURL: '' });
+      })
+      .catch(error => console.log(error) || alert(error.response.request.response));
+  }
+
+  render() {
+    return (
+      <div className="addTreasure">
+        <input
+          type="text"
+          placeholder="Add image URL"
+          onChange={e => this.handleInput(e)}
+          value={this.state.treasureURL}
+        />
+        <button onClick={() => this.addTreasure()}>Add</button>
+      </div>
+    );
+  }
+}
+
+```
+
+</details>
+
+
+## Step X - GetAllTreasure(backend)
+
+### Summary
+
+Now that we are able to view our treasure and add treasure to our horde, we will build the endpoint that will make it possible for an admin can view every user's treasure. 
+
+### Instructions
+
+* Go to treasureController.js and create an async method called getAllTreasure with parameters req and res.
+    * Get the database instance and run the get_all_treasure SQL file. 
+    * Use the await keyword on the database query and store the result on a variable.
+    * Send a response with the result of this database query with status 200. 
+
+* Now go to server/index.js, create a get endpoint, '/api/treasure/all', with the function tc.getAllTreasure.
+* Since we only want users that are logged in to interact with this endpoint, add the `usersOnly` middleware function  between the route path and the controller. In the next step, we will add another middleware function to ensure that will check whether the user is an admin.
+*  You should now be able to test your endpoint using Postman. Note: this shouldn't work, initially because we don't have an active session, but we need to make sure it won't work if the user isn't logged in.
+    * Send a GET request to `http://localhost:4000/api/treasure/all`.
+    * You should receive the following as a response:
+
+    ```
+    Please log in
+    
+    ```
+
+    * Now 'log in' with postman by sending a POST request to `http://localhost:4000/auth/login` with the following raw JSON request body:
+   
+    <details><summary> Postman JSON Body </summary>
+
+    ```json
+    {
+      "username": "mrsmee",
+      "password": "1stM84Lyfe"
+    }
+    ```
+
+    </details>
+
+    * Now use postman to make a GET request to `http://localhost:4000/api/treasure/all`
+        * You should now see `You are not an admin` as a response since mrsmee isn't an admin. 
+    * Now we must test the case where this endpoint is hit by a user that is an admin. 
+        * Register a new user by sending a POST request to `http://localhost:4000/auth/register` with the following raw JSON body:
+
+        <details><summary> Postman JSON Body </summary>
+
+        ```json
+        {
+          "isAdmin": true,
+          "username": "captainjack",
+          "password": "P1r@t3sLyfe"
+        }
+        ```
+
+        </details>
+
+        * You should receive the following as a response. The id on your response may be different.
+
+        ```json
+        {
+          "isAdmin": true,
+          "id": 5,
+          "username": "captainjack"
+        }
+        ```
+
+* Now that we have authenticated, we can test the endpoint to make sure it functions properly when the admin user is logged in.
+    * Send a GET request to `http://localhost:4000/api/treasure/all`
+    * You should receive an array with multiple treasure objects as a response.
+    
+    ***NOTE***: Currently, this endpoint will provide unrestricted access to all of the treasure information to any user type. In the next section we will build middleware that will protect the data from non-admin users.
+
+### Solution
+
+<details><summary><code> server/controllers/treasureController.js </code></summary>
+
+```js
+module.exports = {
+  dragonTreasure: async (req, res) => {
+    const treasure = await req.app.get('db').get_dragon_treasure(1);
+    return res.status(200).send(treasure);
+  },
+
+  getUserTreasure: async (req, res) => {
+    const userTreasure = await req.app.get('db').get_user_treasure([req.session.user.id]);
+    return res.status(200).send(userTreasure);
+  },
+
+  addUserTreasure: async (req, res) => {
+    const { treasureURL } = req.body;
+    const { id } = req.session.user;
+    const userTreasure = await req.app.get('db').add_user_treasure([treasureURL, id]);
+    return res.status(200).send(userTreasure);
+  },
+
+  getAllTreasure: async (req, res) => {
+    const allTreasure = await req.app.get('db').get_all_treasure();
+    return res.status(200).send(allTreasure)
+  }
+};
+
+```
+
+</details>
+<details><summary><code> server/index.js </code></summary>
+
+```js
+require('dotenv').config();
+const express = require('express');
+const session = require('express-session');
+const massive = require('massive');
+const bodyParser = require('body-parser');
+const ac = require('./controllers/authController');
+const tc = require('./controllers/treasureController');
+const auth = require('./middleware/authMiddleware');
+
+const PORT = 4000;
+
+const { SESSION_SECRET, CONNECTION_STRING } = process.env;
+
+const app = express();
+
+app.use(bodyParser.json());
+
+massive(CONNECTION_STRING).then(db => {
+  app.set('db', db);
+  console.log('db connected');
+});
+
+app.use(
+  session({
+    resave: true,
+    saveUninitialized: false,
+    secret: SESSION_SECRET,
+  })
+);
+
+app.post('/auth/register', ac.register);
+app.post('/auth/login', ac.login);
+app.get('/auth/logout', ac.logout);
+
+app.get('/api/treasure/dragon', tc.dragonTreasure);
+app.get('/api/treasure/user', auth.usersOnly, tc.getUserTreasure);
+app.post('/api/treasure/user', auth.usersOnly, tc.addUserTreasure);
+app.get('/api/treasure/all', auth.usersOnly, tc.getAllTreasure)
+
+app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+
+```
+
+## Step X - GetAllTreasure(middleware)
+
+### Summary
+
+Now that we have an endpoint that will retrieve treasure data for all users, we need to build a middleware function that will prevent this data from being accessed by non-admin users.
+
+### Instructions
+
+* Open `server/middleware/authMiddleware.js`
+* Create a new method on the `module.exports` object called `adminsOnly` with the properties `req`, `res`, and `next`.
+* Use an `if` statement to check if the `isAdmin` property on `req.session.user` is `false`.
+* Inside the `if` block, respond with a status of `403` and a string of 'You are not an admin'.
+* Outside of the `if` statement, call `next()`
+* Now that the middleware has been defined, go to `server/index.js` and add the find the `GET` request to `/api/treasure/all`.
+* Add the `auth.adminsOnly` middleware function after the `auth.usersOnly` middleware function, but before the `tc.getAllTreasure` controller function.
+      * This middleware function should now be able to ensure that a user is an admin before control of the request gets passed on to the final controller function.
+  * We should test our admin middleware by attempting to hit the endpoint as a user that isn't an admin. To do this, we will need to register a non-admin user.
+    * Open postman and enter `http://localhost:4000/auth/register` in the URL input and send the following as raw JSON on the body of your request:
+
+    <details><summary>Postman JSON Body - Register</summary>
+
+    ```json
+    {
+      "username": "mrsmee",
+      "password": "1stM84Lyfe",
+      "isAdmin": false
+    }
+
+    ```
+
+    </details>
+
+    You should receive the following as a response if your request was successful. Also, be sure to check your database, you should see the new user in your `users` table.
+
+    <details><summary>Postman JSON Response - Register</summary>
+
+    ```json
+    {
+      "isAdmin": false,
+      "username": "mrsmee",
+      "id": 4
+    }
+
+    ```
+  * Now that our non-admin user is registered (which also puts their data on the session), send another GET request to `http://localhost:4000/api/treasure/all`. 
+      * You should receive `You are not an admin` as a response.
+  * Now that we know our admin middleware is denying non-admins, log in as an admin by sending a POST request to `http://localhost:4000/auth/login` with the following raw JSON body:
+  
+  <details><summary> Postman JSON Body - Register </summary>
+
+    ```json
+    {
+      "username": "captainjack",
+      "password": "P1r@t3sLyfe"
+    }
+    ```
+
+  </details>
+
+      * You should receive the following response
+      ```js
+      {
+        "isAdmin": true,
+        "id": 4,
+        "username": "captainjack"
+      }
+      ```
+  * FINALLY, send a GET request to 'http://localhost:4000/api/treasure/all'.
+      * You should receive an array with several treasure objects with various `user_id` properties, since we are seeing all treasures from all users.
+
+### Solution
+
+<details><summary><code> server/index.js </code></summary>
+
+```js
+require('dotenv').config();
+const express = require('express');
+const session = require('express-session');
+const massive = require('massive');
+const bodyParser = require('body-parser');
+const ac = require('./controllers/authController');
+const tc = require('./controllers/treasureController');
+const auth = require('./middleware/authMiddleware');
+
+const PORT = 4000;
+
+const { SESSION_SECRET, CONNECTION_STRING } = process.env;
+
+const app = express();
+
+app.use(bodyParser.json());
+
+massive(CONNECTION_STRING).then(db => {
+  app.set('db', db);
+  console.log('db connected');
+});
+
+app.use(
+  session({
+    resave: true,
+    saveUninitialized: false,
+    secret: SESSION_SECRET,
+  })
+);
+
+app.post('/auth/register', ac.register);
+app.post('/auth/login', ac.login);
+app.get('/auth/logout', ac.logout);
+
+app.get('/api/treasure/dragon', tc.dragonTreasure);
+app.get('/api/treasure/user', auth.usersOnly, tc.getUserTreasure);
+app.post('/api/treasure/user', auth.usersOnly, tc.addUserTreasure);
+app.get('/api/treasure/all', auth.usersOnly, auth.adminsOnly, tc.getAllTreasure)
+
+app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+
+```
+
+</details>
+
+<details><summary><code> server/middleware/authMiddleware.js </code></summary>
+
+```js
+module.exports = {
+  usersOnly: (req, res, next) => {
+    if (!req.session.user) {
+      return res.status(401).send('Please log in');
+    }
+    next();
+  },
+
+  adminsOnly: (req, res, next) => {
+    if (!req.session.user.isAdmin) {
+      return res.status(403).send('You are not an admin');
+    }
+    next();
+  }
+};
+
+```
+
+</details>
+
+## Step X - GetAllTreasure(frontend)
+
+### Summary
+
+Now that our `getAllTreasure` endpoint is working including responding with appropriate errors if the user isn't logged in or an admin, it is now time to add the code to make the request from our front end.
+
+### Instructions
+
+* Open `src/Components/Container/Container.js`.
+* Find the `getAllTreasure` method and use `axios` to make a `GET` request to `/api/treasure/all`.
+* Chain a `.then()` on the end of .get()` method and call `this.setState()` passing in an object with a treasures property.
+    * Since all treasures including `dragon`, `user`, and `all` will be on the same object, we need to use the spread operator to add all current properties to our new object and then define a new `all` property that will be added to the end of the object.
+    * Your `setState` should look like this:
+      
+      ```js
+        this.setState({
+          treasures: {
+            ...this.state.treasures,
+            all: treasure.data,
+          },
+        });
+      ```
+* Chain a `.catch()` on to the end of the `.then()` and use an pass in an arrow function with `error` as a parameter. You should then `alert` the `error.response.request.response`.
+    * referencing `.response.request.response` on the `error` object allows us to drill down to the string response that we sent on the server.
+* Now we will test our application by attempting to click the 'See All Treasure' button under three different conditions: with no user logged in, with a non-admin logged in, and with an admin logged in.
+    * With no user logged in, you should see 'Please log in' alerted to the screen.
+    * With a non-admin user logged in, you should see `You are not an admin` alerted to the screen. Feel free to use username: `mrsmee` and  password: `1stM84Lyfe`. After you verify the alert appears, log out.
+    * With an admin user logged in, you should see multiple images appear in the all treasure section. Feel free to use username: `captainjack` password: `P1r@t3sLyfe`
+
+
+### Solution
+
+
+<details><summary><code> src/Components/Container/Container.js </code></summary>
+
+```js
+import React, { Component } from 'react';
+import axios from 'axios';
+import './Container.css';
+import Treasure from '../Treasure';
+
+export default class Container extends Component {
+  constructor() {
+    super();
+    this.state = {
+      treasures: {},
+    };
+    this.addMyTreasure = this.addMyTreasure.bind(this);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps !== this.props) {
+      this.setState({ treasures: {} });
+    }
+  }
+
+  getDragonTreasure() {
+    axios
+      .get('/api/treasure/dragon')
+      .then(treasure => {
+        this.setState({
+          treasures: {
+            ...this.state.treasures,
+            dragon: treasure.data,
+          },
+        });
+      })
+      .catch(error => console.log(error));
+  }
+
+  getAllTreasure() {
+    axios.get('/api/treasure/all')
+    .then( treasure => {
+      this.setState({
+        treasures: {
+          ...this.state.treasures,
+          all: treasure.data
+        }
+      })
+    }).catch( error => alert(error.response.request.response))
+  }
+
+  getMyTreasure() {
+    axios
+      .get('/api/treasure/user')
+      .then(treasure => {
+        this.setState({
+          treasures: {
+            ...this.state.treasures,
+            user: treasure.data,
+          },
+        });
+      })
+      .catch(error => alert(error.response.request.response));
+  }
+
+  addMyTreasure(newMyTreasure) {
+    this.setState({
+      treasures: {
+        ...this.state.treasures,
+        user: newMyTreasure,
+      },
+    });
+  }
+
+  render() {
+    const { username } = this.props.user;
+    const { dragon, user, all } = this.state.treasures;
+    return (
+      <div className="Container">
+        {dragon ? (
+          <div className="treasureBox loggedIn">
+            <h1>Dragon's treasure</h1>
+            <Treasure treasure={dragon} />
+          </div>
+        ) : (
+          <div className="treasureBox">
+            <button className="title" onClick={() => this.getDragonTreasure()}>
+              See Dragon's <br /> Treasure
+            </button>
+            <p>This treasure trove does not require a user to be logged in for access</p>
+          </div>
+        )}
+        {user && username ? (
+          <div className="treasureBox loggedIn">
+            <h1>
+              {this.props.user.username}
+              's treasure
+            </h1>
+            <Treasure treasure={user} addMyTreasure={this.addMyTreasure} />
+          </div>
+        ) : (
+          <div className="treasureBox">
+            <button className="title" onClick={() => this.getMyTreasure()} name="user">
+              See My <br /> Treasure
+            </button>
+            <p>This treasure trove requires a user to be logged in for access</p>
+          </div>
+        )}
+        {all && username ? (
+          <div className="treasureBox loggedIn">
+            <h1>All treasure</h1>
+            <Treasure treasure={all} />
+          </div>
+        ) : (
+          <div className="treasureBox">
+            <button className="title" onClick={() => this.getAllTreasure()} name="all">
+              See All <br /> Treasure
+            </button>
+            <p>This treasure trove requires a user to be a logged in as an admin user for access</p>
+          </div>
+        )}
+      </div>
+    );
+  }
+}
+
 ```
 
 </details>
@@ -746,3 +2148,5 @@ If you see a problem or a typo, please fork, make the necessary changes, and cre
 <p align="center">
 <img src="https://s3.amazonaws.com/devmountain/readme-logo.png" width="250">
 </p>
+
+
