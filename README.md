@@ -1,7 +1,7 @@
 <img src="https://s3.amazonaws.com/devmountain/readme-logo.png" width="250" align="right">
 
 # Todo 
-[ ] - change column name from isadmin to is_admin
+[ ] - Test babel-eslint error after `npm install` on a different machine.
 
 # Bcrypt Dragon's Lair
 
@@ -36,15 +36,15 @@ Here we will create the server file.
 * Create a folder called server on the root. 
 * Create a file called `index.js` in the server folder.
 * Install and require the following packages and store them on const variables
-    * express
-    * express-session
-    * massive
-    * body-parser
-    * dotenv
-        * When you require dotenv, immediately invoke the config method from this module.
-* Define a const variable called app equal to express invoked.
-* Define a const variable called PORT equal to 4000
-* Use the json method of the body-parser package as top level middleware.  
+    * `express`
+    * `express-session`
+    * `massive`
+    * `body-parser`
+    * `dotenv`
+        * When you require `dotenv`, immediately invoke the `config` method from this module.
+* Define a const variable called `app` equal to `express` invoked.
+* Define a const variable called `PORT` equal to 4000
+* Use the `json` method of the `body-parser` package as top level middleware.  
 * Make the server listen on this port number using app.listen
 * Run nodemon and make sure there are no bugs.
 
@@ -77,31 +77,23 @@ app.listen(PORT, ()=>console.log(`Listening on port ${PORT}))
 
 ### Summary
 
-Here we will connect the server to the database using massive. We will create a .env file on the root of the project to store our personal data such as the database connection string. We will also set up session top-level middleware. 
+Here we will connect the server to the database using massive. We will create a `.env` file on the root of the project to store our personal data such as the database connection string. We will also set up session top-level middleware. 
 
 ### Instructions
 
 Here we will create a .env file to store the database connection string.
 
 * Create a file in the root directory called `.env`
-* Store a value here called CONNECTION_STRING, the value should come from your heroku db settings.
-* Store a value here called SESSION_SECRET and make up any value for this.
-* In `index.js`, destructure CONNECTION_STRING and SESSION_SECRET from process.env, storing it on a const variable.
-* Create the database connection by invoking massive and passing in the CONNECTION_STRING. 
-* Create a .then callback function on the massive invocation, and store the resulting database connection using app.set.
-    * <details>
-
-        <summary> storing massive connection </summary> 
-
-        ```js
-        massive(CONNECTION_STRING).then(db => {
-            app.set('db', db);
-        })
-        ```
-    </details>
-* Set up session as top-level middleware by invoking app.use and passing in session invoked with a configuration object.
+* Create a new heroku database for this project. If you need help with this, ask a mentor to assist you.
+    * Store the value of your heroku database URI in a variable called `CONNECTION_STRING`, the value should come from your heroku db settings. Make sure to add `?ssl=true` at the end of the URI.
+* Store a value in your `.env` called `SESSION_SECRET` and set the value to a random string of characters.
+* In `index.js`, destructure `CONNECTION_STRING` and `SESSION_SECRET` from `process.env`, storing it on a const variable.
+* Create the database connection by invoking `massive` and passing in the `CONNECTION_STRING`. 
+* Create a `.then` callback function on the massive invocation, and store the resulting database connection using `app.set`.
+  
+* Set up `session` as top-level middleware by invoking app.use and passing in session invoked with a configuration object.
     * The session configuration object should have properties `resave` set to true, `saveUninitialized` set to false, and `secret` set to SESSION_SECRET.
-* Take the contents of queries.sql in the DB folder and run that in your database using SQL tabs. This will create the necessary user and treasure tables. 
+* Copy the contents of `queries.sql` in the DB folder and paste it in your database using SQL tabs. This will create the necessary user and treasure tables as well as populate a little bit of data for testing. 
 
 ### Solution
 
@@ -114,6 +106,8 @@ SESSION_SECRET=asdfa12341234
 ```
 
 </details>
+
+
 <details>
 <summary><code> server/index.js </code></summary>
 
@@ -123,7 +117,6 @@ const express = require('express');
 const session = require('express-session');
 const massive = require('massive');
 const bodyParser = require('body-parser');
-const ac = require('./controllers/authController');
 
 const PORT = 4000;
 
@@ -156,28 +149,30 @@ app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
 
 ### Summary
 
-Here We will create an auth controller file and import the bcryptjs package here. We will also build the server endpoint that we will use to register a new user.
+Here We will create an auth controller file and import the bcryptjs package there. We will also build the server endpoint that we will use to register a new user.
 
 ### Instructions
 
-* Create a folder called controllers in server.
-* Create a file called authController.js in controllers. 
-* Open `server/index.js` and require the authController.js file storing it on a const variable called ac.
-
-* In server/index.js we will create the register endpoint. 
-* Create a POST endpoint with '/auth/register' as the URL and ac.register as the controller function.
-
-* Go back to authController.js and create a register method with parameters req and res. We will use `async` and `await`, so make sure to use the `async` keyword before defining your function.
-* Destructure username, password and isAdmin from req.body.
-* Get the database instance and run the sql file `get_user`, passing in username. This query will check the database to see if there if the username is already taken. Since this query is asynchronous, make sure to use the await keyword to ensure that the promise resolves before the rest of the code executes. 
-* If existingUser is defined, send a response with status 409 and the text 'Username taken');
+* Create a folder called `controllers` in `server`.
+* Create a file called `authController.js` in controllers.
+* Install and require the `bcryptjs` library at the top of the file as the variable `bcrypt`. 
+* Add `module.exports` and set it equal to an object.
+* Open `server/index.js` and require the authController.js file storing it on a const variable called `ac`.
+* Create a POST endpoint with '/auth/register' as the URL and `ac.register` as the controller function.
+* Go back to `authController.js` and create a register method with parameters `req` and `res`. We will use `async` and `await`, so make sure to use the `async` keyword before defining your function.
+* Destructure username, password and isAdmin from `req.body`.
+* Since we will need to reference the database instance for multiple queries in this function, retrieve the database instance and set it to a const variable named `db`.
+* Run the sql file `get_user`, passing in `username`. 
+  * This query will check the database to see if the username is already taken. Since this query is asynchronous, make sure to use the await keyword to ensure that the promise resolves before the rest of the code executes. Set the result of this query to a const variable called `existingUser`.
+* If `existingUser` is defined, send a response with status 409 and the string 'Username taken'. Keep in mind, massive always returns an array so to access the user, we will need to read the first item in the array.
 * Otherwise, create a const variable called salt, equal to `bcrypt.genSaltSync(10)`.
 * Create a const variable called hash, equal to `bcrypt.hashSync(password, salt)`.
-* Asynchronously (using await) run the register_user SQL file, passing in isAdmin, username, and hash as parameters (in that order).
+* Asynchronously (using await) run the `register_user` SQL file, passing in `isAdmin`, `username`, and `hash` as parameters (in that order).
     * Remember that SQL function parameters should be passed in as an array.
-* Set the value of this SQL query to a variable called user.
+* Set the value of this SQL query to a variable called `user`.
     * It will come as an array, and we just need the first element in the array. 
-* Set req.session.user to be an object with properties isAdmin, id, and username, equal to user.is_admin, user.id, and user.username.
+* Set `req.session.user` to be an object with properties `isAdmin`, `id`, and `username`, equal to `user.is_admin`, `user.id`, and `user.username`.
+* Return a response of 201 and send `req.session.user`
 * Now let's test our endpoint with postman. 
     * Open postman and enter `http://localhost:4000/auth/register` in the URL input and send the following as raw JSON on the body of your request:
 
@@ -194,7 +189,9 @@ Here We will create an auth controller file and import the bcryptjs package here
 
 </details>
 
+
 You should receive the following as a response if your request was successful. If nothing went wrong, we have now registered a non-admin user and you should be able to see the new user in the `users` table of your database.
+
 
 <details><summary>Postman JSON Response - Register</summary>
 
@@ -289,15 +286,15 @@ Since the user object is stored on state in `App.js`, but the input boxes and th
 * In the `register` method, use axios to send a POST request to `/auth/register`.
     * Destructure `username`, `password`, and `isAdmin` properties from state.
     * Send along an object with `username`, `password`, and `isAdmin` properties with the correct values from state as the body of the request.
-    * In the .then of the axios request, set username and password on state to empty strings, using setState. 
-    * Also in the .then, invoke this.props.updateUser passing in the response data from our request, so that we can update the user object on App.js.
-    * Chain a `.catch` onto the `.then` method with a callback function that contains the error as a parameter, and `alert` the `response.request.response`. Unfortunately, that path is the only way to get access to the error string that we sent as a response if the status code is not a 200. Dont forget to clear the input boxes using `setState` as well. 
-    ```js
-    .catch(err => {
-        this.setState({ username: '', password: '' })
-        alert(err.response.request.response)
-    })
-    ```
+    * In the `.then` of the axios request, set `username` and `password` on state to empty strings, using `setState`. 
+    * Also in the `.then`, invoke `this.props.updateUser` passing in the response data from our request, so that we can update the user object on App.js.
+    * Chain a `.catch` onto the `.then` method with a callback function that contains the `error` as a parameter.
+    * `alert` `error.response.request.response` to alert the error sent as a string from our server.
+        * Unfortunately, that path is the only way to get access to the error string that we sent as a response if the status code is not a 200.
+        * Your  
+    * Dont forget to clear the input boxes using `setState` as well. 
+  
+  
     * Test your application by entering a username and a password and clicking the register button. The header should switch to display a welcome message and a logout button. The logout button shouldn't work yet, so to test the error handling of our endpoint, refresh the page to get the input boxes back.
     * Try registering again with the same username. You should see an alert that says 'Username taken'.
     
@@ -339,7 +336,7 @@ export default class Header extends Component {
   }
 
   login() {
-    // create POST request to login endpoint
+    // create POST request to /auth/login endpoint
   }
 
   register() {
@@ -347,17 +344,17 @@ export default class Header extends Component {
     axios
       .post('/auth/register', { username, password, isAdmin })
       .then(user => {
-        this.setState({ username: '', password: '' });
+        this.setState({
+          username: '',
+          password: '',
+        });
         this.props.updateUser(user.data);
       })
-      .catch(err => {
-        this.setState({ username: '', password: '' });
-        alert(err.response.request.response);
-      });
+      .catch(error => alert(error.response.request.response));
   }
 
   logout() {
-    // GET request to logout
+    // create POST request to /auth/register endpoint
   }
 
   render() {
@@ -401,7 +398,6 @@ export default class Header extends Component {
   }
 }
 
-
 ```
 
 </details>
@@ -418,20 +414,20 @@ Now that we are successfully able to register, lets create the login endpoint so
 This endpoint will take a username and password off of the body and check if there is a user already exists by that username in the database. If the user is not in the database, our endpoint should respond with a 401 status code (unauthorized) since we were not able to authorize the user based on the fact that the username isn't registered. The endpoint should then compare the plain text password sent by the user to the salted and hashed version in our database. At that point, the endpoint should respond with a 200 (OK) status code if the password matches, or a 403 (Forbidden) status code if the password doesn't match.
 
 * In server/index.js we will create the login endpoint. 
-* Create a POST endpoint with '/auth/login' as the URL and ac.login as the controller function.
+* Create a POST endpoint with '/auth/login' as the URL and `ac.login` as the controller function.
 
-* Create a property called login on the `authController` exports object, with the value of an async function that takes a req and res parameter.
-* Destructure username and password from req.body, storing them on const variables. 
-* Get the database instance using req.app.get('db')
-* Using the `get_user` SQL file, query the database for a user with a username matching the username from req.body. Make sure to use the `await` keyword to ensure the promise resolves before referencing the data.
+* Create a property called `login` on the `authController` exports object, with the value of an `async` function that takes a `req` and `res` parameter.
+* Destructure `username` and `password` from `req.body`, storing them on const variables. 
+* Get the database instance using `req.app.get('db')`
+* Using the `get_user` SQL file, query the database for a user with a username matching the username from `req.body`. Make sure to use the `await` keyword to ensure the promise resolves before referencing the data.
 * Store the result of the SQL query on a const variable called foundUser. 
     * Remember that SQL queries come back in an array, so take the first item of the foundUser array and set it to another const variable called `user`. 
-* If there is no user found, send a response with status 401, and the string 'User  not found. Please register as a new user before logging in.'
-* Otherwise, create a const variable called isAuthenticated and set it equal to `bcrypt.compareSync(password, user.hash)`. This method compares the password entered by the user at login to the hashed and salted version stored in the database.
+* If there is no user found, send a response with status 401, and the string 'User not found. Please register as a new user before logging in.'
+* Otherwise, create a const variable called isAuthenticated and set it equal to `bcrypt.compareSync(password, user.hash)`. This method compares the password entered by the user at login to the hashed and salted version stored in the database and returns a boolean which indicates whether the user is authenticated.
 * If isAuthenticated is false, send a response with status code 403, and the string 'Incorrect password'.
-* Otherwise, set req.session.user to be on object with the same properties as the user object from the register endpoint, but using the data retreived from the `get_user` query. 
+* Otherwise, set `req.session.user` to be on object with the same properties as the user object from the register endpoint, but using the data retrieved from the `get_user` query. 
 * Then send `req.session.user` as a response with status code 200.
-* Now test your endpoint with postman. Paste the following into the body section of the request as raw JSON.
+* Now test your endpoint with postman by sending a POST request to `http://localhost:4000/auth/login`. Paste the following into the body section of the request as raw JSON.
 
 <details><summary> Postman JSON Body - Login </summary>
 
@@ -451,8 +447,9 @@ You should receive the following response.
 
 ```json
 {
-	"username": "mrsmee",
-	"password": "1stM84Lyfe"
+    "isAdmin": false,
+    "id": 4,
+    "username": "mrsmee"
 }
 ```
 
@@ -547,7 +544,7 @@ app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
 
 ### Summary
 
-Now that we are successfully able to register, lets create the login endpoint so an existing user can now log in. 
+In this step, we will write logic that will interact with our login endpoint from the front end. We will make a request with axios, sending along the user's username and password on the body. Our endpoint will respond with either the user's data, or an error message sent as a string. The application has most of the logic built to handle the response, but we still need to initiate the request.
 
 ### Instructions
 
@@ -555,14 +552,15 @@ Now that we are successfully able to register, lets create the login endpoint so
 * Our `login()` method is connected to the login button's onClick event handler, we just need to complete the logic that will make the POST request to our server's login endpoint.
 * Begin by destructuring the `username` and `password` values from state.
 * Use axios to make a POST request to `/auth/login` with a body object with the `username` and `password` values from state.
-* Chain a `.then` onto the end of the `.post` method and provide a function that takes in a parameter called user. 
+* Chain a `.then` onto the end of the `.post` method and provide a function that takes in a parameter called `user`. 
 * The `Header` component has access to an `updateUser` method passed as a prop from the `App` component that will update the `user` property on state in `App`. Execute the `updateUser` method from props with `user.data` as an argument. 
 * Also in the `.then`, make sure to clear the input boxes by setting the `username` and `password` properties to empty strings using `setState`.
 * Chain a `.catch` onto the `.then` with an arrow function that references the error as a parameter. 
 * Alert the error using the `alert()` function, passing in `error.response.request.response`. That chain of data leads to the string response from our server endpoint if there is an error.
 * You should now be able to test the login functionality. In your browser, enter a username and password that you have already registered, or register a new user with a memorable username and password.
+    * Feel free to use username: `mrsmee` and password: `1stM84Lyfe` since they were registered in a previous step. You can also register and log in with a different username and password if you would like.
 * Click Log In. You should now see the welcome message. 
-* Since the logout button doesn't work yet, refresh your browser to get the input boxes back. Try logging in with a username that hasn't been used yet. You should get an alert that says 'User  not found. Please register as a new user before loggin in.'
+* Since the logout button doesn't work yet, refresh your browser to get the input boxes back. Try logging in with a username that hasn't been used yet. You should get an alert that says 'User  not found. Please register as a new user before logging in.'
 * Now try logging in with a registered user, but use an incorrect password. You should see 'Incorrect password' alerted.
 
 ### Solution
@@ -605,9 +603,12 @@ export default class Header extends Component {
       .post('/auth/login', { username, password })
       .then(user => {
         this.props.updateUser(user.data);
-        this.setState({ username: '', password: '' });
+        this.setState({
+          username: '',
+          password: '',
+        });
       })
-      .catch(err => alert(err.response.request.response));
+      .catch(error => alert(error.response.request.response));
   }
 
   register() {
@@ -615,17 +616,17 @@ export default class Header extends Component {
     axios
       .post('/auth/register', { username, password, isAdmin })
       .then(user => {
-        this.setState({ username: '', password: '' });
+        this.setState({
+          username: '',
+          password: '',
+        });
         this.props.updateUser(user.data);
       })
-      .catch(err => {
-        this.setState({ username: '', password: '' });
-        alert(err.response.request.response);
-      });
+      .catch(error => alert(error.response.request.response));
   }
 
   logout() {
-    // GET request to logout
+    // create POST request to /auth/register endpoint
   }
 
   render() {
@@ -669,11 +670,12 @@ export default class Header extends Component {
   }
 }
 
+
 ```
 
 </details>
 
-
+//////////// TRAVIS REVIEWED THROUGH HERE \\\\\\\\\\\\\\
 
 ## Step X - Logout (Backend)
 
