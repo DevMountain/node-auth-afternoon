@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './Container.css';
+import axios from 'axios';
 import Treasure from '../Treasure';
 
 export default class Container extends Component {
@@ -30,12 +31,7 @@ export default class Container extends Component {
   }
 
   addMyTreasure(newMyTreasure) {
-    this.setState({
-      treasures: {
-        ...this.state.treasures,
-        user: newMyTreasure,
-      },
-    });
+    // axios POST to /api/treasure/user here
   }
 
   render() {
