@@ -16,9 +16,7 @@ The purpose of this project is to implement secure password authentication using
 * Run `npm install`
 * Run `npm start`
 
-At this point the app should load in the browser and you should see the view of three treasure hoards and the login bar at the top. None of the buttons are connected to functions at this point. 
-
-<img src="./readme_assets/main-view.png" alt="main view">
+At this point the app should load in the browser and you should see the view of three treasure hoards and the login bar at the top. None of the buttons are connected to functions at this point.
 
 ## Step 1 - Setup
 
@@ -676,7 +674,7 @@ At this point, a user should be able to register, log in, log out, and view the 
 
 </details>
 
-* Now test your GET endpoint using postman by making a GET request to 'http://localhost:4000/api/treasure/user'. 
+* Now test your GET endpoint using postman by making a GET request to `http://localhost:4000/api/treasure/user`. 
   * You should receive `[]` as a response since the user currently has no treasure in the database.
 
 #### Solution
@@ -751,7 +749,7 @@ Remember how you had to first make a POST request to your `/auth/login` endpoint
 
 </details>
 
-* You should then test your GET endpoint again using postman by making a GET request to 'http://localhost:4000/api/treasure/user'. 
+* You should then test your GET endpoint again using postman by making a GET request to `http://localhost:4000/api/treasure/user`. 
   * You should receive `[]` as a response instead of 'Please log in'.
 
 #### Solution
@@ -886,41 +884,41 @@ Now we will code the add treasure functionality on the server side. We will need
 
 </details>
 
-    * You should receive the following as a response. The id on your response may be different.
+* You should receive the following as a response. The id on your response may be different.
 
-    ```json
-    {
-      "isAdmin": false,
-      "id": 4,
-      "username": "mrsmee"
-    }
-    ```
+```json
+{
+  "isAdmin": false,
+  "id": 4,
+  "username": "mrsmee"
+}
+```
 
 * You should now be able to test this endpoint again by sending a POST request to
 
 `http://localhost:4000/api/treasure/user`.
 
-  <details><summary>JSON Treasure POST body</summary>
+<details><summary>JSON Treasure POST body</summary>
 
-    ```json
+```json
+{
+  "treasureURL": "https://bible2blog.files.wordpress.com/2015/06/treasurechest.png"
+}
+```
+
+</details>
+
+* You should receive the following as a response:
+
+```json
+  [
     {
-      "treasureURL": "https://bible2blog.files.wordpress.com/2015/06/treasurechest.png"
+      "id": 4,
+      "image_url": "https://bible2blog.files.wordpress.com/2015/06/treasurechest.png",
+      "user_id": 4
     }
-    ```
-
-  </details>
-
-    * You should receive the following as a response:
-
-    ```json
-      [
-        {
-          "id": 4,
-          "image_url": "https://bible2blog.files.wordpress.com/2015/06/treasurechest.png",
-          "user_id": 4
-        }
-      ]
-    ```
+  ]
+```
 
 #### Solution
 
