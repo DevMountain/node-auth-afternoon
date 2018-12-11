@@ -8,8 +8,6 @@ The purpose of this project is to implement secure password authentication using
 
 <img src="./readme_assets/demo.gif" alt="demo gif">
 
-<img src="./readme_assets/main-view.png" alt="main view">
-
 ## Setup
 
 * `fork` and `clone` this repository
