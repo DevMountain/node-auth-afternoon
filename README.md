@@ -8,6 +8,8 @@ The purpose of this project is to implement secure password authentication using
 
 <img src="./readme_assets/demo.gif" alt="demo gif">
 
+<img src="./readme_assets/main-view.png" alt="main view">
+
 ## Setup
 
 * `fork` and `clone` this repository
@@ -291,8 +293,6 @@ Since the user object is stored on state in `App.js`, but the input boxes and th
 
   * Test your application by entering a username and a password and clicking the register button. The header should switch to display a welcome message and a logout button. The logout button shouldn't work yet, so to test the error handling of our endpoint, refresh the page to get the input boxes back.
   * Try registering again with the same username. You should see an alert that says 'Username taken'.
-    
-<img src="./readme_assets/after-register.gif" alt="main view">
 
 #### Solution
 
