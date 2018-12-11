@@ -7,7 +7,7 @@ export default function Treasure(props) {
   });
   return (
     <div>
-      {props.addMyTreasure ? <AddTreasure /> : null}
+      {props.addMyTreasure ? <AddTreasure addMyTreasure={props.addMyTreasure}/> : null}
       {treasure}
     </div>
   );
